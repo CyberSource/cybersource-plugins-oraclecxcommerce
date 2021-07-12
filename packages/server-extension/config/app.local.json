@@ -1,0 +1,18 @@
+{
+    "atg.server.admin.url": "http://localhost:5000",
+    "atg.application.credentials": {
+        "atg.application.token": "ApiKey"
+    },
+    "cache.service.ttl.secs": 0,
+    "cache.gatewaysettings.ttl.secs": 0,
+    "cache.flex.jwt.ttl.secs": 1200,
+    "cache.device.fingerprint.ttl.secs": 3600,
+    "feature.gatewaysettings.payload": "disabled",
+    "report.daily.download.path": "",
+    "crypto.service.key": "<>",
+    "partner.developerId": "",
+    "partner.solutionId": "Z1BIKTOZ",
+    "logging.webhook.http": false,
+    "logging.api.error": true,
+    "logging.api.access": true
+}

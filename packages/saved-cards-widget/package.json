@@ -1,0 +1,41 @@
+{
+  "name": "@isv-occ-payment/saved-cards-widget",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ISV OCC Saved Cards Widget",
+  "repository": "git@bitbucket.org:tacitknowledge/isv-occ.git",
+  "author": "Tacit Knowledge <developer@tacitknowledge.com>",
+  "scripts": {
+    "build": "yarn clean && yarn build:ts && yarn bundle:dev",
+    "build:prod": "yarn clean && yarn bundle:prod && yarn copy-bundle",
+    "build:ts": "tsc -p tsconfig.json --noEmit",
+    "bundle:dev": "webpack --mode development --devtool source-map --config webpack.dev.config.js",
+    "bundle:prod": "webpack --mode production --config webpack.prod.config.js",
+    "clean": "rimraf ./dist",
+    "copy-bundle": "cp ./dist/saved-cards.bundle.js ./widget/saved-cards/js/saved-cards.bundle.js",
+    "start": "webpack-dev-server -d --progress --open --config webpack.dev.config.js",
+    "test": "jest",
+    "test:coverage:unit": "yarn test:unit --coverage",
+    "test:unit": "yarn test"
+  },
+  "devDependencies": {
+    "@ts-tools/webpack-loader": "^1.1.4",
+    "@types/jquery": "^3.3.38",
+    "@types/knockout": "3.4.68",
+    "@types/knockout.validation": "0.0.37",
+    "css-loader": "^3.6.0",
+    "html-loader": "^0.5.5",
+    "html-webpack-externals-plugin": "^3.8.0",
+    "html-webpack-plugin": "^4.3.0",
+    "jquery": "^3.5.1",
+    "knockout": "3.4.0",
+    "knockout.validation": "2.0.3",
+    "less-loader": "^6.1.1",
+    "style-loader": "^1.2.1",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.1.1"
+  }
+}

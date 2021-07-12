@@ -1,0 +1,432 @@
+{
+  "configType": "payment",
+  "titleResourceId": "title",
+  "descriptionResourceId": "description",
+  "instances": [
+    {
+      "id": "agent",
+      "instanceName": "agent",
+      "labelResourceId": "agentInstanceLabel"
+    },
+    {
+      "id": "preview",
+      "instanceName": "preview",
+      "labelResourceId": "previewInstanceLabel"
+    },
+    {
+      "id": "storefront",
+      "instanceName": "storefront",
+      "labelResourceId": "storefrontInstanceLabel"
+    }
+  ],
+  "properties": [
+    {
+      "id": "paymentMethodTypes",
+      "type": "multiSelectOptionType",
+      "name": "paymentMethodTypes",
+      "required": true,
+      "helpTextResourceId": "paymentMethodsHelpText",
+      "labelResourceId": "paymentMethodsLabel",
+      "defaultValue": "card,generic",
+      "displayAsCheckboxes": true,
+      "public": true,
+      "options": [
+        {
+          "id": "card",
+          "value": "card",
+          "labelResourceId": "cardLabel"
+        },
+        {
+          "id": "generic",
+          "value": "generic",
+          "labelResourceId": "genericLabel"
+        }
+      ]
+    },
+    {
+      "id": "paymentOptions",
+      "type": "multiSelectOptionType",
+      "name": "paymentOptions",
+      "required": true,
+      "helpTextResourceId": "paymentOptionsHelpText",
+      "labelResourceId": "paymentOptionsLabel",
+      "defaultValue": "card,googlepay,applepay",
+      "displayAsCheckboxes": true,
+      "public": true,
+      "options": [
+        {
+          "id": "card",
+          "value": "card",
+          "labelResourceId": "paymentOptionCardLabel"
+        },
+        {
+          "id": "googlepay",
+          "value": "googlepay",
+          "labelResourceId": "paymentOptionGooglePayLabel"
+        },
+        {
+          "id": "applepay",
+          "value": "applepay",
+          "labelResourceId": "paymentOptionApplePayLabel"
+        }
+      ]
+    },
+    {
+      "id": "merchantID",
+      "type": "stringType",
+      "labelResourceId": "merchantIdLabel",
+      "helpTextResourceId": "merchantIdHelpText",
+      "defaultValue": "merchantId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "merchantKeyId",
+      "type": "stringType",
+      "labelResourceId": "merchantKeyIdLabel",
+      "helpTextResourceId": "merchantKeyIdHelpText",
+      "defaultValue": "merchantKeyId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "merchantsecretKey",
+      "type": "passwordType",
+      "labelResourceId": "merchantsecretKeyLabel",
+      "helpTextResourceId": "merchantsecretKeyHelpText",
+      "defaultValue": "merchantsecretKey",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "keyAlias",
+      "type": "stringType",
+      "labelResourceId": "keyAliasLabel",
+      "helpTextResourceId": "keyAliasHelpText",
+      "defaultValue": "keyAlias",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "keyPass",
+      "type": "passwordType",
+      "labelResourceId": "keyPassLabel",
+      "helpTextResourceId": "keyPassHelpText",
+      "defaultValue": "keyPass",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "keyFileName",
+      "type": "stringType",
+      "labelResourceId": "keyFileNameLabel",
+      "helpTextResourceId": "keyFileNameHelpText",
+      "defaultValue": "keyFileName",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "authenticationType",
+      "type": "optionType",
+      "labelResourceId": "authenticationTypeLabel",
+      "helpTextResourceId": "authenticationTypeHelpText",
+      "defaultValue": "http_signature",
+      "required": true,
+      "public": false,
+      "options": [
+        {
+          "id": "httpSignature",
+          "value": "http_signature",
+          "labelResourceId": "httpAuthenticationTypeLabel"
+        },
+        {
+          "id": "jwt",
+          "value": "JWT",
+          "labelResourceId": "jwtAuthenticationTypeLabel"
+        }
+      ]
+    },
+    {
+      "id": "runEnvironment",
+      "type": "stringType",
+      "labelResourceId": "runEnvironmentLabel",
+      "helpTextResourceId": "runEnvironmentHelpText",
+      "defaultValue": "environment",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "payerAuthEnabled",
+      "type": "booleanType",
+      "labelResourceId": "payerAuthEnabledLabel",
+      "helpTextResourceId": "payerAuthEnabledHelpText",
+      "defaultValue": true,
+      "public": false
+    },
+    {
+      "id": "payerAuthKeyId",
+      "type": "stringType",
+      "labelResourceId": "payerAuthKeyIdLabel",
+      "helpTextResourceId": "payerAuthKeyIdHelpText",
+      "defaultValue": "payerAuthKeyId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "payerAuthKey",
+      "type": "stringType",
+      "labelResourceId": "payerAuthKeyLabel",
+      "helpTextResourceId": "payerAuthKeyHelpText",
+      "defaultValue": "payerAuthKey",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "secretKey3DS",
+      "type": "passwordType",
+      "name": "secretKey",
+      "labelResourceId": "secretKeyLabel",
+      "helpTextResourceId": "secretKeyHelpTexts",
+      "defaultValue": "secretKey3DS",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "payerAuthOrgUnitId",
+      "type": "stringType",
+      "labelResourceId": "payerAuthOrgUnitIdLabel",
+      "helpTextResourceId": "payerAuthOrgUnitIdHelpText",
+      "defaultValue": "payerAuthOrgUnitId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "songbirdUrl",
+      "type": "stringType",
+      "labelResourceId": "songbirdUrlLabel",
+      "helpTextResourceId": "songbirdUrlHelpText",
+      "defaultValue": "https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "saleEnabled",
+      "type": "multiSelectOptionType",
+      "name": "saleEnabled",
+      "required": false,
+      "labelResourceId": "saleEnabledLabel",
+      "helpTextResourceId": "saleEnabledHelpText",
+      "defaultValue": "",
+      "displayAsCheckboxes": true,
+      "public": false,
+      "options": [
+        {
+          "id": "card",
+          "value": "card",
+          "labelResourceId": "cardOptionLabel"
+        }
+      ]
+    },
+    {
+      "id": "flexSdkUrl",
+      "type": "stringType",
+      "labelResourceId": "flexSdkUrlLabel",
+      "helpTextResourceId": "flexSdkUrlHelpText",
+      "defaultValue": "flexSdkUrl",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "isCVVRequiredForSavedCards",
+      "type": "booleanType",
+      "name": "isCVVRequiredForSavedCards",
+      "helpTextResourceId": "isCVVRequiredForSavedCardsHelpText",
+      "labelResourceId": "isCVVRequiredForSavedCardsLabel",
+      "defaultValue": false
+    },
+    {
+      "id": "isCVVRequiredForScheduledOrders",
+      "type": "booleanType",
+      "name": "isCVVRequiredForScheduledOrders",
+      "helpTextResourceId": "isCVVRequiredForScheduledOrdersHelpText",
+      "labelResourceId": "isCVVRequiredForScheduledOrdersLabel",
+      "defaultValue": false
+    },
+    {
+      "id": "googlePaySdkUrl",
+      "type": "stringType",
+      "labelResourceId": "googlePaySdkUrlLabel",
+      "helpTextResourceId": "googlePaySdkUrlHelpText",
+      "defaultValue": "https://pay.google.com/gp/p/js/pay.js",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "googlePayEnvironment",
+      "type": "multiSelectOptionType",
+      "name": "googlePayEnvironment",
+      "required": true,
+      "helpTextResourceId": "googlePayEnvironmentHelpText",
+      "labelResourceId": "googlePayEnvironmentLabel",
+      "defaultValue": "TEST",
+      "displayAsCheckboxes": true,
+      "public": false,
+      "options": [
+        {
+          "id": "TEST",
+          "value": "TEST",
+          "labelResourceId": "googlePayTestOptionLabel"
+        },
+        {
+          "id": "PRODUCTION",
+          "value": "PRODUCTION",
+          "labelResourceId": "googlePayProductionOptionLabel"
+        }
+      ]
+    },
+    {
+      "id": "googlePayGateway",
+      "type": "stringType",
+      "labelResourceId": "googlePayGatewayLabel",
+      "helpTextResourceId": "googlePayGatewayHelpText",
+      "defaultValue": "googlePayGateway",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "googlePayGatewayMerchantId",
+      "type": "stringType",
+      "labelResourceId": "googlePayGatewayMerchantIdLabel",
+      "helpTextResourceId": "googlePayGatewayMerchantIdHelpText",
+      "defaultValue": "googlePayGatewayMerchantId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "googlePayMerchantId",
+      "type": "stringType",
+      "labelResourceId": "googlePayMerchantIdLabel",
+      "helpTextResourceId": "googlePayMerchantIdHelpText",
+      "defaultValue": "googlePayMerchantId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "googlePayMerchantName",
+      "type": "stringType",
+      "labelResourceId": "googlePayMerchantNameLabel",
+      "helpTextResourceId": "googlePayMerchantNameHelpText",
+      "defaultValue": "googlePayMerchantName",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "googlePaySupportedNetworks",
+      "type": "stringType",
+      "labelResourceId": "googlePaySupportedNetworksLabel",
+      "helpTextResourceId": "googlePaySupportedNetworksHelpText",
+      "defaultValue": "AMEX,DISCOVER,INTERAC,JCB,MASTERCARD,VISA",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "applePayMerchantId",
+      "type": "stringType",
+      "labelResourceId": "applePayMerchantIdLabel",
+      "helpTextResourceId": "applePayMerchantIdHelpText",
+      "defaultValue": "applePayMerchantId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "applePayInitiative",
+      "type": "stringType",
+      "labelResourceId": "applePayInitiativeLabel",
+      "helpTextResourceId": "applePayInitiativeHelpText",
+      "defaultValue": "web",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "applePayInitiativeContext",
+      "type": "stringType",
+      "labelResourceId": "applePayInitiativeContextLabel",
+      "helpTextResourceId": "applePayInitiativeContextHelpText",
+      "defaultValue": "applePayInitiativeContextId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "applePaySupportedNetworks",
+      "type": "stringType",
+      "labelResourceId": "applePaySupportedNetworksLabel",
+      "helpTextResourceId": "applePaySupportedNetworksHelpText",
+      "defaultValue": "visa,masterCard,amex,discover",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "dmDecisionSkip",
+      "type": "multiSelectOptionType",
+      "name": "dmDecisionSkip",
+      "required": false,
+      "helpTextResourceId": "dmDecisionSkipHelpText",
+      "labelResourceId": "dmDecisionSkipLabel",
+      "defaultValue": "",
+      "displayAsCheckboxes": true,
+      "public": true,
+      "options": [
+        {
+          "id": "card",
+          "value": "card",
+          "labelResourceId": "cardOptionLabel"
+        },
+        {
+          "id": "applepay",
+          "value": "applepay",
+          "labelResourceId": "applepayOptionLabel"
+        },
+        {
+          "id": "googlepay",
+          "value": "googlepay",
+          "labelResourceId": "googlepayOptionLabel"
+        }
+      ]
+    },
+    {
+      "id": "dailyReportName",
+      "type": "stringType",
+      "labelResourceId": "dailyReportNameLabel",
+      "helpTextResourceId": "dailyReportNameHelpText",
+      "defaultValue": "dailyReportName",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "deviceFingerprintUrl",
+      "type": "stringType",
+      "labelResourceId": "deviceFingerprintUrlLabel",
+      "helpTextResourceId": "deviceFingerprintUrlHelpText",
+      "defaultValue": "https://h.online-metrix.net/fp/tags",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "deviceFingerprintOrgId",
+      "type": "stringType",
+      "labelResourceId": "deviceFingerprintOrgIdLabel",
+      "helpTextResourceId": "deviceFingerprintOrgIdHelpText",
+      "defaultValue": "deviceFingerprintOrgId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "deviceFingerprintEnabled",
+      "type": "booleanType",
+      "labelResourceId": "deviceFingerprintEnabledLabel",
+      "helpTextResourceId": "deviceFingerprintEnabledHelpText",
+      "defaultValue": true,
+      "public": false
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@isv-occ-payment/occ-mock-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mock OCC APIs",
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:tacitknowledge/isv-occ.git"
+  },
+  "author": "Tacit Knowledge <developer@tacitknowledge.com>",
+  "main": "cjs/server.js",
+  "types": "cjs/server.d.ts",
+  "scripts": {
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf ./cjs",
+    "start": "node -r @ts-tools/node/r -r tsconfig-paths/register ./src/server.ts",
+    "start:watch": "nodemon"
+  },
+  "config": {
+    "port": "5000",
+    "ssl_port": "5001"
+  },
+  "dependencies": {
+    "@isv-occ-payment/payment-gateway": "1.0.0",
+    "@types/json-server": "^0.14.2",
+    "json-server": "^0.16.1",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

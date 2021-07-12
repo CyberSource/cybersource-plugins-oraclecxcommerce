@@ -1,0 +1,12 @@
+{
+    "cache.service.ttl.secs": 0,
+    "cache.gatewaysettings.ttl.secs": 1,
+    "crypto.service.key": "<>",
+    "feature.gatewaysettings.payload": "disabled",
+    "partner.developerId": "",
+    "partner.solutionId": "Z1BIKTOZ",
+    "logging.webhook.http": true,
+    "logging.api.error": true,
+    "logging.api.access": true,
+    "/isv-payment/v1/payments": "<>"
+}

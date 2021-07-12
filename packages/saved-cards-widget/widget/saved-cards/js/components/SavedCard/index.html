@@ -1,0 +1,93 @@
+<div class="thumbnail" data-bind="css: {'saved-card__edit': editInProgress()}">
+    <div class="caption">
+        <h4>
+            <span class="text-info" data-bind="widgetLocaleText: {
+                value: 'cardCaptionText',
+                attr:'innerText',
+                params: {type: card.cardType, last4: getLast4digits()}}"></span>
+
+            <span class="badge" data-bind="widgetLocaleText: 'defaultCardLabel',
+                visible: isDefault()">
+            </span>
+        </h4>
+        <br/>
+        <form class="form-horizontal">
+            <!-- Edit or Show nickname -->
+            <div class="form-group" data-bind="visible: editInProgress, validationOptions: validationOptions">
+                <label for="nickname" class="col-xs-4 control-label text-right"
+                    data-bind="widgetLocaleText: 'cardNickNameLabel'"></label>
+                <div class="col-xs-6">
+                    <input type="text" id="nickname" class="form-control"
+                        data-bind="textInput: nickname, hasfocus: editInProgress()"/>
+                    <span class="text-danger" data-bind="validationMessage: nickname"></span>
+                </div>
+            </div>
+            <div class="row" data-bind="visible: !editInProgress()">
+                <div class="col-xs-4 text-right">
+                    <p data-bind="widgetLocaleText: 'cardNickNameLabel'"></p>
+                </div>
+                <div class="col-xs-6">
+                    <strong data-bind="text: nickname"></strong>
+                </div>
+            </div>
+
+            <!-- Rest of labels -->
+            <div class="row">
+                <div class="col-xs-4 text-right">
+                    <p data-bind="widgetLocaleText: 'nameOnCardLabel'"></p>
+                </div>
+                <div class="col-xs-6">
+                    <strong data-bind="text: card.nameOnCard"></strong>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 text-right">
+                    <p data-bind="widgetLocaleText: 'expiryDateLabel'"></p>
+                </div>
+                <div class="col-xs-6">
+                    <strong data-bind="widgetLocaleText: {
+                        value: 'expiryDateText',
+                        attr:'innerText',
+                        params: {month: card.expiryMonth, year: card.expiryYear}}"></strong>
+                </div>
+            </div>
+
+            <!-- Set as default -->
+            <div class="row" data-bind="visible: !isDefault() && editInProgress">
+                <div class="col-xs-4 text-right"></div>
+                <div class="col-xs-8">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" data-bind="checked: isDefaultEdit"/>
+                            <span data-bind="widgetLocaleText: 'makeDefaultCardLabel'"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <br/>
+
+            <!-- Control Buttons -->
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    <!-- Edit or Remove card -->
+                    <p data-bind="visible: !editInProgress()">
+                        <button class="btn btn-primary btn-sm" data-bind="widgetLocaleText: 'btnEditCardText',
+                            click: edit,
+                            enable: canEdit"></button>
+                        <button class="btn btn-default btn-sm" data-bind="widgetLocaleText: 'btnRemoveCardText',
+                            click: remove,
+                            enable: canEdit"></button>
+                    </p>
+                    <!-- Save updates or Cancel -->
+                    <p data-bind="visible: editInProgress">
+                        <button class="btn btn-primary btn-sm" data-bind="widgetLocaleText: 'btnSaveCardText',
+                            click: save,
+                            enable: canSave()"></button>
+                        <button class="btn btn-default btn-sm" data-bind="widgetLocaleText: 'btnCancelUpdateCardText',
+                            click: cancelUpdated"></button>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

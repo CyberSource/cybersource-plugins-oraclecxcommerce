@@ -1,0 +1,15 @@
+{
+  "name": "ISV OCC Payment",
+  "javascript": "isv-occ-payment.bundle",
+  "i18nresources": "isv-occ-payment",
+  "pageTypes": ["checkout", "payment"],
+  "imports": [
+    "payment",
+    "order",
+    "paymentauthorization",
+    "site"
+  ],
+  "jsEditable": false,
+  "version": 1,
+  "global": false
+}

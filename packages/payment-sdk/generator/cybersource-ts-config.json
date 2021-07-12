@@ -1,0 +1,4 @@
+{
+   "outputDir" : ".",
+   "templateDir" : "generator/cybersource-ts-template"
+}

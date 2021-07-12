@@ -1,0 +1,254 @@
+declare module 'cybersource-rest-client' {
+    export interface MerchantConfig {
+        authenticationType: string;
+        runEnvironment: string;
+
+        merchantID: string;
+        merchantKeyId?: string;
+        merchantsecretKey?: string;
+
+        keyAlias?: string;
+        keyPass?: string;
+        keyFileName?: string;
+        keysDirectory?: string;
+        enableLog: boolean;
+        logFilename: string;
+        logDirectory: string;
+        logFileMaxSize: string;
+    }
+
+    export class ApiClient {
+    	/** 
+    	 * Daily report download file path. Must include file name without extension. The extension .xml will be added automatically
+    	 */
+    	downloadFilePath: string;
+
+    	/**
+    	 * Manages low level client-server communications, parameter marshalling, etc. There should not be any need for an
+    	 * application to use this class directly - the *Api and model classes provide the public API for the service. The
+    	 * contents of this file should be regarded as internal but are documented for completeness.
+    	 * @alias module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient
+    	 * @class
+    	 */
+    	 
+    	constructor();
+
+    	/**
+    	 * Applies authentication headers to the request.
+    	 * @param {Object} request The request object created by a <code>superagent()</code> call.
+    	 * @param {Array.<String>} authNames An array of authentication method names.
+    	 */
+    	applyAuthToRequest(request: any, authNames: Array<string>): void;
+	
+    	/**
+     	 * Builds a string representation of an array-type actual parameter, according to the given collection format.
+     	 * @param {Array} param An array parameter.
+     	 * @param {module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient.CollectionFormatEnum} collectionFormat The array element 	 separator strategy.
+     	 * @returns {String|Array} A string representation of the supplied collection, using the specified delimiter. Returns
+     	 * <code>param</code> as is if <code>collectionFormat</code> is <code>multi</code>.
+     	 */
+    	buildCollectionParam(param: Array<string>, collectionFormat: any): string|Array<string>;
+
+    	/**
+    	 *added by infosys team, to generate requestTarget with pathParam
+    	 */
+    	buildRequestTarget(path: string, pathParams: any, queryParams: any): string;
+	
+    	/**
+    	 * Builds full URL by appending the given path to the base URL and replacing path parameter place-holders with parameter values.
+    	 * NOTE: query parameters are not handled here.
+    	 * @param {String} path The path to append to the base URL.
+    	 * @param {Object} pathParams The parameter values to append.
+    	 * @returns {String} The encoded path with parameter values substituted.
+    	 */
+    	buildUrl(path: string, pathParams: any): string;
+	
+    	/**
+    	 * Invokes the REST service using the supplied settings and parameters.
+    	 * @param {String} path The base URL to invoke.
+    	 * @param {String} httpMethod The HTTP method to use.
+    	 * @param {Object.<String, String>} pathParams A map of path parameters and their values.
+    	 * @param {Object.<String, Object>} queryParams A map of query parameters and their values.
+    	 * @param {Object.<String, Object>} headerParams A map of header parameters and their values.
+    	 * @param {Object.<String, Object>} formParams A map of form parameters and their values.
+    	 * @param {Object} bodyParam The value to pass as the request body.
+    	 * @param {Array.<String>} authNames An array of authentication type names.
+    	 * @param {Array.<String>} contentTypes An array of request MIME types.
+    	 * @param {Array.<String>} accepts An array of acceptable response MIME types.
+    	 * @param {(String|Array|ObjectFunction)} returnType The required type to return; can be a string for simple types or the
+    	 * constructor for a complex type.{{^usePromises}}
+    	 * @param {module:{{#invokerPackage}}{{invokerPackage}}/{{/invokerPackage}}ApiClient~callApiCallback} callback The callback function.{{/usePromises}}
+    	 * @returns {{#usePromises}}{Promise} A {@link https://www.promisejs.org/|Promise} object{{/usePromises}}{{^usePromises}}{Object} The SuperAgent 	request object{{/usePromises}}.
+    	 */
+    	callApi(
+    	        path: string,
+    	        httpMethod: string,
+    	        pathParams: Record<string, string>,
+    	        queryParams: Record<string, unknown>,
+    	        headerParams: Record<string, unknown>,
+    	        formParams: Record<string, unknown>,
+    	        bodyParam: object,
+    	        authNames: Array<string>,
+    	        contentTypes: Array<string>,
+    	        accepts: Array<string>,
+    	        returnType: string|Array<string>|object,
+    	        callback: any
+    	): object;
+	
+    	/**
+    	 * This method is to generate headers for http and jwt authentication.
+    	 *
+    	 * @param {String} httpMethod 
+    	 * @param {String} requestTarget 
+    	 * @param {String} requestBody 
+    	 */
+    	callAuthenticationHeader(
+    	        httpMethod: string,
+    	        requestTarget: string,
+    	        requestBody: string,
+    	        headerParams: Record<string, unknown>
+    	): Record<string, unknown>;
+	
+    	/**
+    	 * Checks whether the given parameter value represents file-like content.
+    	 * @param param The parameter to check.
+    	 * @returns {Boolean} <code>true</code> if <code>param</code> represents a file.
+    	 */
+    	isFileParam(param: any): boolean;
+	
+    	/**
+    	 * Checks whether the given content type represents JSON.<br>
+    	 * JSON content type examples:<br>
+    	 * <ul>
+    	 * <li>application/json</li>
+    	 * <li>application/json; charset=UTF8</li>
+    	 * <li>APPLICATION/JSON</li>
+    	 * </ul>
+    	 * @param {String} contentType The MIME content type to check.
+    	 * @returns {Boolean} <code>true</code> if <code>contentType</code> represents JSON, otherwise <code>false</code>.
+    	 */
+    	isJsonMime(contentType: string): boolean;
+	
+    	/**
+    	 * Chooses a content type from the given array, with JSON preferred; i.e. return JSON if included, otherwise return the first.
+    	 * @param {Array.<String>} contentTypes
+    	 * @returns {String} The chosen content type, preferring JSON.
+    	 */
+    	jsonPreferredMime(contentTypes: Array<string>): string;
+	
+    	/**
+    	 * Normalizes parameter values:
+    	 * <ul>
+    	 * <li>remove nils</li>
+    	 * <li>keep files and arrays</li>
+    	 * <li>format to string with `paramToString` for other cases</li>
+    	 * </ul>
+    	 * @param {Object.<String, Object>} params The parameters as object properties.
+    	 * @returns {Object.<String, Object>} normalized parameters.
+    	 */
+    	normalizeParams(params: Record<string, unknown>): Record<string, unknown>;
+	
+    	/**
+    	 * Returns a string representation for an actual parameter.
+    	 * @param param The actual parameter.
+    	 * @returns {String} The string representation of <code>param</code>.
+    	 */
+    	paramToString(param: any): string;
+	
+    	/**
+    	 * This method will set the merchantConfig object global
+    	 *
+    	 * @param {Configuration} configObject merchantConfiguration properties.
+    	 */
+    	setConfiguration(config: MerchantConfig): void;
+	
+    	/**
+    	 * Enumeration of collection format separator strategies.
+    	 * @enum {String}
+    	 * @readonly
+    	 */
+    	static CollectionFormatEnum: {
+    	    CSV: string;
+    	    MULTI: string;
+    	    PIPES: string;
+    	    SSV: string;
+    	    TSV: string;
+    	};
+	
+    	/**
+    	 * Constructs a new map or array model from REST data.
+    	 * @param data {Object|Array} The REST data.
+    	 * @param obj {Object|Array} The target object or array.
+    	 */
+    	static constructFromObject(data: object|Array<object>, obj: object|Array<object>, itemType: any): void;
+	
+    	/**
+    	 * Converts a value to the specified type.
+    	 * @param {(String|Object)} data The data to convert, as a string or object.
+    	 * @param {(String|Array.<String>|Object.<String, Object>|Function)} type The type to return. Pass a string for simple types
+    	 * or the constructor function for a complex type. Pass an array containing the type name to return an array of that type. To
+    	 * return an object, pass an object with one property whose name is the key type and whose value is the corresponding value type:
+    	 * all properties on <code>data<code> will be converted to this type.
+    	 * @returns An instance of the specified type or null or undefined if data is null or undefined.
+    	 */
+    	static convertToType(data: string|object, type: string|Array<string>|Record<string, unknown>|Function): any;
+	
+    	/**
+    	 * Parses an ISO-8601 string representation of a date value.
+    	 * @param {String} str The date value as a string.
+    	 * @returns {Date} The parsed date object.
+    	 */
+    	static parseDate(str: string): Date;
+	}
+    {{#models}}
+    {{#model}}
+    {{#description}}
+    /**
+     * {{{description}}}
+     */
+    {{/description}}
+    export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
+    {{#vars}}
+    {{#description}}
+        /**
+         * {{{description}}}
+         */
+    {{/description}}
+        '{{name}}'{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{datatype}}}{{/isEnum}};
+    {{/vars}} 
+    }
+    {{/model}}
+    {{/models}}
+    {{#apiInfo}}
+    {{#apis}}
+    {{#operations}}
+    {{#description}}
+    /**
+     * {{&description}}
+     */
+    {{/description}}
+    
+    export class {{classname}} {
+        config: MerchantConfig;
+        apiClient: ApiClient;
+    
+        constructor(config: MerchantConfig, apiClient: ApiClient)
+    
+    {{#operation}}
+        /**
+         * {{&notes}}
+         {{#summary}}
+         * @summary {{&summary}}
+         {{/summary}}
+         {{#allParams}}
+         * @param {{paramName}} {{description}}
+         {{/allParams}}
+         * @param {*} [options] Override http request options.
+         */
+        {{nickname}} ({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}, {{/allParams}}callback?: any) : {{#returnType}}{{.}}{{/returnType}}{{^returnType}}null{{/returnType}};
+    {{/operation}}
+    }
+    {{/operations}}
+    {{/apis}}
+    {{/apiInfo}}
+}

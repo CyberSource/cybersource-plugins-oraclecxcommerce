@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./amd",
+    "target": "ES5",
+    "module": "amd",
+    "preserveSymlinks": true
+  },
+  "include": ["widget/saved-cards/js"]
+}
