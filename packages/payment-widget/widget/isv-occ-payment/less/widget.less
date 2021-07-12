@@ -1,0 +1,30 @@
+.apple-pay-button {
+    display: inline-block;
+    -webkit-appearance: -apple-pay-button;
+    -apple-pay-button-type: buy;
+}
+.apple-pay-button-black {
+    -apple-pay-button-style: black;
+}
+.apple-pay-button-white {
+    -apple-pay-button-style: white;
+}
+.apple-pay-button-white-with-line {
+    -apple-pay-button-style: white-outline;
+}
+
+@gradient_from: #b4ddfa;
+@gradient_to: #e2e8ec;
+
+.panel-payment__selected {
+    .panel-heading {
+        background-image: -webkit-linear-gradient(top, @gradient_from 0, @gradient_to 100%);
+        background-image: -o-linear-gradient(top, @gradient_from 0, @gradient_to 100%);
+        background-image: -webkit-gradient(linear,left top, left bottom, from(@gradient_from),to(@gradient_to));
+        background-image: linear-gradient(to bottom, @gradient_from 0, @gradient_to 100%);
+    }
+}
+
+.checkbox .disabled {
+    cursor: not-allowed;
+}

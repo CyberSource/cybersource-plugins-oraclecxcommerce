@@ -1,0 +1,13 @@
+<div data-bind="if: store.isLoading">
+    <div class="alert alert-info" role="alert">
+        <strong data-bind="widgetLocaleText: 'paymentDataIsLoadingText'"></strong>
+    </div>
+</div>
+
+<div data-bind="ifnot: store.isLoading">
+    <payment-selector
+        params='config: store.config'></payment-selector>
+
+    <device-fingerprint
+        params='config: store.config'></device-fingerprint>
+</div>

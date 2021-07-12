@@ -1,0 +1,80 @@
+{
+  "name": "isv-occ-payment",
+  "version": "1.0.0",
+  "description": "ISV Oracle Commerce Cloud Payment Plugin",
+  "main": "index.js",
+  "repository": "https://github.com/cybersource-tpi/cybersource-plugins-oraclecxcommerce",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "build": "lerna run build --stream",
+    "build:prod": "lerna run build:prod --stream",
+    "clean": "lerna run clean --stream",
+    "ci": "run-s lint:ci test:ci",
+    "format": "prettier --write packages/**/*.{js,jsx,ts,tsx}",
+    "lint": "yarn lint:cmd --fix",
+    "lint:ci": "yarn lint:cmd -o ./html-reports/lint-report.html -f html",
+    "lint:cmd": "eslint . --ext '.ts,.tsx,.json,.js' --cache",
+    "test": "jest",
+    "test:unit": "lerna run test:unit --stream",
+    "test:int": "lerna run test:int --stream",
+    "test:coverage:unit": "lerna run test:coverage:unit",
+    "test:coverage:int": "lerna run test:coverage:int",
+    "test:ci": "yarn test --ci",
+    "tsc": "tsc -p ./tsconfig.json",
+    "start:server": "yarn workspace @isv-occ-payment/server-extension start",
+    "start:mock-server": "yarn workspace @isv-occ-payment/occ-mock-server start",
+    "start:widget": "yarn workspace @isv-occ-payment/payment-widget start",
+    "generate": "yarn workspace @isv-occ-payment/payment-sdk generate",
+    "occ": "node ./bin/index.js"
+  },
+  "devDependencies": {
+    "@ts-tools/node": "^1.1.3",
+    "@types/compression": "^1.7.0",
+    "@types/jest": "^24.0.18",
+    "@types/node": "10",
+    "@types/supertest": "^2.0.9",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
+    "archiver": "^5.0.0",
+    "commander": "^5.0.0",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-jest": "^23.13.2",
+    "eslint-plugin-json": "^2.1.1",
+    "eslint-plugin-markdown": "^1.0.2",
+    "eslint-plugin-no-only-tests": "^2.4.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "fs-extra": "^9.0.1",
+    "husky": "^3.0.7",
+    "jest": "^24.9.0",
+    "jest-html-reporters": "^2.0.2",
+    "jest-mock-extended": "^1.0.9",
+    "jszip": "^3.5.0",
+    "lerna": "^3.22.0",
+    "lint-staged": "^9.4.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "supertest": "^4.0.2",
+    "ts-jest": "^24.1.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "~3.9.5",
+    "yauzl": "^2.10.0",
+    "JSONStream": "^1.3.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}

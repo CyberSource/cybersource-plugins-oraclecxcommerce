@@ -1,0 +1,20 @@
+{
+  "name": "@isv-occ-payment/occ-sdk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OCC SDK",
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:tacitknowledge/isv-occ.git"
+  },
+  "author": "Tacit Knowledge <developer@tacitknowledge.com>",
+  "main": "cjs/occSdk.js",
+  "types": "cjs/occSdk.d.ts",
+  "scripts": {
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf ./cjs",
+    "prepack": "yarn build",
+    "test": "jest --passWithNoTests"
+  }
+}

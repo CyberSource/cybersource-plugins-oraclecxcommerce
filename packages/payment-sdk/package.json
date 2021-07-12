@@ -1,0 +1,16 @@
+{
+  "name": "@isv-occ-payment/payment-sdk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Payment SDK",
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:tacitknowledge/isv-occ.git"
+  },
+  "author": "Tacit Knowledge <developer@tacitknowledge.com>",
+  "types": "index.d.ts",
+  "scripts": {
+    "generate": "yarn generate:cmd && rm -r .swagger-codegen && mv api.ts index.d.ts",
+    "generate:cmd": "java -jar generator/swagger-codegen-cli.jar generate -i ../server-extension/node_modules/cybersource-rest-client/generator/cybersource-rest-spec.json -l typescript-node -c generator/cybersource-ts-config.json"
+  }
+}

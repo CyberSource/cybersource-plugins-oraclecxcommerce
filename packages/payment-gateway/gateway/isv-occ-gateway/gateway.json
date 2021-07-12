@@ -1,0 +1,11 @@
+{
+  "provider": "ISV OCC Gateway",
+  "paymentMethodTypes": ["generic", "card"],
+  "transactionTypes": {
+    "generic": ["initiate", "retrieve", "authorization", "void", "refund"],
+    "card": ["authorization", "void", "refund"]
+  },
+  "processors" : {
+    "card": "card3ds"
+  }
+}

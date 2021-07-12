@@ -1,0 +1,12 @@
+{
+    "name": "ISV Saved Cards",
+    "javascript": "saved-cards.bundle",
+    "i18nresources": "saved-cards",
+    "pageTypes": [
+        "profile"
+    ],
+    "imports": [],
+    "jsEditable": false,
+    "version": 1,
+    "global": false
+}

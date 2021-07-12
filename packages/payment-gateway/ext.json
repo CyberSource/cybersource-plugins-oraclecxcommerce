@@ -1,0 +1,9 @@
+{
+    "extensionID": "b91cc643-c1fe-4eec-9c81-a36b9be77a23",
+    "developerID": "4272322",
+    "createdBy": "Tacit Knowledge",
+    "name": "payment-gateway",
+    "version": 1,
+    "timeCreated": "2020-06-25",
+    "description": "ISV Payment Gateway"    
+}

@@ -1,0 +1,7 @@
+<div class="payment-method-applepay">
+  <div class="apple-pay-button apple-pay-button-black"
+    data-bind="click: triggerPayment, visible: supported">
+  </div>
+
+  <div data-bind="visible: !supported(), widgetLocaleText: 'applePayNotSupported'"></div>
+</div>

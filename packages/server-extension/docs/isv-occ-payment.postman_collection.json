@@ -1,0 +1,451 @@
+{
+	"info": {
+		"_postman_id": "6155465c-9d72-499d-ab20-825c0844e37c",
+		"name": "ISV OCC Payment SSE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a71492fe-19e9-4af3-a708-65b3f05bb14f",
+						"exec": [
+							"var data = JSON.parse(responseBody)",
+							"postman.setEnvironmentVariable(\"token\", data.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{APP_KEY}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccadmin/v1/login",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccadmin",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Payment Methods",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/javascript, */*; q=0.01",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "{{CHANNEL}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/paymentMethods",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"paymentMethods"
+					]
+				},
+				"description": "Returns configuration for supported (enabled) payment methods "
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Flex Capture Context",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json, text/javascript, */*; q=0.01"
+					},
+					{
+						"key": "channel",
+						"type": "text",
+						"value": "{{CHANNEL}}"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"targetOrigin\":\"http://localhost:8080\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/keys",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"keys"
+					]
+				},
+				"description": "Request a Flex Capture Context directly from payment provider"
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Payer Auth Enrolment JWT",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json, text/javascript, */*; q=0.01"
+					},
+					{
+						"key": "channel",
+						"type": "text",
+						"value": "{{CHANNEL}}"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"currencyCode\":\"USD\",\"orderId\":\"o30039\",\"shippingAddress\":{\"city\":\"New York\",\"selectedCountry\":\"US\",\"country\":\"US\",\"firstName\":\"Test\",\"lastName\":\"Shopper\",\"postalCode\":\"10017\",\"selectedState\":\"NY\",\"address1\":\"292 Madison Avenue\",\"email\":\"test.shopper@example.com\"},\"billingAddress\":{\"city\":\"New York\",\"selectedCountry\":\"US\",\"country\":\"US\",\"firstName\":\"Test\",\"lastName\":\"Shopper\",\"postalCode\":\"10017\",\"selectedState\":\"NY\",\"address1\":\"292 Madison Avenue\",\"email\":\"test.shopper@example.com\"},\"shoppingCart\":{\"orderTotal\":170,\"items\":[{\"productId\":\"testprod123\",\"quantity\":2}]}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/payerAuth/generateJwt",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"payerAuth",
+						"generateJwt"
+					]
+				},
+				"description": "Generate JWT token to be used as the method of authentication between the merchant and Cardinal servers"
+			},
+			"response": []
+		},
+		{
+			"name": "Generate ApplePay session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "channel",
+						"value": "{{CHANNEL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"validationUrl\":\"https://apple-pay-gateway.apple.com/paymentservices/startSession\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/applepay/validate",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"applepay",
+						"validate"
+					]
+				},
+				"description": "Requesting an Apple Pay Payment Session"
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Capture",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "channel",
+						"type": "text",
+						"value": "{{CHANNEL}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"currency\": \"USD\",\n  \"transactionId\": \"6000665182156212804001\",\n  \"amount\": \"000000122526\",\n  \"merchantReferenceNumber\": \"o30446\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/capture",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"capture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Refund",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "channel",
+						"type": "text",
+						"value": "{{CHANNEL}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"currency\": \"USD\",\n  \"transactionId\": \"6000667026186910704002\",\n  \"amount\": \"000000122526\",\n  \"merchantReferenceNumber\": \"o30446\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/refund",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"refund"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report - OnDemand",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "channel",
+						"type": "text",
+						"value": "{{CHANNEL}}"
+					}
+				],
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/report/onDemand?startTime=2020-09-13T15:17:12.000Z&endTime=2020-09-14T15:16:12.001Z",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"report",
+						"onDemand"
+					],
+					"query": [
+						{
+							"key": "startTime",
+							"value": "2020-09-13T15:17:12.000Z"
+						},
+						{
+							"key": "endTime",
+							"value": "2020-09-14T15:16:12.001Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report - Daily",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "channel",
+						"type": "text",
+						"value": "{{CHANNEL}}"
+					}
+				],
+				"url": {
+					"raw": "{{OCC_ENVIRONMENT}}/ccstorex/custom/isv-payment/v1/report/daily?date=2020-09-09",
+					"host": [
+						"{{OCC_ENVIRONMENT}}"
+					],
+					"path": [
+						"ccstorex",
+						"custom",
+						"isv-payment",
+						"v1",
+						"report",
+						"daily"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2020-09-09"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "43f1bcdd-0a48-45c9-84b7-a115ffcf8f5b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "b3ee75b6-f3cb-4374-814f-2697fb0556dd",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "e205b411-0d58-448f-a8e7-e730a0eb1336",
+			"key": "OCC_ENVIRONMENT",
+			"value": "https://ccadmin-z0aa.oracleoutsourcing.com/"
+		},
+		{
+			"id": "a93b1d80-61df-483d-87ce-5afd90c6f202",
+			"key": "CHANNEL",
+			"value": "storefront"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

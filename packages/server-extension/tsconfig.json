@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "cjs",
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
+  },
+  "typeRoots": [ "./types", "./node_modules/@types"],
+  "include": ["src", "./node_modules/@isv-occ-payment/payment-sdk"]
+}
