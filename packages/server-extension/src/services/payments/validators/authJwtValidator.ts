@@ -1,12 +1,11 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import jwtService from '@server-extension/services/jwtService';
+import { Request, Response } from 'express';
 
-function validateAuthJwt(context: PaymentContext) {
-  const { webhookRequest } = context;
-  const authJwt = webhookRequest.customProperties?.authJwt;
+export default function validateAuthJwt(req: Request, res: Response) {
+  const authJwt = req.body.customProperties?.authJwt;
 
   if (authJwt) {
-    const payerAuthKey = context.requestContext.gatewaySettings.payerAuthKey;
+    const payerAuthKey = req.app.locals.gatewaySettings.payerAuthKey;
     try {
       jwtService.verify(authJwt, payerAuthKey);
     } catch (err) {
@@ -14,5 +13,3 @@ function validateAuthJwt(context: PaymentContext) {
     }
   }
 }
-
-export default middleware(validateAuthJwt);

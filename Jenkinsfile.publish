@@ -1,0 +1,151 @@
+#!/usr/bin/env groovy
+
+@Library('tkutils')
+import static tk.jenkins.slack.SlackNotify.notifySlack
+import tk.jenkins.common.*
+
+def podLabel = UUID.randomUUID().toString()
+def deployWidgets = JobParameter.getBoolean(this, 'deployWidgets', false)
+def deploySSE = JobParameter.getBoolean(this, 'deploySSE', false)
+def deployGateway = JobParameter.getBoolean(this, 'deployGateway', false)
+
+def widgetNames = JobParameter.get(this, 'widgetNames', 'payment-widget,saved-cards-widget')
+def appName = JobParameter.get(this, 'appName', 'osf-payment-sse')
+def gatewayName = JobParameter.get(this, 'gatewayName', 'payment-gateway')
+
+def settingsPayload = JobParameter.get(this, 'settingsPayload', 'packages/payment-gateway/settings.json')
+
+def gitBranch = 'unknown'
+
+podTemplate(
+  label: podLabel,
+  yaml: PodSecurityContext.ROOT,
+  containers: [
+    containerTemplate(
+        name: 'node',
+        image: 'node:10.18.0',
+        alwaysPullImage: true,
+        ttyEnabled: true,
+        command: 'cat',
+        workingDir: '/home/jenkins/agent',
+        resourceRequestCpu: '500m',
+        resourceRequestMemory: '5120Mi',
+        resourceLimitMemory: '5120Mi',
+    )
+  ],
+  volumes: [
+    secretVolume(mountPath: '/secrets', secretName: 'jenkins-service-account')
+  ]
+)
+
+{
+    node(podLabel) {
+
+    try
+    {
+        currentBuild.result = 'SUCCESS'
+        gitBranch = GitHelper.getCurrentBranch(this)
+        print "checking out '${gitBranch}' branch..."
+
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'isv_occ_sse',
+                usernameVariable: 'url',
+                passwordVariable: 'occ_key'),
+            usernamePassword(
+                credentialsId: 'isv_occ_widget',
+                usernameVariable: 'occ_user',
+                passwordVariable: 'occ_pwd')]) {
+
+            stage('checkout') {
+                checkout scm
+            }
+
+            stage('install') {
+                container('node') {
+                    sh 'yarn install'
+                }
+            }
+
+            stage('build') {
+                container('node') {
+                    sh 'yarn build'
+                }
+            }
+
+            stage('build:prod') {
+                container('node') {
+                    dir('packages/server-extension') {
+                        sh 'yarn build:prod'
+                    }
+
+                    dir('packages/payment-widget') {
+                        sh 'yarn build:prod'
+                    }
+
+                    dir('packages/saved-cards-widget') {
+                        sh 'yarn build:prod'
+                    }
+                }
+            }
+
+            stage('package and upload application') {
+                if (deploySSE)
+                {
+                    container('node') {
+                        sh "yarn occ package-app ${appName}"
+                        sh "yarn occ upload-app -u ${url} -k ${occ_key} ${appName}"
+                    }
+                } else {
+                    echo 'Skip server-side extension deploy'
+                }
+            }
+
+            stage('package and upload widget') {
+                if (deployWidgets)
+                {
+                    container('node') {
+                        widgetNames.split(',').each { widget ->
+                            def widgetId = sh (
+                                returnStdout: true,
+                                script: """yarn occ find-extension-id -u ${url} -k ${occ_key} ${widget} | awk 'BEGIN{ RS = ""; FS = "\\n" } {print \$5; exit}'""").trim()
+                        
+                            sh "yarn occ deactivate-extension -u ${url} -k ${occ_key} -e ${widgetId} ${widget}"
+                    
+                            sh "yarn occ upload-extension -x html-reports,widget/isv-occ-payment/js/__tests__,widget/saved-cards/js/__tests__ -u ${url} -k ${occ_key} ${widget}"
+                        }
+                    }
+                } else {
+                    echo 'Skip widgets deploy'
+                }
+            }
+
+            stage('package and upload gateway settings') {
+                if (deployGateway)
+                {
+                    container('node') {                        
+                        def gatewayId = sh (
+                            returnStdout: true,
+                            script: """yarn occ find-extension-id -u ${url} -k ${occ_key} ${gatewayName} | awk 'BEGIN{ RS = ""; FS = "\\n" } {print \$5; exit}'""").trim()
+                        sh "yarn occ deactivate-extension -u ${url} -k ${occ_key} -e ${gatewayId} ${gatewayName}"
+                        
+                        sh "yarn occ package-extension ${gatewayName}"
+                        sh "yarn occ upload-extension -u ${url} -k ${occ_key} ${gatewayName}"
+
+                        stage('set settings') {
+                            sh "yarn occ settings:set -u ${url} -k ${occ_key} isv-occ-gateway '${settingsPayload}'"
+                        }
+                    }
+                } else {
+                    echo 'Skip payment gateway deploy'
+                }
+            }
+        } // withCredentials
+    } catch (any) {
+        currentBuild.result = 'FAILURE'
+        throw any
+    } finally {
+        step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: 'cybersource-dev@tacitknowledge.com'])
+        notifySlack(this, "cybersource-jenkins", false)
+    }
+}}

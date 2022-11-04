@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "typeRoots": ["./types"],
+    "module": "commonjs",
+    "outDir": "cjs"
+//    "composite": true,
+//    "rootDir": "./lib",
+//    "plugins": [
+//      { "transform": "typescript-transform-paths" },
+//      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+//    ]
+  },
+  "include": ["lib"]
+}

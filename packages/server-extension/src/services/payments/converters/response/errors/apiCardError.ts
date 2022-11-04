@@ -1,11 +1,11 @@
-import { PaymentContext } from '@server-extension/common';
 import { pspResponseTypeMappings, responseCodeMappings } from '../common';
+import { Request } from 'express';
 
-function apiErrorResponse(err: any, context: PaymentContext) {
-  const { webhookRequest } = context;
+export function apiErrorResponse(err: any, req: Request) {
+  const webhookRequest = req.body;
   const pspResponseType = pspResponseTypeMappings[webhookRequest.transactionType];
 
-  context.webhookResponse = <OCC.GenericPaymentWebhookResponse>{
+  return <OCC.GenericPaymentWebhookResponse>{
     orderId: webhookRequest.orderId,
     channel: webhookRequest.channel,
     locale: webhookRequest.locale,
@@ -28,5 +28,3 @@ function apiErrorResponse(err: any, context: PaymentContext) {
     }
   };
 }
-
-export default apiErrorResponse;

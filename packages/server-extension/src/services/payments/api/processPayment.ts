@@ -1,17 +1,22 @@
-import { Next, PaymentContext } from '@server-extension/common';
 import { PaymentsApi, PtsV2PaymentsPost201Response } from 'cybersource-rest-client';
 import makeRequest from './paymentCommand';
+import { Request, Response } from 'express';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { maskRequestData } from '@server-extension/common';
+const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 
-export default async function makePaymentRequest(context: PaymentContext, next: Next) {
+export default async function makePaymentRequest(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { request } = context.data;
   const { merchantConfig } = context.requestContext;
 
+  const logger = LogFactory.logger();
+  logger.debug(`Payment API Request: ${JSON.stringify(maskRequestData(request))}`);
+  
   context.data.response = await makeRequest<PtsV2PaymentsPost201Response>(
     merchantConfig,
     PaymentsApi,
     'createPayment',
     request
   );
-
-  next();
 }

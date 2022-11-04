@@ -330,6 +330,15 @@
       "public": false
     },
     {
+      "id": "applePaySdkUrl",
+      "type": "stringType",
+      "labelResourceId": "applePaySdkUrlLabel",
+      "helpTextResourceId": "applePaySdkUrlHelpText",
+      "defaultValue": "https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js",
+      "required": true,
+      "public": false
+    },
+    {
       "id": "applePayMerchantId",
       "type": "stringType",
       "labelResourceId": "applePayMerchantIdLabel",
@@ -353,6 +362,15 @@
       "labelResourceId": "applePayInitiativeContextLabel",
       "helpTextResourceId": "applePayInitiativeContextHelpText",
       "defaultValue": "applePayInitiativeContextId",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "applePayDisplayName",
+      "type": "stringType",
+      "labelResourceId": "applePayDisplayNameLabel",
+      "helpTextResourceId": "applePayDisplayNameHelpText",
+      "defaultValue": "applePayDisplayName",
       "required": true,
       "public": false
     },

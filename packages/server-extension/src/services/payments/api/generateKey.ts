@@ -1,7 +1,7 @@
-import { RequestContext } from '@server-extension/common';
+import { RequestContext, maskRequestData } from '@server-extension/common';
 import { KeyGenerationApi } from 'cybersource-rest-client';
 import makeRequest from './paymentCommand';
-
+const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const FLEX_ENCRYPTION_TYPE = 'RsaOaep';
 
 export default async function generateKey(
@@ -15,6 +15,9 @@ export default async function generateKey(
     encryptionType: FLEX_ENCRYPTION_TYPE,
     targetOrigin: targetOrigin
   };
+
+  const logger = LogFactory.logger();
+  logger.debug(`Generate Key API Request: ${JSON.stringify(maskRequestData(request))}`);
 
   return await makeRequest<any>(
     merchantConfig,

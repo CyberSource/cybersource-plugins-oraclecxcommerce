@@ -10,7 +10,7 @@ const headers = {
 export default async function createOrder(req: Request, res: Response) {
   const webhookRequest = orderToWebhook(req);
 
-  return fetch('http://localhost:3000/ccstorex/custom/isv-payment/v1/payments', {
+  return fetch('http://localhost:3000/ccstorex/custom/isv-payment/v2/payments/generic', {
     method: 'post',
     body: JSON.stringify(webhookRequest),
     headers

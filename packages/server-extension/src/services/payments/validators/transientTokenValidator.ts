@@ -1,6 +1,6 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import cryptoService from '@server-extension/services/cryptoService';
 import jwtService from '@server-extension/services/jwtService';
+import { Request, Response } from 'express';
 
 function jwkToPem(context: string) {
   const payload = jwtService.decode(context).payload;
@@ -23,8 +23,8 @@ function validateCaptureContext(captureContext?: string, encryptedData?: string,
   }
 }
 
-function validateTransientToken(context: PaymentContext) {
-  const { customProperties } = context.webhookRequest;
+export default function validateTransientToken(req: Request, res: Response) {
+  const { customProperties } = req.body;
 
   if (customProperties && customProperties.transientTokenJwt) {
     const token = customProperties.transientTokenJwt;
@@ -43,5 +43,3 @@ function validateTransientToken(context: PaymentContext) {
     }
   }
 }
-
-export default middleware(validateTransientToken);

@@ -1,8 +1,8 @@
 {
     "name": "@isv-occ-payment/payment-gateway",
-    "version": "1.0.0",
+    "version": "22.1.0",
     "private": true,
     "description": "ISV OCC Payment Gateway",
-    "repository": "git@bitbucket.org:tacitknowledge/isv-occ.git",
-    "author": "Tacit Knowledge <developer@tacitknowledge.com>"
+    "repository": "",
+    "author": "ISV Plugins"
 }

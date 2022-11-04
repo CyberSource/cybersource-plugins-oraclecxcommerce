@@ -17,13 +17,14 @@ export default function buildPaymentContext(req: Request): PaymentContext {
   const getOptions = (key: string) => toArray(<string>getSetting(key));
   const isValidForPaymentMode = (key: string) => getOptions(key).includes(paymentMode);
   const hasOption = (key: string, option: string) => getOptions(key).includes(option);
+  req.app.locals.data = req.app.locals.data || {};
 
   return {
     requestContext,
     paymentMode,
     webhookRequest,
     webhookResponse: undefined,
-    data: {},
+    data: req.app.locals.data,
     getSetting,
     getOptions,
     hasOption,

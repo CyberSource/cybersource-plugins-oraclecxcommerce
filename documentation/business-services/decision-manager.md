@@ -16,7 +16,7 @@ Please refer to the "Payment Fraud Detection" section of the [Payment Integratio
 
 According to [Payment with Add-On Features](https://developer.cybersource.com/api/authorization-add-ons.html#ADM)
 
-> For a Merchant Account(MID) that is enabled for Decision Manager should receive Decision Manager specific fields in the Payments API response. There is no explicit field or action required to trigger Decision Manager with Payments API call.Note: If you MID is enabled for Decision Manager, Please contact your CyberSource representative.
+> For a Merchant Account(MID) that is enabled for Decision Manager should receive Decision Manager specific fields in the Payments API response. There is no explicit field or action required to trigger Decision Manager with Payments API call.Note: If you MID is enabled for Decision Manager, Please contact your Cybersource representative.
 
 Having DM enabled for your MID does not require any configuration in gateway settings or SSE. It is managed by PSP.
 
@@ -49,22 +49,6 @@ The following gateway settings apply for device fingerprint
 | **deviceFingerprintOrgId**   | Device Fingerprint Organization ID. Get the value from PSP |
 
 Device fingerprint is enabled by the `deviceFingerprintEnabled` setting and applies to all payment types
-
-### UI integration details
-
-Payment Widget contains `DeviceFingerprint` component which triggers device information collection process:
-
-```text
-.
-└── widget
-    └── isv-occ-payment
-        ├── js
-        │   └── components
-        │       ├── DeviceFingerprint
-        │       │   └── index.ts // Collects device data
-        │       └── index.ts // Before components appear on the page retrieve device fingerprint configuration
-        └── widget.json
-```
 
 ### Backend (SSE) integration details
 

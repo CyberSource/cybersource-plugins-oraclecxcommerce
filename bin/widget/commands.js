@@ -7,12 +7,10 @@ const cmd = require('../../lib/widget/cmd');
 
 // Create extension id
 // $ occ create-extension-id <extensionName> --url <host> --username <username> --password <password>
-// $ occ ls -u <host> -k <appKey> -e <extensionName>
 program
   .command('create-extension-id <extensionName>') // sub-command name
   .requiredOption('-u, --url <url>', 'The url to your CX Commerce host.')
-  .requiredOption('-n, --username <username>', 'Admin user name.')
-  .requiredOption('-p, --password <password>', 'Admin password.')
+  .requiredOption('-k, --appKey <appKey>', 'The application key.')
   .description('Create CX Commerce Storefront extension id') // command description
   // function to execute when command invoked
   .action(async (extensionName, options) => {
@@ -21,13 +19,11 @@ program
   });
 
 // Import CX Commerce Storefront extension to host
-// $ occ upload-extension <extensionName> --url <host> --username <username> --password <password>
-// $ occ ls -u <host> -k <appKey> -e <extensionName>
+// $ occ upload-extension <extensionName> --url <host> --appKey <appKey>
 program
   .command('upload-extension <extensionName>') // sub-command name
   .requiredOption('-u, --url <url>', 'The url to your CX Commerce host.')
-  .requiredOption('-n, --username <username>', 'Admin user name.')
-  .requiredOption('-p, --password <password>', 'Admin password.')
+  .requiredOption('-k, --appKey <appKey>', 'The application key.')
   .option('-e, --extensionId [extensionId]', 'Extension id to add.')
   .option(
     '-x, --exclude <items>',
@@ -44,7 +40,6 @@ program
 
 // Create extension archive
 // $ occ package-extension <extensionName>
-// $ occ ls -u <host> -k <appKey> -e <extensionName>
 program
   .command('package-extension <extensionName>') // sub-command name
   .description('Create extension archive') // command description
@@ -62,7 +57,6 @@ program
 
 // Deactivate CX Commerce Storefront extension
 // $ occ deactivate-extension <extensionName> --url <host> --appKey <appKey> --op [activate | deactivate]
-// $ occ ls -u <host> -k <appKey> -e <extensionName>
 program
   .command('deactivate-extension <extensionName>') // sub-command name
   .requiredOption('-u, --url <url>', 'The url to your CX Commerce host.')

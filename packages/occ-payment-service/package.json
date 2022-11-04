@@ -1,0 +1,24 @@
+{
+    "name": "@isv-occ-payment/occ-payment-service",
+    "version": "22.1.0",
+    "description": "Oracle Commerce payment service",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+    },
+    "author": "ISV Payments",
+    "main": "cjs/indexPaymentService.js",
+    "types": "cjs/indexPaymentService.d.ts",
+    "devDependencies": {
+        "sinon": "^9.2.4",
+        "node-mocks-http": "^1.10.1"
+    },
+    "scripts": {
+        "prebuild": "yarn clean",
+        "build": "tsc -p tsconfig.json",
+        "build:prod": "ttsc -p tsconfig.json",
+        "clean": "rimraf ./cjs",
+        "prepack": "yarn build",
+        "test": "jest --passWithNoTests"
+    }
+}

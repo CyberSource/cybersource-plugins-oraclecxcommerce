@@ -5,8 +5,10 @@ import path from 'path';
 import request, * as superagent from 'superagent';
 import httpProxy from 'superagent-proxy';
 
-const CERT_PATH = path.join(__dirname, '../../../certs/applePayIdentityCertAndKey.pem');
+const CERT_PATH = path.join(__dirname, '../../../certs/applePayIdentityCert.pem');
 const CERT = fs.readFileSync(CERT_PATH, 'utf8');
+const KEY_PATH = path.join(__dirname, '../../../certs/applePayIdentityKey.key');
+const KEY = fs.readFileSync(KEY_PATH, 'utf8');
 
 httpProxy(superagent);
 
@@ -28,10 +30,11 @@ export default async function createSession(
       merchantIdentifier: settings.applePayMerchantId,
       initiativeContext: settings.applePayInitiativeContext,
       initiative: settings.applePayInitiative,
-      displayName: 'Cloudlake' //TODO get this value from the store
+      displayName: settings.applePayDisplayName,
+      domainName: settings.applePayInitiativeContext
     })
     .cert(CERT)
-    .key(CERT);
+    .key(KEY);
 
   return validationResult.body;
 }

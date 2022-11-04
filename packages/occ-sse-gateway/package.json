@@ -1,0 +1,103 @@
+{
+  "name": "@isv-occ-payment/occ-sse-gateway",
+  "version": "22.1.0",
+  "private": true,
+  "description": "Oracle Commerce SSE payment gateway",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+  },
+  "author": "ISV Payments",
+  "main": "cjs/indexGateway.js",
+  "workspaces": {
+    "nohoist": [
+      "**/@isv-occ-payment/occ-sdk",
+      "**/@isv-occ-payment/occ-payment-factory",
+      "**/@isv-occ-payment/payment-sdk",
+      "**/cybersource-rest-client",
+      "**/form-data",
+      "**/jwk-to-pem",
+      "**/deepmerge",
+      "**/node-cache",
+      "**/express-validator",
+      "**/guid-typescript",
+      "**/jsonwebtoken",
+      "**/xml2js",
+      "**/@isv-occ-payment/occ-sdk/**",
+      "**/@isv-occ-payment/occ-payment-factory/**",
+      "**/@isv-occ-payment/payment-sdk/**",
+      "**/cybersource-rest-client/**",
+      "**/form-data/**",
+      "**/jwk-to-pem/**",
+      "**/express-validator/**",
+      "**/node-cache/**",
+      "**/guid-typescript/**",
+      "**/jsonwebtoken/**",
+      "**/xml2js/**"
+    ]
+  },
+  "scripts": {
+    "prebuild": "yarn clean && mkdirp node_modules/@isv-occ-payment && symlink-dir ../occ-sdk node_modules/@isv-occ-payment/occ-sdk && symlink-dir ../server-extension node_modules/@isv-occ-payment/server-extension && symlink-dir ../payment-sdk node_modules/@isv-occ-payment/payment-sdk && symlink-dir ../applepay-payment-service node_modules/@isv-occ-payment/applepay-payment-service && symlink-dir ../card-payment-service node_modules/@isv-occ-payment/card-payment-service && symlink-dir ../generic-payment-service node_modules/@isv-occ-payment/generic-payment-service && symlink-dir ../googlepay-payment-service node_modules/@isv-occ-payment/googlepay-payment-service && symlink-dir ../occ-payment-service node_modules/@isv-occ-payment/occ-payment-service && symlink-dir ../occ-payment-factory node_modules/@isv-occ-payment/occ-payment-factory",
+    "build": "ttsc -p tsconfig.json",
+    "build:prod": "yarn prebuild && ttsc -p tsconfig.json",
+    "clean": "rimraf ./cjs",
+    "prepack": "yarn build",
+    "start": "node -r @ts-tools/node/r -r tsconfig-paths/register ./lib/server.ts",
+    "start:watch": "nodemon",
+    "test": "node ./cjs/server.js"
+  },
+  "config": {
+    "port": "3000",
+    "ssl_port": "3001"
+  },
+  "dependencies": {
+    "@isv-occ-payment/occ-sdk": "22.1.0",
+    "@isv-occ-payment/payment-sdk": "22.1.0",
+    "@isv-occ-payment/server-extension": "22.1.0",
+    "cybersource-rest-client": "0.0.20",
+    "deepmerge": "^4.2.2",
+    "express-validator": "6.6.1",
+    "form-data": "^3.0.0",
+    "guid-typescript": "^1.0.9",
+    "jsonwebtoken": "8.5.1",
+    "jwk-to-pem": "^2.0.3",
+    "node-cache": "5.1.2",
+    "xml2js": "0.4.23"
+  },
+  "devDependencies": {
+    "@types/body-parser": "latest",
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.6",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/jwk-to-pem": "^2.0.0",
+    "@types/nconf": "^0.10.0",
+    "@types/superagent-proxy": "^2.0.0",
+    "@types/xml2js": "0.4.5",
+    "body-parser": "latest",
+    "cors": "^2.8.5",
+    "express": "latest",
+    "nconf": "0.10.0",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2",
+    "ttypescript": "^1.5.10",
+    "typescript-transform-paths": "^2.0.0",
+    "winston": "latest"
+  },
+  "authenticatedUrls": [],
+  "publicUrls": [
+    "/ccstorex/custom/isv-payment/v2/paymentMethods",
+    "/ccstorex/custom/isv-payment/v2/keys",
+    "/ccstorex/custom/isv-payment/v2/payments",
+    "/ccstorex/custom/isv-payment/v2/paymentMethods",
+    "/ccstorex/custom/isv-payment/v2/applepay/validate",
+    "/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt",
+    "/ccstorex/custom/isv-payment/v2/report/daily",
+    "/ccstorex/custom/isv-payment/v2/report/onDemand",
+    "/ccstorex/custom/isv-payment/v2/capture",
+    "/ccstorex/custom/isv-payment/v2/refund"
+  ],
+  "whitelistUrls": [
+    "https://apitest.cybersource.com",
+    "https://api.cybersource.com"
+  ]
+}

@@ -1,13 +1,13 @@
 {
   "name": "@isv-occ-payment/payment-sdk",
-  "version": "1.0.0",
+  "version": "22.1.0",
   "private": true,
   "description": "Payment SDK",
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:tacitknowledge/isv-occ.git"
+    "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
   },
-  "author": "Tacit Knowledge <developer@tacitknowledge.com>",
+  "author": "ISV Payments",
   "types": "index.d.ts",
   "scripts": {
     "generate": "yarn generate:cmd && rm -r .swagger-codegen && mv api.ts index.d.ts",

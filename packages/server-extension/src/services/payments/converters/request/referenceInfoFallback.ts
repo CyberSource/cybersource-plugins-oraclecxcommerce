@@ -1,5 +1,6 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import occClient from '@server-extension/services/occ/occClient';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
 async function findHostTransactionID(orderId: string, paymentId: string) {
   const orderData = await occClient.getOrder(orderId);
@@ -26,7 +27,8 @@ function getTransactionId(
     ?.[statusField]?.find((status) => status.transactionSuccess)?.statusProps.hostTransactionId;
 }
 
-async function referenceInfoFallback(context: PaymentContext) {
+export default async function referenceInfoFallback(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { webhookRequest } = context;
   const { orderId, paymentId, referenceInfo } = webhookRequest;
 
@@ -37,5 +39,3 @@ async function referenceInfoFallback(context: PaymentContext) {
     };
   }
 }
-
-export default middleware(referenceInfoFallback);

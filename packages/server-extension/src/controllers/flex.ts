@@ -1,11 +1,12 @@
-import { asyncMiddleware, RequestContext, validateRequest } from '@server-extension/common';
+import { asyncMiddleware, RequestContext, validateRequest } from '../common/index';
 import { NextFunction, Request, Response, Router } from 'express';
 import { checkSchema } from 'express-validator';
 import { createCaptureContext } from '../services/payments/flexService';
 import { schema } from './validation/flexCaptureContextSchema';
+const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 
 const router = Router();
-
+const logger = LogFactory.logger();
 router.post(
   '/',
   checkSchema(schema),
@@ -18,7 +19,7 @@ router.post(
       requestContext,
       captureContextPayload
     );
-
+    logger.debug(`Keys webhook response: ${JSON.stringify(captureContext)}`);
     res.json(captureContext);
   })
 );

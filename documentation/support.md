@@ -1,8 +1,8 @@
 # Support
 
-For a support and bug fixes, please visit CyberSource support portal: [https://support.cybersource.com/](https://support.cybersource.com/)
+For a support and bug fixes, please visit Cybersource support portal: [https://support.cybersource.com/](https://support.cybersource.com/)
 
-CyberSource Corporation HQ
+Cybersource Corporation HQ
 
 P.O. Box 8999
 

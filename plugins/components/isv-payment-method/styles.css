@@ -1,0 +1,23 @@
+.CheckoutCreditCard {
+  flex: 0 0 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 var(--cc-container-padding);
+  border: 1px solid var(--cc-border-color);
+}
+
+.CheckoutCreditCard__RadioButtonContainer {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.CheckoutCreditCard__AddCardDetailsContainer {
+  padding: 0.5rem;
+  background-color: var(--cc-secondary-background-color);
+  border-top: 1px solid var(--cc-border-color);
+}
+
+.CheckoutCreditCard__AddCardDetailsContainer--hidden {
+  display: none;
+}
