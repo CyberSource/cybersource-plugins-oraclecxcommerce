@@ -1,14 +1,17 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { convertRequest, twoDecimal } from './common';
 import {
   billingAddressMapper,
   decisionManagerMapper,
   deviceFingerprintMapper,
-  saleMapper
+  saleMapper,
+  shippingAddressMapper
 } from './mappers';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
-function createApplepayAuthorizationRequest(context: PaymentContext) {
+export default function createApplepayAuthorizationRequest(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { webhookRequest } = context;
 
   const paymentRequest: CreatePaymentRequest = {
@@ -40,8 +43,7 @@ function createApplepayAuthorizationRequest(context: PaymentContext) {
     deviceFingerprintMapper,
     decisionManagerMapper,
     billingAddressMapper,
+    shippingAddressMapper,
     saleMapper
   );
 }
-
-export default middleware(createApplepayAuthorizationRequest);

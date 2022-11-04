@@ -1,10 +1,10 @@
-import { PaymentContext } from '@server-extension/common';
 import { responseCodeMappings } from '../common';
+import { Request } from 'express';
 
-function apiGenericErrorResponse(err: any, context: PaymentContext) {
-  const { webhookRequest } = context;
+export function apiGenericErrorResponse(err: any, req: Request) {
+  const webhookRequest = req.body;
 
-  context.webhookResponse = <OCC.GenericPaymentWebhookResponse>{
+  return <OCC.GenericPaymentWebhookResponse>{
     orderId: webhookRequest.orderId,
     channel: webhookRequest.channel,
     locale: webhookRequest.locale,
@@ -23,5 +23,3 @@ function apiGenericErrorResponse(err: any, context: PaymentContext) {
     }
   };
 }
-
-export default apiGenericErrorResponse;

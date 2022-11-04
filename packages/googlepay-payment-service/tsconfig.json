@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "typeRoots": ["./types"],
+    "module": "commonjs",
+    "outDir": "cjs"
+  },
+  "types" : "../server-extension/src/types/occ-sdk.d.ts",
+  "typeRoots": [
+    "../../node_modules/@isv-occ-payment/server-extension/src/types",
+    "../server-extension/src/types"
+  ],
+  "include": [
+    "lib",
+    "./node_modules/@isv-occ-payment/payment-sdk",
+    "../server-extension/src/types"
+  ]
+}

@@ -1,6 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
     "module": "commonjs",
     "outDir": "cjs",
     "plugins": [
@@ -9,5 +10,8 @@
     ]
   },
   "typeRoots": [ "./types", "./node_modules/@types"],
-  "include": ["src", "./node_modules/@isv-occ-payment/payment-sdk"]
+  "include": [
+    "src",
+    "./node_modules/@isv-occ-payment/payment-sdk"
+  ]
 }

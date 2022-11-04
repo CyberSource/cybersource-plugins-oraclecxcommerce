@@ -1,0 +1,31 @@
+{
+    "name": "@isv-occ-payment/generic-payment-service",
+    "version": "22.1.0",
+    "description": "Generic SSE Payment Service",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+    },
+    "author": "ISV Payments",
+    "main": "cjs/index.js",
+    "dependencies": {
+        "@isv-occ-payment/occ-payment-service": "22.1.0",
+        "@isv-occ-payment/occ-sdk": "22.1.0",
+        "@isv-occ-payment/payment-sdk": "22.1.0",
+        "@isv-occ-payment/server-extension": "22.1.0",
+        "cybersource-rest-client": "0.0.20"
+    },
+    "devDependencies": {
+        "node-mocks-http": "^1.10.1",
+        "sinon": "^9.2.4",
+        "typescript-transform-paths": "^2.0.0"
+    },
+    "scripts": {
+        "prebuild": "yarn clean && mkdirp node_modules/@isv-occ-payment && symlink-dir ../occ-sdk node_modules/@isv-occ-payment/occ-sdk && symlink-dir ../payment-sdk node_modules/@isv-occ-payment/payment-sdk",
+        "build": "tsc -p tsconfig.json",
+        "build:prod": "yarn prebuild && ttsc -p tsconfig.json",
+        "clean": "rimraf ./cjs",
+        "prepack": "yarn build",
+        "test": "jest --passWithNoTests"
+    }
+}

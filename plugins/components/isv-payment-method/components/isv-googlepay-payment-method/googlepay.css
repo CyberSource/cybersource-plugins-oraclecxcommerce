@@ -1,0 +1,55 @@
+.checkoutGooglePay__Container{
+  padding: 0.5rem;
+  background-color: var(--cc-secodary-background-color);
+  border-top: 1px solid var(--cc-border-color);
+}
+.checkoutGooglePay__Container--hidden{
+  display: none;
+}
+
+#outerBlock {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #00000038;
+    opacity: 1;
+    z-index: 9999;
+    display: block;
+  }
+
+  #loader-inner{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  #innerBlock {
+    display: inline-block;
+    border: 16px solid #f1f1f1;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    -webkit-animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    #innerBlock {
+        left: 25%;
+        top: 25%;
+    }
+}

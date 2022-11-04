@@ -4,6 +4,7 @@ import occClient from '@server-extension/services/occ/occClient';
 import { NextFunction, Request, Response } from 'express';
 
 function contextLoader(req: Request, res: Response, next: NextFunction) {
+  
   const requestContext: RequestContext = req.app.locals;
   const { logger } = res.locals;
 

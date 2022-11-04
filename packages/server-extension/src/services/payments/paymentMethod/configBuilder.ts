@@ -22,8 +22,10 @@ function buildGooglePayConfig({
   };
 }
 
-function buildApplePayConfig({ applePaySupportedNetworks }: OCC.GatewaySettings): ApplePayConfig {
+function buildApplePayConfig({ applePaySdkUrl, applePayDisplayName, applePaySupportedNetworks }: OCC.GatewaySettings): ApplePayConfig {
   return {
+    applePaySdkUrl,
+    applePayDisplayName,
     applePaySupportedNetworks
   };
 }

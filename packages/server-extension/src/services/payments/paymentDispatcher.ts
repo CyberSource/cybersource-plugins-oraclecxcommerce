@@ -1,5 +1,4 @@
 import { GenericDispatcher, Middleware, PaymentContext } from '@server-extension/common';
-import loggingService from '@server-extension/services/loggingService';
 import { Request } from 'express';
 import buildPaymentContext from './paymentContextBuilder';
 
@@ -25,11 +24,7 @@ class PaymentDispatcher {
 
   async dispatchFrom(req: Request): Promise<OCC.GenericPaymentWebhookResponse> {
     const paymentContext = buildPaymentContext(req);
-
-    loggingService.info('logging.webhook.http', paymentContext.webhookRequest);
     await this.dispatch(paymentContext);
-    loggingService.info('logging.webhook.http', paymentContext.webhookResponse);
-
     return paymentContext.webhookResponse as OCC.GenericPaymentWebhookResponse;
   }
 

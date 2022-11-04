@@ -4,7 +4,7 @@
 ## Oracle Commerce Cloud
 
 **Version 1.0.0**
-September 2020
+October 2022
 
 ## Contents
 
@@ -21,14 +21,13 @@ September 2020
 | _Business Services_                                            |                                                                                                                              |
 | [Decision Manager](business-services/decision-manager.md)      | A detailed technical guide on fraud detection and manual review of transactions                                              |
 | [Reporting](business-services/reporting.md)                    | Additional Reporting APIs to allow fulfillment retrieve transactions reviewed in Decision Manager                            |
-| [Testing](testing.md)                                          | Learn how to run unit and integration tests                                                                                  |
 | [Support](support.md)                                          | Support information                                                                                                          |
 
 ## Recent Revisions to This Document
 
 | Release        | Release version | Changes         |
 |----------------|-----------------|-----------------|
-| September 2020 | 1.0.0           | Initial Release |
+| October 2022 | 1.0.0           | Initial Release |
 
 ## Audience and Purpose
 
@@ -61,7 +60,6 @@ This document is written for merchants who want to use Payment and Value added B
 | **RI**                 | Reference Implementation. The implementation of payment integration for Oracle Commerce Cloud using the widget framework and server side extension |
 | **OCC**                | Oracle Commerce Cloud                                                                                                                              |
 | **Payment Widget**     | UI representation of payment methods plugable into storefront's checkout pages                                                                     |
-| **Saved Cards Widget** | UI representation of user's profile saved cards plugable into storefront's 'My Account' pages                                                      |
 | **SSE**                | Server side extension. Payment Integration Service                                                                                                 |
 | **OOTB**               | Out Of The Box                                                                                                                                     |
 | **Converter**          | A component which transforms payment service request into REST API specific object.                                                                |

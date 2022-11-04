@@ -44,6 +44,8 @@ declare interface GooglePayConfig {
 }
 
 declare interface ApplePayConfig {
+  applePaySdkUrl: string;
+  applePayDisplayName: string;
   applePaySupportedNetworks: string;
 }
 
@@ -88,9 +90,11 @@ declare namespace OCC {
     flexSdkUrl: string;
     saleEnabled: string;
     songbirdUrl: string;
+    applePaySdkUrl: string;
     applePayMerchantId: string;
     applePayInitiative: string;
     applePayInitiativeContext: string;
+    applePayDisplayName:string;
     applePaySupportedNetworks: string;
     dmDecisionSkip: string;
 
@@ -134,6 +138,21 @@ declare namespace OCC {
     country: string;
   }
 
+  export type genericItems = Array<item>;
+
+  export interface item {
+    id: String,
+    rawTotalPrice: Number,
+    price: Number,
+    productId: String,
+    catRefId: String,
+    unitPrice: String,
+    quantity: Number,
+    displayName: String,
+    description: String,
+    options: []
+  }
+
   export interface ShippingAddress {
     lastName: string;
     postalCode: string;
@@ -162,6 +181,7 @@ declare namespace OCC {
     receiveEmail: string;
     registrationDate: string;
     lastPasswordUpdate: string;
+    email?: string;
   }
 
   export interface AuxiliaryProperties {
@@ -335,6 +355,7 @@ declare namespace OCC {
     referenceInfo?: ReferenceInfo;
     customProperties?: CustomProperties;
     order?: any;
+    paymentGroups?: any;
   }
 
   export interface WebhookCommonResponse {

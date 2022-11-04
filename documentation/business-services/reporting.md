@@ -23,8 +23,8 @@ SSE exposes two API endpoints which generate DM reports
 
 | **Endpoint**                                      | **Description**                                                                                                                                                                                                                                                        |
 |---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `/ccstorex/custom/isv-payment/v1/report/daily`    | Returns conversion report for a given date. A wrapper around [Reports Download API](https://developer.cybersource.com/api-reference-assets/index.html#reporting_report-downloads_download-a-report). Downloads report with `ConversionDetailReport_Daily_Classic` name. Controlled by `dailyReportName` gateway setting |
-| `/ccstorex/custom/isv-payment/v1/report/onDemand` | Returns conversion report for a start and end dates.  A wrapper around [Get Conversion Detail Transactions](https://developer.cybersource.com/api-reference-assets/index.html#reporting_conversion-details_get-conversion-detail-transactions)                         |
+| `/ccstorex/custom/isv-payment/v2/report/daily`    | Returns conversion report for a given date. A wrapper around [Reports Download API](https://developer.cybersource.com/api-reference-assets/index.html#reporting_report-downloads_download-a-report). Downloads report with `ConversionDetailReport_Daily_Classic` name. Controlled by `dailyReportName` gateway setting |
+| `/ccstorex/custom/isv-payment/v2/report/onDemand` | Returns conversion report for a start and end dates.  A wrapper around [Get Conversion Detail Transactions](https://developer.cybersource.com/api-reference-assets/index.html#reporting_conversion-details_get-conversion-detail-transactions)                         |
 
 Both endpoints return reports in same JSON format, e.g.
 
@@ -47,7 +47,7 @@ Fulfillment can proceed with further actions based on available decision.
 
 ### Backend (SSE) integration details
 
-In the table below you can find related codebase artifacts for handling device fingerprint logic:
+In the table below you can find related codebase artifacts for handling reporting logic:
 
 | **Location**                                                           | **Description**                                                                                         |
 |------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|

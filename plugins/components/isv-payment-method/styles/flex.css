@@ -1,0 +1,14 @@
+.flex-microform{
+    height: 42px;
+    /* border: 1px solid #ccc; */
+    border-radius: 5px;
+    background-color: #fff;
+    line-height: 1.5;
+    border: 1px solid var(--cc-border-color);
+    padding: 0.5rem 0.25rem;
+}
+
+.CheckoutCardDetails__CvvContainer .flex-microform{
+    max-width: 100px;
+    text-align: center;
+}

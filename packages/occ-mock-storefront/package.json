@@ -1,10 +1,10 @@
 {
   "name": "@isv-occ-payment/occ-mock-storefront",
-  "version": "1.0.0",
+  "version": "22.1.0",
   "private": true,
   "description": "ISV OCC Payment Widget",
-  "repository": "git@bitbucket.org:tacitknowledge/isv-occ.git",
-  "author": "Tacit Knowledge <developer@tacitknowledge.com>",
+  "repository": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git",
+  "author": "ISV Payments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

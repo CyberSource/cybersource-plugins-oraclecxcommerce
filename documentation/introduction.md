@@ -18,7 +18,6 @@ The custom payment plugin solution provides an integration layer between OCC and
     - Payer authentication support (3D Secure)
     - Store tokenized credit card against user profile
         - Payments using stored credit cards
-        - Display and manage saved cards on My Account page
 2. Online Authorizations
     - Supported services
         - Google Pay
@@ -38,7 +37,6 @@ The custom payment plugin solution provides an integration layer between OCC and
 Integration with payment gateway consist of the following components and deliverables:
 
 - Payment widget
-- Saved Cards widget
 - Payment gateway settings
 - Custom payment integration service using Server Side Extensions
 
@@ -59,14 +57,16 @@ Please find out more details about generic payments in the [Developing Generic P
 
 ![Interaction Flow](images/data-flow.png)
 
-1. Custom Payment Widget communicates with Payment Integration Service (SSE)
-    - OCC sends payment operation through the means of Webhooks (API Functions)
-    - Payment Widget can consume public URLs (services) exposed by SSE
-2. Payment Extension consumes Payment Provider REST APIs using SDK client library
-3. Payment Widget can delegate payment to external payment providers
+1.	Payment Widget can delegate payment to external payment providers
     - A shopper can be redirected to external provider to complete payment
     - A shopper can stay on the same page (In-Context checkout)
-4. OMS system controls certain steps in payment flow
+2.	Custom Payment Widget communicates with Payment Service (SSE)
+    - OCC sends payment operation through the means of Webhooks (API Functions)
+    - Payment Widget can consume public URLs (services) exposed by SSE
+3.	Payment Extension consumes Payment Provider REST APIs using SDK client library
+4.	Payment Provider communicates with external providers to fulfill its services
+5.	OMS system controls certain steps in payment flow
     - Settlement can be triggered when goods are ready for shipment
-    - Handling Fraud Payment and manual transaction reviews
-5. Payment Provider communicates with external providers to fulfill its services
+    - Refund can be triggered when goods are delivered
+    - For any technical glitch if order is rejected, SSE triggers auto cancel service(Auth Reversal)
+    - Handling Fraud Payment and manual transaction reviews 

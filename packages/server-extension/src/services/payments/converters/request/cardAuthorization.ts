@@ -1,4 +1,3 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { convertRequest, twoDecimal } from './common';
 import {
@@ -8,13 +7,18 @@ import {
   payerAuthEnrollMapper,
   payerAuthValidationMapper,
   plainCardPaymentMapper,
+  cardSelectionIndicatorMapper,
   saleMapper,
   savedCardPaymentMapper,
   savePaymentTokenMapper,
-  transientTokenInfoMapper
+  transientTokenInfoMapper,
+  shippingAddressMapper
 } from './mappers';
+import { Request, Response } from 'express';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
 
-export function createAuthorizationRequest(context: PaymentContext) {
+export default function createAuthorizationRequest(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { webhookRequest } = context;
 
   const paymentRequest: CreatePaymentRequest = {
@@ -34,6 +38,7 @@ export function createAuthorizationRequest(context: PaymentContext) {
     paymentRequest,
     savedCardPaymentMapper,
     plainCardPaymentMapper,
+    cardSelectionIndicatorMapper,
     transientTokenInfoMapper,
     savePaymentTokenMapper,
     payerAuthEnrollMapper,
@@ -41,8 +46,7 @@ export function createAuthorizationRequest(context: PaymentContext) {
     decisionManagerMapper,
     deviceFingerprintMapper,
     billingAddressMapper,
+    shippingAddressMapper,
     saleMapper
   );
 }
-
-export default middleware(createAuthorizationRequest);
