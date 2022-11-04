@@ -1,9 +1,11 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { PtsV2PaymentsRefundPost201Response } from 'cybersource-rest-client';
 import { convertResponse, twelveDigits } from '../common';
 import genericCardPayment from '../common/genericCardPayment';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request } from 'express';
 
-function createRefundResponse(context: PaymentContext) {
+export default function createRefundResponse(req: Request, res: any) {
+  const context = buildPaymentContext(req);
   const paymentResponse = <DeepRequired<PtsV2PaymentsRefundPost201Response>>context.data.response;
 
   context.webhookResponse = convertResponse(context, genericCardPayment(context), {
@@ -11,6 +13,6 @@ function createRefundResponse(context: PaymentContext) {
       amount: twelveDigits(paymentResponse.refundAmountDetails.refundAmount)
     }
   });
-}
 
-export default middleware(createRefundResponse);
+  Object.assign(res, context.webhookResponse);
+}

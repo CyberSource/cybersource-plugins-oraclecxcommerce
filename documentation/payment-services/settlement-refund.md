@@ -9,8 +9,8 @@ Custom Payment Integration Service can provide and option (using `saleEnabled` g
 
 In case merchants decide to settle authorization or issue a refund at fulfillment (e.g. using OMS) SSE exposes two additional endpoints to help with the process:
 
-- `/ccstorex/custom/isv-payment/v1/capture` - Settle authorization for a given authorization transaction id
-- `/ccstorex/custom/isv-payment/v1/refund` - Refund settled transaction for a given transaction id
+- `/ccstorex/custom/isv-payment/v2/capture` - Settle authorization for a given authorization transaction id
+- `/ccstorex/custom/isv-payment/v2/refund` - Refund settled transaction for a given transaction id
 
 Each endpoint accepts the the following parameters:
 

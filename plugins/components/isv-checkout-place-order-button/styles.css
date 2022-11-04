@@ -1,0 +1,12 @@
+.IsvCheckoutPlaceOrderButton {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+.IsvCheckoutPlaceOrderButton__Label {
+  color: #729fff;
+}
+.IsvCheckoutPlaceOrderButton__ExtraInfo {
+  background-color: red;
+  color: yellow;
+  margin-left: 5px;
+}

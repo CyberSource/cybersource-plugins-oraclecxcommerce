@@ -1,9 +1,24 @@
-import { RequestValidationError } from '@server-extension/errors';
+import { RequestValidationError } from '../errors/index';
 import { MerchantConfig } from 'cybersource-rest-client';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { validationResult } from 'express-validator';
 
 export * from './genericDispatcher';
+
+export interface Logger {
+  info: (message: string) => void;
+  debug: (message: string) => void;
+  error: (message: string) => void;
+}
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace NodeJS {
+    interface Global {
+      logger: Logger;
+    }
+  }
+}
 
 export interface RequestContext {
   gatewaySettings: OCC.GatewaySettings;
@@ -54,3 +69,24 @@ export const validateRequest = (req: Request, _res: Response, next: NextFunction
 
   next();
 };
+const payload = ['email', 'lastName', 'firstName', 'expirationYear', 'expirationMonth', 'phoneNumber', 'cvv', 'securityCode'];
+const replaceCharacterRegex = /./g
+
+export const maskRequestData = (obj: any) => {
+  var logData = JSON.parse(JSON.stringify(obj));
+  replaceChar(logData);
+  return logData;
+};
+const replaceChar = (logData: any) => {
+  Object.keys(logData).forEach(key => {
+    if (typeof logData[key] === 'object' && logData[key] !== null) {
+      replaceChar(logData[key])
+    } else {
+      payload.forEach(data => {
+        if (data == key && logData[key] !== null) {
+          logData[key] = logData[key].replace(replaceCharacterRegex, "x");
+        }
+      })
+    }
+  });
+}

@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "plugin:react/recommended"
+  ],
+  "env": {
+    "browser": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "react/prop-types": "off"
+  }
+}

@@ -38,11 +38,14 @@ The following gateway settings apply to ApplePay payments
 | **applePayInitiative**        | A predefined value that identifies the e-commerce application making the request. For ApplePay on the web use 'web' |
 | **applePayInitiativeContext** | Fully qualified domain name associated with your Apple Pay Merchant Identity Certificate                            |
 | **applePaySupportedNetworks** | ApplePay Supported Networks                                                                                         |
+| **applePaySdkUrl**                  | ApplePay SDK URL                                      |
+| **applePayDisplayName**    | Apple Pay display name |
 
 Default values:
 
 - `applePayInitiative`: 'web'
 - `applePaySupportedNetworks`: 'visa,masterCard,amex,discover'. List of supported card networks. Can be updated in OCC Admin
+- `applePaySdkUrl`: 'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js'
 
 ### Setup ApplePay
 
@@ -66,16 +69,16 @@ yarn occ upload-apple-domain-association -u ${OCC_ADMIN_HOST} -k ${APPLICATION_K
 where
 
 - `APPLICATION_KEY` - Application Key created in Settings -> Web APIs ->  Registered Applications
-- `OCC_ADMIN_HOST` - your OCC specific environment, e.g. `ccadmin-{env}.oracleoutsourcing.com`
+- `OCC_ADMIN_HOST` - your OCC specific environment, e.g. `asbx80c1dev-admin-{env}.oraclecloud.com`
 - `apple-developer-merchantid-domain-association` - domain association file downloaded from ApplePay dev account
 
-When you verify domain make sure it is accessible from ApplePay network. OCC Storefront (e.g. `https://ccstore-{env}.oracleoutsourcing.com/thirdparty/.well-known/apple-developer-merchantid-domain-association`) is often protected by basic authentication which might fail the domain verification process. You can use [updateBasicAuthConfiguration](https://docs.oracle.com/en/cloud/saas/commerce-cloud/20a/cxocc/op-ccadmin-v1-merchant-basicauth-put.html) to update your storefront access control settings by removing basic authentication or whitelisting [ApplePay IP Range](https://developer.apple.com/documentation/apple_pay_on_the_web/setting_up_your_server)
+When you verify domain make sure it is accessible from ApplePay network. OCC Storefront (e.g. `https://asbx80c1dev-admin-{env}.oraclecloud.com/thirdparty/.well-known/apple-developer-merchantid-domain-association`) is often protected by basic authentication which might fail the domain verification process. You can use [updateBasicAuthConfiguration](https://docs.oracle.com/en/cloud/saas/commerce-cloud/20a/cxocc/op-ccadmin-v1-merchant-basicauth-put.html) to update your storefront access control settings by removing basic authentication or whitelisting [ApplePay IP Range](https://developer.apple.com/documentation/apple_pay_on_the_web/setting_up_your_server)
 
-![Important](../images/important.jpg) Merchant Identity Certificate is used to validate ApplePay session in `packages/server-extension/src/services/payments/applePayService.ts`. Identity certificate file is located in `packages/server-extension/certs/applePayIdentityCertAndKey.pem`. Please make sure you update the file with identity certificate downloaded from your Apple dev account.
+![Important](../images/important.jpg) Merchant Identity Certificate is used to validate ApplePay session in `packages/server-extension/src/services/payments/applePayService.ts`. Identity certificate file is located in `packages/server-extension/certs/applePayIdentityCert.pem`. Private key file is located in`packages/server-extension/certs/applePayIdentityKey.key`. Please make sure you update the file with identity certificate downloaded from your Apple dev account.
 
 Please make sure you update gateway settings once you complete all setup steps:
 
-- `applePayInitiativeContext` should be the verified domain (.e.g 'ccstore-{env}.oracleoutsourcing.com')
+- `applePayInitiativeContext` should be the verified domain (.e.g `asbx80c1dev-store-{env}.oraclecloud.com`)
 
 ![Note](../images/note.jpg) It is recommended to test ApplePay in OCC storefront, not preview mode to avoid confusion with domain being verified during payments (ApplePay will accept payments only from verified domains).
 
@@ -97,34 +100,63 @@ ApplePay payment flow is the following:
 10. Payment is authorized by SSE and result is returned back to storefront
 11. ApplePay session objects completes the payment with `ApplePaySession.STATUS_SUCCESS`
 
-![ApplePay](images/applepay.png)
+![ApplePay](images/apple-pay-payment-flow.png)
 
 ### UI integration details
 
 ApplePay UI component is located in Payment Widget:
 
 ```text
-.
-└── widget
-    └── isv-occ-payment
-        ├── js
-        │   └── components
-        │       ├── ApplePay
-        │       │   ├── requestBuilder.ts // Payment request builder which collects data from checkout page as well as configuration
-        │       │   ├── index.html // UI template for ApplePay button
-        │       │   └── index.ts // ApplePay UI integration
-        │       ├── PaymentSelector
-        │       └── index.ts // Before components appear on the page retrieve supported payment methods
-        ├── less
-        │   └── widget.less // CSS styles for ApplePay button
-        └── widget.json
-```
+plugins
+ ├── actions
+ | ├── apple-pay-validation-action
+ | | ├── index.js
+ | | └── meta.js
+ | ├── index.js
+ | └── meta.js
+ ├── components
+ | ├── isv-payment-method
+ | | ├── components
+ | | | ├── isv-applepay-payment-method
+ | | | | ├── applePay.css
+ | | | | ├── applePay.js
+ | | | | └── index.jsx
+ | | ├── cybersource
+ | | | ├── common.js
+ | | | └── scriptLoader.js
+ | | ├── index.jsx
+ | | ├── meta.js
+ | | └── styles.css
+ | ├── index.js
+ | └── meta.js
+ ├── endpoints
+ | ├── apple-pay-validation-endpoint
+ | | ├── index.js
+ | | └── meta.js
+ | ├── payment-method-config-endpoint
+ | | ├── index.js
+ | | └── meta.js
+ | ├── index.js
+ | └── meta.js
+ ├── fetchers
+ | ├── payment-method-config-fetcher
+ | | ├── hook.js
+ | | ├── index.js
+ | | └── meta.js
+ | ├── hooks.js
+ | ├── index.js
+ | └── meta.js
+ └── selectors
+   ├── paymentMethod-config-selector
+   | └── index.js
+   └── index.js
+ ```
 
-- Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v1/paymentMethods` endpoint
+- Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint
 - Implementation checks whether ApplePay is supported by calling `ApplePaySession.canMakePayments`
 - ApplePay button is shown in case it is supported by shopper's device otherwise a message is displayed saying the payment method is not supported
 - On clicking either ApplePay button or 'Place Order' button payment is initiated by creating payment request and showing payment sheet (pop-up window) to the shopper
-- ApplePay session is validated for current domain by calling `/ccstorex/custom/isv-payment/v1/applepay/validate`
+- ApplePay session is validated for current domain by calling `/ccstorex/custom/isv-payment/v2/applepay/validate`
 - Once session is validated shopper proceeds with payment method selection from the sheet and payment details are updated with encrypted payment token
 - Payment token is used to authorize the payment
 

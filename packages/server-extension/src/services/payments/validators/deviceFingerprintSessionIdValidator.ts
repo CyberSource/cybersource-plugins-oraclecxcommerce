@@ -1,5 +1,5 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import cryptoService from '@server-extension/services/cryptoService';
+import { Request, Response } from 'express';
 
 function validateSessionId(sessionId?: string, encryptedData?: string, iv?: string) {
   if (
@@ -15,9 +15,9 @@ function validateSessionId(sessionId?: string, encryptedData?: string, iv?: stri
   }
 }
 
-function validateDeviceFingerprintSessionId(context: PaymentContext) {
-  const { customProperties } = context.webhookRequest;
-  if (context.requestContext.gatewaySettings.deviceFingerprintEnabled) {
+export default function validateDeviceFingerprintSessionId(req: Request, res: Response) {
+  const { customProperties } = req.body;
+  if (req.app.locals.gatewaySettings.deviceFingerprintEnabled) {
     const sessionId = customProperties?.deviceFingerprintSessionId;
     validateSessionId(
       sessionId,
@@ -26,5 +26,3 @@ function validateDeviceFingerprintSessionId(context: PaymentContext) {
     );
   }
 }
-
-export default middleware(validateDeviceFingerprintSessionId);

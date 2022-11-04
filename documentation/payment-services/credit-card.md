@@ -20,6 +20,7 @@ The Credit Card payment service provides the following operations:
 - Authorization
 - Authorization Reversal (VOID)
 - Sale (Authorization + Settlement)
+- Capture
 - Refund
 
 The following applies to credit card payments:
@@ -82,35 +83,111 @@ The following describes the end to end use case with an option to save credit ca
 10. Shopper sees order confirmation and card is saved
 11. Saved card should become visible in shopper's profile
 
-![Flex Microform](images/flex-microform.png)
+![Flex Microform](images/credit-card-payment-flow.png)
 
 #### UI integration details
 
 Below are credit card related components from Payment Widget:
+`/packages/apps/core-commerce-reference-store/src/plugins/components/isv-payment-method/component/isv-creditcard-payment-method`
+
+The application is structured based on OSF especifications.
+
+Inside the components there is the list of widgets that are necessary to integrate the credit card payment using Cybersource.
+Inside the endpoints folder there is specific call to REST apis
+Fetchers are used to call APIs before the widget is redered. This are used to load data that widgets need before they can be rendered in the page. Fetchers can be global or local that means that some fetcher will be contained inside the components/widget folder (where widget is your custom widget).
+Actions are used to call APIs but when the user performeces an action like clicking a button.
+
+To read more about follow the next link.
+
+Understand OSF applications [CX-Commerce](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/dosfa/understand-osf-applications.html)
+
+REST API for Oracle Commerce Cloud 21D [Oracle Commerce Cloud](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/cxocc/op-ccadmin-v1-merchant-paymenttypes-get.html)
+
+Microform Integration 0.11 Documentation [Microform 0.11](https://developer.cybersource.com/api/developer-guides/dita-flex/da-microform-integ/microform-integ.html)
+
+The structure that follows contain all the components necessary to run Credit Card Payment in OSF.
 
 ```text
-.
-└── widget
-    └── isv-occ-payment
-        ├── js
-        │   └── components
-        │       ├── Card
-        │       │   ├── CreditCardForm // Renders credit card form using FlexMicroform
-        │       │   ├── SavedCardSelector // Renders list of saved credit cards
-        │       │   ├── cardPaymentController.ts
-        │       │   ├── common.ts
-        │       │   ├── index.html
-        │       │   ├── index.ts
-        │       │   └── paymentAuthentication // Handling Payer Authentication using CardinalCruise integration
-        │       ├── PaymentSelector
-        │       └── index.ts // Before components appear on the page retrieve supported payment methods and retrieved saved cards for logged-in users
-        └── widget.json
+plugins
+ ├── actions
+ | ├── flex-microform-action
+ | | ├── index.js
+ | | └── meta.js
+ | ├── get-payer-auth-token-action
+ | | ├── index.js
+ | | └── meta.js
+ | ├── .eslintrc
+ | ├── index.js
+ | └── meta.js
+ ├── components
+ | ├── isv-checkout-continue-to-review-order-button
+ | | ├── index.jsx
+ | | ├── meta.js
+ | | └── styles.css
+ | ├── isv-payment-method
+ | | ├── components
+ | | | ├── isv-add-card-details
+ | | | | └── index.jsx
+ | | | ├── isv-checkout-card-details
+ | | | | └── index.jsx
+ | | | ├── isv-checkout-saved-card-item
+ | | | | └── index.jsx
+ | | | ├── isv-checkout-saved-cards
+ | | | | └── index.jsx
+ | | | └── isv-credit-card-payment-method
+ | | |   ├── index.jsx
+ | | |   └── IsvCreditCard.jsx
+ | | ├── cybersource
+ | | | ├── common.js
+ | | | ├── flexMicroForm.js
+ | | | ├── flexMicroFormAPI.js
+ | | | └── scriptLoader.js
+ | | ├── styles
+ | | | └── flex.css
+ | | ├── index.jsx
+ | | ├── meta.js
+ | | └── styles.css
+ | ├── .eslintrc
+ | ├── index.js
+ | └── meta.js
+ ├── endpoints
+ | ├── flex-microform-endpoint
+ | | ├── index.js
+ | | └── meta.js
+ | ├── payer-auth-endpoint
+ | | ├── index.js
+ | | └── meta.js
+ | ├── payment-method-config-endpoint
+ | | ├── index.js
+ | | └── meta.js
+ | ├── index.js
+ | └── meta.js
+ ├── fetchers
+ | ├── flex-microform-fetcher
+ | | ├── hook.js
+ | | ├── index.js
+ | | └── meta.js
+ | ├── payment-method-config-fetcher
+ | | ├── hook.js
+ | | ├── index.js
+ | | └── meta.js
+ | ├── hooks.js
+ | ├── index.js
+ | └── meta.js
+ └── selectors
+   ├── flex-microform-selector
+   | └── index.js
+   ├── paymentMethod-config-selector
+   | └── index.js
+   └── index.js
+
 ```
 
-- Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v1/paymentMethods` endpoint. Saved credit cards are also retrieved from OCC in case user is logged-in.
+
+- Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint. Saved credit cards are also retrieved from OCC in case user is logged-in.
 - `Card` component renders by default list of saved cards if it is not empty and user is logged-in. Otherwise credit card form is rendered
 - Credit card form is managed by `CreditCardForm` component. Saved cards are managed by `SavedCardSelector` component. Shopper can switch between both components to choose preferable way to pay.
-- FlexMicroform is initialized by fetching keys from SSE using `/ccstorex/custom/isv-payment/v1/keys` endpoint
+- FlexMicroform is initialized by fetching keys from SSE using `/ccstorex/custom/isv-payment/v2/keys` endpoint
 - Credit card form is validated using rules defined in `payment-widget/widget/isv-occ-payment/js/components/Card/CreditCardForm/validator.ts`
 - Transient token is generated client side and is then included into payment details during order submission
 - In case shopper pays with saved card only savedCardId is sent and transient token is not generated. Shopper can also choose to set card as default
@@ -163,7 +240,7 @@ Payer authentication is enabled by default using `payerAuthEnabled` gateway sett
 
 Generally payer authentication services are executed together with credit card authorization:
 
-1. JWT token is created using existing order information using `/ccstorex/custom/isv-payment/v1/payerAuth/generateJwt` SSE endpoint
+1. JWT token is created using existing order information using `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt` SSE endpoint
 2. Cardinal Cruise JS SDK library is included into storefront and is called to setup the payer auth process
 3. Credit card is tokenized as per process described in the [FlexMicroform Card Payments](#flexmicroform-card-payments) section
 4. Order is created and "Authorize" Webhook request is triggered
@@ -177,15 +254,15 @@ Generally payer authentication services are executed together with credit card a
 12. "Authorize" Webhook request is triggered with `authJwt` being included in its payload
 13. Card authorization service is executed along with Payer Auth Validation service
 
-The diagram below denotes all the steps involved (happy path scenario):
+The diagram below denotes all the steps involved:
 
-![Payer Authentication](images/payer-auth.png)
+![Payer Authentication](images/credit-card-payer-auth-payment-flow.png)
 
 #### UI integration details
 
-The following UI component contains Payer Authentication integration logic `payment-widget/widget/isv-occ-payment/js/components/Card/paymentAuthentication/index.ts`
+The following UI component contains Payer Authentication integration logic `plugins/components/isv-payment-method/index.jsx` and `plugins/components/isv-place-order-button/index.jsx`.
 
-- Payer Authentication is initiated by generating a signed JWT token containing current order data. The following SSE endpoint is used `/ccstorex/custom/isv-payment/v1/payerAuth/generateJwt`
+- Payer Authentication is initiated by generating a signed JWT token containing current order data. The following SSE endpoint is used `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt`
 - Payment details are being enhanced with validation JWT token once shopper finishes consumer authentication process
 
 #### Backend (SSE) integration details

@@ -1,9 +1,11 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { PtsV2PaymentsReversalsPost201Response } from 'cybersource-rest-client';
 import { convertResponse, twelveDigits } from '../common';
 import genericPayment from '../common/genericPayment';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
-function createAuthorizationReversalResponse(context: PaymentContext) {
+export default function createAuthorizationReversalResponse(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const paymentResponse = <DeepRequired<PtsV2PaymentsReversalsPost201Response>>(
     context.data.response
   );
@@ -15,6 +17,6 @@ function createAuthorizationReversalResponse(context: PaymentContext) {
       amount: twelveDigits(paymentResponse.reversalAmountDetails.reversedAmount)
     }
   );
-}
 
-export default middleware(createAuthorizationReversalResponse);
+  Object.assign(res, context.webhookResponse);
+}

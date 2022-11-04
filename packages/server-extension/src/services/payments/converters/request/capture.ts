@@ -1,8 +1,10 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { CapturePaymentRequest } from 'cybersource-rest-client';
 import { convertRequest, twoDecimal } from './common';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
-function createCaptureRequest(context: PaymentContext) {
+export default function createCaptureRequest(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { webhookRequest } = context;
 
   context.data.request = convertRequest<CapturePaymentRequest>(context, {
@@ -20,5 +22,3 @@ function createCaptureRequest(context: PaymentContext) {
   context.data.transactionId =
     webhookRequest.referenceInfo && webhookRequest.referenceInfo.hostTransactionId;
 }
-
-export default middleware(createCaptureRequest);

@@ -57,28 +57,51 @@ In OCC context GooglePay payment happens as follows:
 7. Generic "Authorize" Webhook is triggered with custom payment data
 8. Payment is authorized by SSE and result is returned back to storefront
 
-![GooglePay](images/googlepay.png)
+![GooglePay](images/google-pay-payment-flow.jpg)
 
 ### UI integration details
 
 GooglePay UI component can is located in Payment Widget:
 
 ```text
-.
-└── widget
-    └── isv-occ-payment
-        ├── js
-        │   └── components
-        │       ├── GooglePay
-        │       │   ├── requestBuilder.ts // Payment request builder which collects data from checkout page as well as configuration
-        │       │   ├── index.html // UI template for GooglePay button
-        │       │   └── index.ts // GooglePay UI integration
-        │       ├── PaymentSelector
-        │       └── index.ts // Before components appear on the page retrieve supported payment methods
-        └── widget.json
+plugins
+ ├── components
+ | ├── isv-payment-method
+ | | ├── components
+ | | | └── isv-googlepay-payment-method
+ | | | | ├── googlepay.css
+ | | | | ├── googlePay.js
+ | | | | └── index.jsx
+ | | ├── cybersource
+ | | | ├── common.js
+ | | | └── scriptLoader.js
+ | | ├── index.jsx
+ | | ├── meta.js
+ | | └── styles.css
+ | ├── index.js
+ | └── meta.js
+ ├── endpoints
+ | ├── payment-method-config-endpoint
+ | | ├── index.js
+ | | └── meta.js
+ | ├── index.js
+ | └── meta.js
+ ├── fetchers
+ | ├── payment-method-config-fetcher
+ | | ├── hook.js
+ | | ├── index.js
+ | | └── meta.js
+ | ├── hooks.js
+ | ├── index.js
+ | └── meta.js
+ └── selectors
+   ├── paymentMethod-config-selector
+   | └── index.js
+   └── index.js
+
 ```
 
-- Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v1/paymentMethods` endpoint
+- Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint
 - GooglePay SDK is loaded (see `googlePaySdkUrl` gateway setting)
 - GooglePay button is added in case it is supported by shopper's device  otherwise a message is displayed saying the payment method is not supported
 - On clicking the either GooglePay button or 'Place Order' button payment is initiated by creating payment request and showing payment sheet (pop-up window) to the shopper

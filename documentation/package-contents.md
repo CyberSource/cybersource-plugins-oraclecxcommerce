@@ -1,66 +1,13 @@
 # Package Contents <!-- omit in toc -->
 
-1. [Overall project structure](#overall-project-structure)
-2. [OCC CLI Utilities](#occ-cli-utilities)
-3. [Payment Gateway Package (payment-gateway)](#payment-gateway-package-payment-gateway)
-4. [Server Extension Package (server-extension)](#server-extension-package-server-extension)
+1. [OCC CLI Utilities](#occ-cli-utilities)
+2. [Payment Gateway Package (payment-gateway)](#payment-gateway-package-payment-gateway)
+3. [Server Extension Package (server-extension)](#server-extension-package-server-extension)
    1. [Authorizing access to endpoints](#authorizing-access-to-endpoints)
    2. [Request processing components](#request-processing-components)
    3. [Payment Dispatcher](#payment-dispatcher)
    4. [Build process](#build-process)
-5. [Payment Widget Package (payment-widget)](#payment-widget-package-payment-widget)
-6. [Saved Cards Widget Package (saved-cards-widget)](#saved-cards-widget-package-saved-cards-widget)
-
-## Overall project structure
-
-```text
-.
-├── README.md
-├── bin
-│   ├── index.js
-│   ├── sse // CLI commands to manage SSE deployment
-│   └── widget // CLI commands to manage widget deployment
-├── certs // Certificates for local development, needed for testing communication over HTTPS
-│   ├── localhost.crt
-│   └── localhost.key
-├── documentation
-├── husky.config.js // GIT hooks to check code before it is being pushed
-├── jest.config.js // Common testing framework setup
-├── lerna.json
-├── lib // CLI commands implementation
-│   ├── common
-│   ├── sse
-│   └── widget
-├── lint-staged.config.js
-├── package.json // Common NodeJS dependencies and 'yarn' scripts to help build
-├── packages
-│   ├── occ-mock-server // Mocking OCC APIs for local development
-│   ├── occ-mock-storefront // Mocking OCC Storefront libraries and modules for local development
-│   ├── occ-sdk // OCC REST SDK - Typescript friendly wrapper
-│   ├── payment-gateway // Payment Gateway Settings
-│   ├── payment-sdk // PSP REST SDK
-│   ├── payment-widget // Payment Widget - payment components and UI checkout integration logic
-│   ├── saved-cards-widget // Saved Cards Widget for user's profile for My Account
-│   └── server-extension // Payment integration service
-├── tsconfig.json // Common Typescript compiler configuration
-└── yarn.lock
-```
-
-Solution is composed of particular packages primarily utilizing Typescript as programming language.
-
-Build process and modularization has been implemented by using [Yarn workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) and [Lerna](https://lerna.js.org/)
-
-All available Yarn scripts to help you start with building and deploying solution in OCC can be found in the `scripts` section of the `package.json` file.
-
-By running `yarn install` all NodeJS dependencies are going to be installed and you should be able to proceed with further development or deployment tasks
-
-![Note](images/note.jpg) Please refer to the Installation section of the document to find out more about building and deploying payment solution to OCC
-
-Component dependencies are depicted in the diagram below:
-
-![Component dependencies](images/component-dependencies.png)
-
-Please notice all the packages on the left are those which should be deployed to OCC in order to get the payment plugin work. Packages on the right hand side have been created with better separation of concerns and modularity in mind.
+4. [Payment Widget Package (payment-widget)](#payment-widget-package-payment-widget)
 
 ## OCC CLI Utilities
 
@@ -82,13 +29,6 @@ Options:
   -h, --help                                            display help for command
 
 Commands:
-  create-extension-id [options] <extensionName>         Create CX Commerce Storefront extension id
-  upload-extension [options] <extensionName>            Import CX Commerce Storefront extension to host
-  package-extension [options] <extensionName>           Create extension archive
-  deactivate-extension [options] <extensionName>        Deactivate CX Commerce Storefront extension
-  activate-extension [options] <extensionName>          Activate CX Commerce Storefront extension
-  remove-extension [options] <extensionName>            Remove CX Commerce Storefront extension
-  find-extension-id [options] <extensionName>           Remove CX Commerce Storefront extension
   list-apps [options]                                   List server-side extension custom apps on CX Commerce server
   package-app <appName>                                 Create server-side extension archive
   upload-app [options] <appName>                        Upload server-side extension custom app to CX Commerce server
@@ -106,7 +46,7 @@ Commands:
   help [command]                                        display help for command
 ```
 
-Please familiarize yourself with available command options by looking at `bin/sse/commands.js` and `bin/widget/commands.js` scripts
+Please familiarize yourself with available command options by looking at `bin/sse/commands.js` scripts
 
 ## Payment Gateway Package (payment-gateway)
 
@@ -189,6 +129,8 @@ The following settings can be configured in gateway:
 | **applePayInitiative**              | A predefined value that identifies the e-commerce application making the request. For ApplePay on the web use 'web'                                                                                                                                                                                               |
 | **applePayInitiativeContext**       | Fully qualified domain name associated with your Apple Pay Merchant Identity Certificate                                                                                                                                                                                                                          |
 | **applePaySupportedNetworks**       | ApplePay Supported Networks                                                                                                                                                                                                                                                                                       |
+| **applePaySdkUrl**                  | ApplePay SDK URL                                      |
+| **applePayDisplayName**    | Apple Pay display name |
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Decision Manager**                |                                                                                                                                                                                                                                                                                                                   |
 | **dmDecisionSkip**                  | Indicates which payment modes should skip the decision manager step                                                                                                                                                                                                                                               |
@@ -198,6 +140,7 @@ The following settings can be configured in gateway:
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Reporting**                       |                                                                                                                                                                                                                                                                                                                   |
 | **dailyReportName**                 | Daily Report Name                                                                                                                                                                                                                                                                                                 |
+
 
 ![Important](images/important.jpg) `secretKey3DS`, `isCVVRequiredForSavedCards` and `isCVVRequiredForScheduledOrders` should be present in gateway settings in order for saved cards and Payer Authentication to be working
 
@@ -265,15 +208,15 @@ Find below the structure of the package:
 
 | **Endpoint**                                            | **Description**                                                                                                                 |
 |---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| `/ccstorex/custom/isv-payment/v1/paymentMethods`        | Returns list of supported payment types. Consumer: Payment Widget                                                               |
-| `/ccstorex/custom/isv-payment/v1/keys`                  | Generates Flex public key (capture context). Consumer: Payment Widget                                                           |
-| `/ccstorex/custom/isv-payment/v1/payments`              | Generic Payments Webhook handler endpoint. Consumer: OCC                                                                        |
-| `/ccstorex/custom/isv-payment/v1/payerAuth/generateJwt` | Generates JWT for payer authentication. Consumer: Payment Widget                                                                |
-| `/ccstorex/custom/isv-payment/v1/applepay/validate`     | Validates ApplePay session. Consumer: Payment Widget                                                                            |
-| `/ccstorex/custom/isv-payment/v1/report/daily`          | Returns daily conversion report for a given date. Consumer: Fulfillment                                                         |
-| `/ccstorex/custom/isv-payment/v1/report/onDemand`       | Returns conversion report for specified start and end dates. Applies only for less than 24 hour interval. Consumer: Fulfillment |
-| `/ccstorex/custom/isv-payment/v1/capture`               | Capture funds for a given transaction. Consumer: Fulfillment                                                                    |
-| `/ccstorex/custom/isv-payment/v1/refund`                | Refund payment for a given transaction. Consumer: Fulfillment                                                                   |
+| `/ccstorex/custom/isv-payment/v2/paymentMethods`        | Returns list of supported payment types. Consumer: Payment Widget                                                               |
+| `/ccstorex/custom/isv-payment/v2/keys`                  | Generates Flex public key (capture context). Consumer: Payment Widget                                                           |
+| `/ccstorex/custom/isv-payment/v2/payments`              | Generic Payments Webhook handler endpoint. Consumer: OCC                                                                        |
+| `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt` | Generates JWT for payer authentication. Consumer: Payment Widget                                                                |
+| `/ccstorex/custom/isv-payment/v2/applepay/validate`     | Validates ApplePay session. Consumer: Payment Widget                                                                            |
+| `/ccstorex/custom/isv-payment/v2/report/daily`          | Returns daily conversion report for a given date. Consumer: Fulfillment                                                         |
+| `/ccstorex/custom/isv-payment/v2/report/onDemand`       | Returns conversion report for specified start and end dates. Applies only for less than 24 hour interval. Consumer: Fulfillment |
+| `/ccstorex/custom/isv-payment/v2/capture`               | Capture funds for a given transaction. Consumer: Fulfillment                                                                    |
+| `/ccstorex/custom/isv-payment/v2/refund`                | Refund payment for a given transaction. Consumer: Fulfillment                                                                   |
 
 ### Authorizing access to endpoints
 
@@ -284,25 +227,25 @@ In order to add url to 'authenticatedUrls' property in package.json use the foll
 ```json
   "authenticatedUrls": [
     {
-      "url": "/ccstorex/custom/isv-payment/v1/capture",
+      "url": "/ccstorex/custom/isv-payment/v2/capture",
       "method": [
         "post"
       ]
     },
     {
-      "url": "/ccstorex/custom/isv-payment/v1/refund",
+      "url": "/ccstorex/custom/isv-payment/v2/refund",
       "method": [
         "post"
       ]
     },
     {
-      "url": "/ccstorex/custom/isv-payment/v1/report/daily",
+      "url": "/ccstorex/custom/isv-payment/v2/report/daily",
       "method": [
         "get"
       ]
     },
     {
-      "url": "/ccstorex/custom/isv-payment/v1/report/onDemand",
+      "url": "/ccstorex/custom/isv-payment/v2/report/onDemand",
       "method": [
         "get"
       ]
@@ -373,8 +316,8 @@ Please refer to the documents below to familiarize yourself with Widget developm
 
 The overall UI integration flow is as follows:
 
-1. Payment Widget is initialized with available Storefront view models in the `onLoad` method in `payment-widget/widget/isv-occ-payment/js/isv-occ-payment.ts`
-2. Before Widget appears a list of supported payment methods is fetched from the SSE (`/ccstorex/custom/isv-payment/v1/paymentMethods`)
+1. Payment Widget will be loaded with available Storefront checkout-payment page.
+2. Before Widget appears a list of supported payment methods is fetched from the SSE (`/ccstorex/custom/isv-payment/v2/paymentMethods`)
 3. Payment selector UI component renders the list of supported payment methods
 4. User can chooses one of the methods and proceed with order placement by providing payment details
 5. Order is submitted to OCC and Generic Webhook is called
@@ -386,42 +329,91 @@ Find below the structure of the package
 
 ```text
 .
-├── ext.json
-├── jest.config.js
-├── node_modules
-├── package.json
-├── tsconfig.json
-├── webpack.common.js
-├── webpack.dev.config.js // Webpack configuration for local development
-├── webpack.prod.config.js // Webpack configuration for bundling JS for OCC environment
-└── widget
-    └── isv-occ-payment
-        ├── js
-        │   ├── __tests__
-        │   ├── common
-        │   ├── components // All payment components
-        │   ├── constants
-        │   ├── dev // Local development support
-        │   ├── isv-occ-payment.bundle.js // This is the actual JS widget module that is compiled from all Typescript assets and is used by OCC
-        │   ├── isv-occ-payment.ts
-        │   ├── services
-        │   │   ├── checkout.ts // Integration point to handle OCC events and payment orchestration
-        │   │   └── occClient.ts // API client for endpoints exposed by SEE and OCC
-        │   ├── store // State and payment actions shared between all payment components
-        │   └── types
-        ├── less
-        │   └── widget.less
-        ├── locales
-        │   └── en
-        │       └── ns.isv-occ-payment.json
-        ├── templates
-        │   └── display.template
-        └── widget.json
+└── packages/apps
+    └── core-commerce-reference-store
+        └── src
+          ├─ components
+          │  ├─ index.js
+          │  ├─ isv-checkout-continue-to-review-order-button
+          │  │  ├─ index.jsx
+          │  │  ├─ meta.js
+          │  │  └─ styles.css
+          │  ├─ isv-checkout-place-order-button
+          │  │  ├─ index.jsx
+          │  │  ├─ locales
+          │  │  │  └─ en.json
+          │  │  ├─ meta.js
+          │  │  └─ styles.css
+          │  ├─ isv-payment-method
+          │  │  ├─ components
+          │  │  │  ├─ isv-add-card-details
+          │  │  │  │  └─ index.jsx
+          │  │  │  ├─ isv-applepay-payment-method
+          │  │  │  │  ├─ applePay.css
+          │  │  │  │  ├─ applePay.js
+          │  │  │  │  └─ index.jsx
+          │  │  │  ├─ isv-checkout-card-details
+          │  │  │  │  └─ index.jsx
+          │  │  │  ├─ isv-checkout-saved-card-item
+          │  │  │  │  └─ index.jsx
+          │  │  │  ├─ isv-checkout-saved-cards
+          │  │  │  │  └─ index.jsx
+          │  │  │  ├─ isv-credit-card-payment-method
+          │  │  │  │  ├─ index.jsx
+          │  │  │  │  └─ IsvCreditCard.jsx
+          │  │  │  └─ isv-googlepay-payment-method
+          │  │  │     ├─ googlepay.css
+          │  │  │     ├─ googlePay.js
+          │  │  │     └─ index.jsx
+          │  │  ├─ cybersource
+          │  │  │  ├─ common.js
+          │  │  │  ├─ flexMicroForm.js
+          │  │  │  ├─ flexMicroFormAPI.js
+          │  │  │  └─ scriptLoader.js
+          │  │  ├─ index.jsx
+          │  │  ├─ locales
+          │  │  │  └─ en.json
+          │  │  ├─ meta.js
+          │  │  ├─ styles
+          │  │  │  └─ flex.css
+          │  │  └─ styles.css
+          │  └─ meta.js
+          ├─ endpoints
+          │  ├─ apple-pay-validation-endpoint
+          │  │  ├─ index.js
+          │  │  └─ meta.js
+          │  ├─ flex-microform-endpoint
+          │  │  ├─ index.js
+          │  │  └─ meta.js
+          │  ├─ index.js
+          │  ├─ meta.js
+          │  ├─ payer-auth-endpoint
+          │  │  ├─ index.js
+          │  │  └─ meta.js
+          │  └─ payment-method-config-endpoint
+          │     ├─ index.js
+          │     └─ meta.js
+          ├─ fetchers
+          │  ├─ flex-microform-fetcher
+          │  │  ├─ hook.js
+          │  │  ├─ index.js
+          │  │  └─ meta.js
+          │  ├─ hooks.js
+          │  ├─ index.js
+          │  ├─ meta.js
+          │  └─ payment-method-config-fetcher
+          │     ├─ hook.js
+          │     ├─ index.js
+          │     └─ meta.js
+          └─ selectors
+             ├─ flex-microform-selector
+             │   └─ index.js
+             ├─ index.js
+             └─ paymentMethod-config-selector
+                └─ index.js     
+      
 ```
 
-![Important](images/important.jpg) `widget/isv-occ-payment/js/services/checkout.ts` extends OOTB methods `createOrder` and `postOrderCreateOrUpdateSuccess` from `OrderViewModel` in order to wait for payment details to be resolved in asynchronous way. OOTB OCC does not support asynchronous payment details (e.g. does not wait until those are available before submitting an order). One could choose to customize OrderViewModel to incorporate same logic as in `checkout.ts`.
-
-After customizing codebase you will need to compile a new JS module for the widget by running `yarn build:prod`. It will result in a new JS module `widget/js/isv-occ-payment/isv-occ-payment.bundle.js`
 
 The overall payment components interaction flow withing checkout process is presented below:
 
@@ -431,60 +423,8 @@ The overall payment components interaction flow withing checkout process is pres
 2. 'initiate' payment action is triggered with current selected payment method
 3. Payment action is routed to the appropriate component which listens to the initiate action
 4. Payment component collects payment details (might be in asynchronous way)
-5. Checkout process waits until payment details are available and then updates OrderViewModel's payments array accordingly. Order is submitted
+5. Checkout process waits until payment details are available and then updates payment context array accordingly. Order is submitted
 6. Payment is finalized on successful submission
 
 The flow documented above applies to all payment components
 
-## Saved Cards Widget Package (saved-cards-widget)
-
-Saved Cards widget enables customers to view and manage saved cards stores as part of user's profile.
-
-The following documents provide enough details in order to understand implementation details:
-
-- [Support stored credit cards](https://docs.oracle.com/en/cloud/saas/cx-commerce/20c/ccdev/support-stored-credit-cards.html)
-- [Technical Dive Implementing Stored Cards Examples](https://community.oracle.com/docs/DOC-1030476)
-
-Saved Cards widget can be installed into My Account layouts and implements the following:
-
-- Fetching list of saved cards and rendering those by marking default card
-- Set card as default
-- Edit card nickname
-- Remove saved card
-
-```text
-.
-├── ext.json
-├── jest.config.js
-├── package.json
-├── tsconfig.json
-├── webpack.common.js
-├── webpack.dev.config.js // Webpack configuration for local development
-├── webpack.prod.config.js // Webpack configuration for bundling JS for OCC environment
-└── widget
-    └── saved-cards
-        ├── js
-        │   ├── __tests__
-        │   ├── components
-        │   │   └── SavedCard
-        │   ├── dev
-        │   ├── saved-cards.bundle.js // This is the actual JS widget module that is compiled from all Typescript assets and is used by OCC
-        │   ├── saved-cards.ts
-        │   ├── services
-        │   │   └── profileCardsClient.ts // REST client for saved card operations
-        │   ├── store
-        │   │   ├── actions.ts
-        │   │   └── index.ts
-        │   └── types
-        │       └── index.d.ts
-        ├── less
-        │   └── widget.less
-        ├── locales
-        │   └── en
-        │       └── ns.saved-cards.json
-        ├── templates
-        │   └── display.template // Renders 'SavedCard' components
-        └── widget.json
-```
-
-![Important](images/important.jpg) After customizing codebase you will need to compile a new JS module for the widget by running `yarn build:prod`. It will result in a new JS module `widget/js/saved-cards/saved-cards.bundle.js`

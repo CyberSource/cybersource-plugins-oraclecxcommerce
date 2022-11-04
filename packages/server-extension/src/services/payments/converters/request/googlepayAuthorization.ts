@@ -1,14 +1,18 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { convertRequest, twoDecimal } from './common';
 import {
   billingAddressMapper,
   decisionManagerMapper,
   deviceFingerprintMapper,
-  saleMapper
+  saleMapper,
+  // genericLineItemsMapper,
+  shippingAddressMapper
 } from './mappers';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
-function createGooglepayAuthorizationRequest(context: PaymentContext) {
+export default function createGooglepayAuthorizationRequest(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { webhookRequest } = context;
 
   const paymentRequest: CreatePaymentRequest = {
@@ -41,9 +45,10 @@ function createGooglepayAuthorizationRequest(context: PaymentContext) {
       deviceFingerprintMapper,
       decisionManagerMapper,
       billingAddressMapper,
+      shippingAddressMapper,
+      // genericLineItemsMapper,
       saleMapper
     )
   );
-}
 
-export default middleware(createGooglepayAuthorizationRequest);
+}

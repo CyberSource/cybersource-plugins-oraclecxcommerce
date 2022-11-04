@@ -1,5 +1,5 @@
-import { RequestContext } from '@server-extension/common';
-import cryptoService from '@server-extension/services/cryptoService';
+import { RequestContext } from '../../common/index';
+import cryptoService from '../cryptoService';
 import generateKey from './api/generateKey';
 
 export async function createCaptureContext(

@@ -1,9 +1,11 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { PtsV2PaymentsCapturesPost201Response } from 'cybersource-rest-client';
 import { convertResponse, twelveDigits } from '../common';
 import genericPayment from '../common/genericPayment';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
-function createCaptureResponse(context: PaymentContext) {
+export default function createCaptureResponse(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const paymentResponse = <DeepRequired<PtsV2PaymentsCapturesPost201Response>>context.data.response;
 
   context.webhookResponse = convertResponse<OCC.GenericWebhookResponse>(
@@ -13,6 +15,6 @@ function createCaptureResponse(context: PaymentContext) {
       amount: twelveDigits(paymentResponse.orderInformation.amountDetails.totalAmount)
     }
   );
-}
 
-export default middleware(createCaptureResponse);
+  Object.assign(res, context.webhookResponse);
+}

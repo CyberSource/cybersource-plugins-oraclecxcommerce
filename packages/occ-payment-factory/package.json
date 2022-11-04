@@ -1,0 +1,29 @@
+{
+    "name": "@isv-occ-payment/occ-payment-factory",
+    "version": "22.1.0",
+    "private": true,
+    "description": "Oracle Commerce payment service factory",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+    },
+    "author": "ISV Payments",
+    "main": "cjs/indexPaymentFactory.js",
+    "types": "cjs/indexPaymentFactory.d.ts",
+    "devDependencies": {
+        "winston": "latest",
+        "async": "^3.2.3",
+        "fecha": "^4.2.0",
+        "is-stream": "^1.1.0",
+        "logform": "^2.1.1",
+        "one-time": "^1.0.0"
+    },
+    "scripts": {
+        "prebuild": "yarn clean",
+        "build": "tsc -p tsconfig.json",
+        "build:prod": "ttsc -p tsconfig.json",
+        "clean": "rimraf ./cjs",
+        "prepack": "yarn build",
+        "test": "jest --passWithNoTests"
+    }
+}

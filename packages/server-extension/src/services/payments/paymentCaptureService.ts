@@ -1,4 +1,4 @@
-import { RequestContext } from '@server-extension/common';
+import { RequestContext, maskRequestData } from '@server-extension/common';
 import {
   CaptureApi,
   CapturePaymentRequest,
@@ -8,12 +8,16 @@ import {
 import makeRequest from './api/paymentCommand';
 import createCapturePaymentRequest from './converters/request/captureEndpoint';
 import createCapturePaymentResponse from './converters/response/captureEndpoint';
+const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 
 function executeCapturePayment(
   request: CapturePaymentRequest,
   hostTransactionId: string,
   merchantConfig: MerchantConfig
 ) {
+  const logger = LogFactory.logger();
+  logger.debug(`Capture API Request: ${JSON.stringify(maskRequestData(request))}`);
+
   return makeRequest<PtsV2PaymentsCapturesPost201Response>(
     merchantConfig,
     CaptureApi,

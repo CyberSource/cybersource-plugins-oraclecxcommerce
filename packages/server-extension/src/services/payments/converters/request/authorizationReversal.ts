@@ -1,8 +1,10 @@
-import { middleware, PaymentContext } from '@server-extension/common';
 import { AuthReversalRequest } from 'cybersource-rest-client';
 import { convertRequest, twoDecimal } from './common';
+import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
+import { Request, Response } from 'express';
 
-function createAuthorizationReversalRequest(context: PaymentContext) {
+export default function createAuthorizationReversalRequest(req: Request, res: Response) {
+  const context = buildPaymentContext(req);
   const { webhookRequest } = context;
 
   context.data.request = convertRequest<AuthReversalRequest>(context, {
@@ -20,5 +22,3 @@ function createAuthorizationReversalRequest(context: PaymentContext) {
   context.data.transactionId =
     webhookRequest.referenceInfo && webhookRequest.referenceInfo.hostTransactionId;
 }
-
-export default middleware(createAuthorizationReversalRequest);

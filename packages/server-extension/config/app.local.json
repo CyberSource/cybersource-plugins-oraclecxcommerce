@@ -9,10 +9,10 @@
     "cache.device.fingerprint.ttl.secs": 3600,
     "feature.gatewaysettings.payload": "disabled",
     "report.daily.download.path": "",
-    "crypto.service.key": "<>",
-    "partner.developerId": "",
+    "crypto.service.key": "l8myMlkZiBX/kLbpDcn3Nw==",
+    "partner.developerId": "999",
     "partner.solutionId": "Z1BIKTOZ",
-    "logging.webhook.http": false,
+    "logging.webhook.http": true,
     "logging.api.error": true,
     "logging.api.access": true
 }

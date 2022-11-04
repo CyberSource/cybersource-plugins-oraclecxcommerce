@@ -9,9 +9,8 @@ import path from 'path';
 import { createLogger, Logger, transports } from 'winston';
 import configureApp from './app';
 
-process.env.NODE_ENV = 'development';
-
 const app = express();
+app.locals.env = 'development';
 
 //Initialize new logger for local env
 const logger: Logger = createLogger({

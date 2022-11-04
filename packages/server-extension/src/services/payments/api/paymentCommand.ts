@@ -1,6 +1,8 @@
 import { ApiExecutionError } from '@server-extension/errors';
 import { ApiClient, MerchantConfig } from 'cybersource-rest-client';
+const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 
+const logger = LogFactory.logger();
 export const apiClient = new ApiClient();
 
 export default async function makeRequest<T>(
@@ -19,10 +21,11 @@ export default async function makeRequest<T>(
             api: apiClass.name,
             operation: methodName,
             status: error.status,
-            source: error.response.body
+            source: error.response?.body
           })
         );
       } else {
+        logger.debug(`API Response: ${JSON.stringify(response?.body)}`);
         resolve(response?.body);
       }
     });

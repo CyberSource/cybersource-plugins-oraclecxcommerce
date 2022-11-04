@@ -6,7 +6,8 @@ const SKIP_HOSTS = ['localhost', '127.0.0.1'];
 const WEBHOOK_SIGNATURE_HEADER = 'x-oracle-cc-webhook-signature';
 
 function validateWebhook(req: Request, res: Response, next: NextFunction) {
-  const secretKey = nconf.get(req.url);
+  const confKey = getConfKeyFromUrl(req.url);
+  const secretKey = nconf.get(confKey);
   const signature = <string>req.headers[WEBHOOK_SIGNATURE_HEADER];
   const rawBody = req.rawBody;
 
@@ -19,6 +20,11 @@ function validateWebhook(req: Request, res: Response, next: NextFunction) {
   }
 
   next();
+}
+
+function getConfKeyFromUrl(url: string) {
+  const urlParts = url.split('/');
+  return urlParts[urlParts.length - 1] + '.secret.key';
 }
 
 export default validateWebhook;

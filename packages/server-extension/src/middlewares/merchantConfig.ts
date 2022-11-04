@@ -6,15 +6,18 @@ import { RequestContext } from '../common';
 
 function proxySettings() {
   const hasProxy = Boolean(process.env.http_proxy || nconf.get('general:proxy-server'));
+  var url = nconf.get('general:proxy-server');
+  const { hostname = null, port = null } = url ? new URL(url) : {};
 
   return (
     hasProxy && {
       useProxy: true,
-      proxyAddress: 'omcs-proxy.oracleoutsourcing.com',
-      proxyPort: '80'
+      proxyAddress: hostname,
+      proxyPort: port
     }
   );
 }
+
 
 function createMerchantConfig(settings: OCC.GatewaySettings): MerchantConfig {
   const keysDirectory = path.join(__dirname, '../../certs');
