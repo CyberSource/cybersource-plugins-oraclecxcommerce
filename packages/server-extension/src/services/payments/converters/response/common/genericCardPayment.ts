@@ -15,9 +15,11 @@ type PspResponse =
 
 export default function convert(context: PaymentContext): OCC.GenericCardWebhookResponse {
   const { webhookRequest } = context;
+
   const paymentResponse = <DeepRequired<PspResponse>>context.data.response;
   const timestamp = new Date().getTime().toString();
   const pspResponseType = pspResponseTypeMappings[webhookRequest.transactionType];
+  const { processorInformation } = <DeepRequired<PtsV2PaymentsPost201Response>>paymentResponse;
 
   return {
     orderId: webhookRequest.orderId,
@@ -41,7 +43,13 @@ export default function convert(context: PaymentContext): OCC.GenericCardWebhook
       responseDescription: paymentResponse.status,
       merchantTransactionId: webhookRequest.transactionId,
       hostTransactionId: paymentResponse.id,
-      merchantTransactionTimestamp: timestamp
+      merchantTransactionTimestamp: timestamp,
+      additionalProperties: {
+        authAvsCode: processorInformation?.avs?.code,
+        authCvResult: processorInformation?.cardVerification?.resultCode,
+        authTime: paymentResponse.submitTimeUtc
+      }
     }
+    
   };
 }

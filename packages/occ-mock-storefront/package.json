@@ -1,6 +1,6 @@
 {
   "name": "@isv-occ-payment/occ-mock-storefront",
-  "version": "22.1.0",
+  "version": "23.1.0",
   "private": true,
   "description": "ISV OCC Payment Widget",
   "repository": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git",
@@ -14,8 +14,8 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.3.38",
-    "@types/knockout": "3.4.68",
+    "@types/knockout": "3.4.72",
     "jquery": "^3.5.1",
-    "knockout": "3.4.0"
+    "knockout": "3.5.1"
   }
 }

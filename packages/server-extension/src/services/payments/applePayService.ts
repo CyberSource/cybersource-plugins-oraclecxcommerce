@@ -2,7 +2,7 @@ import { RequestContext } from '@server-extension/common';
 import fs from 'fs';
 import nconf from 'nconf';
 import path from 'path';
-import request, * as superagent from 'superagent';
+import request from 'superagent';
 import httpProxy from 'superagent-proxy';
 
 const CERT_PATH = path.join(__dirname, '../../../certs/applePayIdentityCert.pem');
@@ -10,7 +10,7 @@ const CERT = fs.readFileSync(CERT_PATH, 'utf8');
 const KEY_PATH = path.join(__dirname, '../../../certs/applePayIdentityKey.key');
 const KEY = fs.readFileSync(KEY_PATH, 'utf8');
 
-httpProxy(superagent);
+httpProxy(request);
 
 const createRequest = (validationUrl: string) => {
   const occProxy: string = process.env.http_proxy || nconf.get('general:proxy-server');

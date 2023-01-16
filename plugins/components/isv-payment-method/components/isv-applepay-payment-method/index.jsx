@@ -1,9 +1,9 @@
 /* eslint-disable no-inner-declarations */
-import React, {useContext, useEffect, useState, useRef, useCallback} from 'react';
+import React, { useContext, useEffect, useState, useRef, useCallback } from 'react';
 import RadioButton from '@oracle-cx-commerce/react-components/radio';
 import CheckoutBillingAddress from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/components/checkout-billing-address';
-import {useNavigator} from '@oracle-cx-commerce/react-components/link';
-import {StoreContext, PaymentsContext} from '@oracle-cx-commerce/react-ui/contexts';
+import { useNavigator } from '@oracle-cx-commerce/react-components/link';
+import { StoreContext, PaymentsContext } from '@oracle-cx-commerce/react-ui/contexts';
 import {
   PAYMENT_STATE_INITIAL,
   PAYMENT_TYPE_PAY_IN_STORE,
@@ -20,8 +20,8 @@ import {
   deleteAppliedPaymentsByIds,
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
-import {getCurrentOrder, getGlobalContext} from '@oracle-cx-commerce/commerce-utils/selector';
-import {replaceSpecialCharacter} from '../../isv-payment-utility/common';
+import { getCurrentOrder, getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
+import { replaceSpecialCharacter } from '../../isv-payment-utility/common';
 import ApplePay from './applePay';
 
 /**
@@ -38,11 +38,13 @@ const IsvApplePayPaymentMethod = props => {
     headingPayment,
     messageFailed,
     messageEmptyCart,
-    labelNoDefaultBillingAddressAvailable
+    labelNoDefaultBillingAddressAvailable,
+    isvSelectedGenericPayment,
+    setIsvSelectedGenericPayment
   } = props;
   const store = useContext(StoreContext);
-  const {action, getState} = store;
-  const {priceInfo = {}, paymentGroups = {}} = getCurrentOrder(getState());
+  const { action, getState } = store;
+  const { priceInfo = {}, paymentGroups = {} } = getCurrentOrder(getState());
   const {
     payments = [],
     selectedPaymentType,
@@ -51,7 +53,7 @@ const IsvApplePayPaymentMethod = props => {
   } = useContext(PaymentsContext) || {};
   const [billingAddress, setBillingAddress] = useState({});
   const [isDisplayApplePay, setDisplayApplelePay] = useState(false);
-  const {isPreview} = getGlobalContext(store.getState());
+  const { isPreview } = getGlobalContext(store.getState());
   let applePayConfiguration = [];
 
   if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
@@ -93,7 +95,7 @@ const IsvApplePayPaymentMethod = props => {
    */
   const applyPayments = paymentsToApply => {
     if (paymentsToApply.length > 0) {
-      action('applyPayments', {items: paymentsToApply})
+      action('applyPayments', { items: paymentsToApply })
         .then(response => {
           if (response.ok) {
             const order = getCurrentOrder(getState());
@@ -102,12 +104,12 @@ const IsvApplePayPaymentMethod = props => {
               goToReviewOrderPage();
             }
           } else {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             setInProgress(false);
           }
         })
         .catch(err => {
-          action('notify', {level: ERROR, message: err.message});
+          action('notify', { level: ERROR, message: err.message });
           setInProgress(false);
         });
     } else if (isPaymentDetailsComplete(props)) {
@@ -128,7 +130,7 @@ const IsvApplePayPaymentMethod = props => {
           const response = await deleteAppliedPaymentsByTypes(store);
           //remove error - pgid not available in current order
           if (!response.ok) {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             isError = true;
             setInProgress(false);
           }
@@ -146,7 +148,7 @@ const IsvApplePayPaymentMethod = props => {
         if (paymentGroupsToRemoved.length) {
           const response = await deleteAppliedPaymentsByIds(action, paymentGroupsToRemoved);
           if (!response.ok) {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             isError = true;
             setInProgress(false);
           }
@@ -154,7 +156,7 @@ const IsvApplePayPaymentMethod = props => {
       }
       return isError;
     } catch (error) {
-      action('notify', {level: ERROR, message: error.message});
+      action('notify', { level: ERROR, message: error.message });
       let isError = true;
       setInProgress(false);
       return isError;
@@ -176,7 +178,7 @@ const IsvApplePayPaymentMethod = props => {
       return;
     }
     for (const payment of payments) {
-      const {...paymentDetails} = payment;
+      const { ...paymentDetails } = payment;
       paymentsToApply.push(paymentDetails);
     }
     if (!isError) {
@@ -220,7 +222,7 @@ const IsvApplePayPaymentMethod = props => {
     var sessionData;
     switch (method) {
       case 'VALIDATION':
-        await action('applePayValidationAction', {validationUrl, isPreview});
+        await action('applePayValidationAction', { validationUrl, isPreview });
         sessionData = store.getState()?.applePayRepository.sessionData;
         break;
       case 'PAYMENT_AUTHORIZE':
@@ -228,7 +230,7 @@ const IsvApplePayPaymentMethod = props => {
         await continueToReviewOrder(validationUrl);
         break;
       case 'ERROR':
-        action('notify', {level: ERROR, message: headingPayment + ' ' + messageFailed});
+        action('notify', { level: ERROR, message: headingPayment + ' ' + messageFailed });
         break;
       default:
         console.log(method);
@@ -239,10 +241,10 @@ const IsvApplePayPaymentMethod = props => {
   //handles button click event
   const handleApplePayButtonClick = () => {
     if (!Object.keys(priceInfo).length) {
-      return action('notify', {level: ERROR, message: messageEmptyCart});
+      return action('notify', { level: ERROR, message: messageEmptyCart });
     }
     if (!Object.keys(billingAddress).length) {
-      return action('notify', {level: ERROR, message: labelNoDefaultBillingAddressAvailable});
+      return action('notify', { level: ERROR, message: labelNoDefaultBillingAddressAvailable });
     }
     const paymentData = {
       countryCode: billingAddress?.country,
@@ -263,16 +265,26 @@ const IsvApplePayPaymentMethod = props => {
 
   //hide applepay button if applepay radio button is not checked
   useEffect(() => {
-    if (isDisplayApplePay && !applePayRadioRef.current.checked && !isApplePayButtonHidden) {
-      setApplePayButtonHidden(true);
+    if (applePayRadioRef.current && (
+      (isDisplayApplePay && !applePayRadioRef.current.checked && !isApplePayButtonHidden) ||
+      (applePayRadioRef.current.checked && selectedPaymentType != PAYMENT_TYPE_GENERIC) ||
+      !applePayRadioRef.current.checked
+    )) {
+      applePayRadioRef.current.checked = false;
+      setApplePayButtonHidden(true)
+      if (isvSelectedGenericPayment === 'applePay') {
+        setIsvSelectedGenericPayment(null);
+      }
     }
-  }, [selectedPaymentType]);
+  }, [selectedPaymentType, isvSelectedGenericPayment]);
 
   const onApplePayPaymentSelection = useCallback(() => {
     if (selectedPaymentType != PAYMENT_TYPE_GENERIC) {
       updateSelectedPaymentType(PAYMENT_TYPE_GENERIC);
     }
     setApplePayButtonHidden(false);
+
+    setIsvSelectedGenericPayment("applePay");
   }, [selectedPaymentType, isApplePayButtonHidden, applePayConfiguration]);
 
   if (!isDisplayApplePay) {
@@ -296,15 +308,15 @@ const IsvApplePayPaymentMethod = props => {
           </div>
           <div
             className={`CheckoutCreditCard__AddCardDetailsContainer ${
-              isApplePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
-            }`}
+            isApplePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
+              }`}
           >
             <div
               id="container-applepay"
               className="apple-pay-button-with-text apple-pay-button-white-with-text"
               onClick={handleApplePayButtonClick}
             ></div>
-            <CheckoutBillingAddress {...props} onInput={({billingAddress}) => setBillingAddress(billingAddress)} />
+            <CheckoutBillingAddress {...props} onInput={({ billingAddress }) => setBillingAddress(billingAddress)} />
           </div>
         </div>
         {inProgress && (

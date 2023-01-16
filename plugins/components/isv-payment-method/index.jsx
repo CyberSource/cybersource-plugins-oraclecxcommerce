@@ -1,5 +1,5 @@
 /* eslint-disable no-inner-declarations */
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect,useState} from 'react';
 import {StoreContext} from '@oracle-cx-commerce/react-ui/contexts';
 import {connect} from '@oracle-cx-commerce/react-components/provider';
 import {getCurrentOrder, getGlobalContext} from '@oracle-cx-commerce/commerce-utils/selector';
@@ -14,20 +14,21 @@ import {amdJsLoad} from './isv-payment-utility/script-loader';
 export var getOrderData;
 
 const IsvPaymentMethod = props => {
-  const {paymentMethods = [], deviceFingerprint = {}} = props || {};
+  const {paymentMethods = [], deviceFingerprint = {}, alertTechnicalProblemTryAgain} = props || {};
   const store = useContext(StoreContext);
   const {action, getState} = store;
   const {isPreview} = getGlobalContext(store.getState());
   var payerAuthEnabled, songbirdUrl, flexSdkUrl;
-  let payerAuthConfiguration = [],
+  let creditCardConfiguration = [],
     itemDetails = [],
     shoppingCartItems = [],
     applePayConfiguration = [];
-  var applePayEnabled = false;
-  var applePaySupported = false;
-
+  var applePayEnabled, creditCardEnabled = false, applePaySupported = false;
+  const [isError, setError] = useState(false);
+  
   getOrderData = function () {
     var order = getCurrentOrder(getState());
+    var json = {};
     shoppingCartItems = order.commerceItems;
     if (!isEmptyObject(shoppingCartItems)) {
       Object.keys(shoppingCartItems).forEach(key => {
@@ -37,30 +38,32 @@ const IsvPaymentMethod = props => {
         });
       });
     }
-    var json = {
-      currencyCode: order.priceInfo.currencyCode,
-      orderId: order.id,
-      shoppingCart: {
-        orderTotal: order.priceInfo.amount,
-        items: itemDetails
-      }
-    };
+    if(order?.priceInfo) {
+      json = {
+        currencyCode: order.priceInfo.currencyCode,
+        orderId: order.id,
+        shoppingCart: {
+          orderTotal: order.priceInfo.amount,
+          items: itemDetails
+        }
+      };
+    }
     return json;
   };
 
   if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
-    payerAuthConfiguration = Object.entries(paymentMethods)
+    creditCardConfiguration = Object.entries(paymentMethods)
       .map(entry => entry[1])
       .filter(paymentMethod => paymentMethod.type === 'card');
     applePayConfiguration = Object.entries(paymentMethods)
       .map(entry => entry[1])
       .filter(paymentMethod => paymentMethod.type === 'applepay');
   } else if (Array.isArray(paymentMethods)) {
-    payerAuthConfiguration = paymentMethods?.filter(paymentMethod => paymentMethod.type === 'card');
+    creditCardConfiguration = paymentMethods?.filter(paymentMethod => paymentMethod.type === 'card');
     applePayConfiguration = paymentMethods?.filter(paymentMethod => paymentMethod.type === 'applepay');
   }
 
-  payerAuthConfiguration.forEach(key => {
+  creditCardConfiguration.forEach(key => {
     payerAuthEnabled = key.config.payerAuthEnabled;
     songbirdUrl = key.config.songbirdUrl;
     flexSdkUrl = key.config.flexSdkUrl;
@@ -70,18 +73,38 @@ const IsvPaymentMethod = props => {
     applePayEnabled = true;
   });
 
+  creditCardConfiguration.forEach(key => {
+    creditCardEnabled = true;
+  });
   if (applePayEnabled && window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
     applePaySupported = true;
   }
 
   useEffect(() => {
-    action('flexMicroformAction', {isPreview});
-    usePaymentMethodConfigFetcher(store);
+    if(creditCardEnabled){
+      action('flexMicroformAction', {isPreview}).then(response => {
+        if (!response.ok) {
+          setError(true);
+        }
+      });
+    }
+  },[creditCardEnabled]);
+  
+  useEffect(() => {
+    usePaymentMethodConfigFetcher(store).then(response => {
+      if(!response.ok) {
+        setError(true);
+      }
+    });
   }, []);
 
   useEffect(() => {
     if (payerAuthEnabled) {
-      action('getPayerAuthTokenAction', {isPreview});
+      action('getPayerAuthTokenAction', {isPreview}).then(response => {
+        if(!response.ok){
+          setError(true);
+        }
+      });
       amdJsLoad(songbirdUrl, 'SongBird');
     }
   }, [payerAuthEnabled]);
@@ -93,19 +116,24 @@ const IsvPaymentMethod = props => {
     }
   }, [deviceFingerprint]);
 
-  if (applePaySupported) {
+  const [isvSelectedGenericPayment, setIsvSelectedGenericPayment] = useState();
+
+  if (isError) {
+    action('notify', {level: 'error', message: alertTechnicalProblemTryAgain});
+    return null;
+  } else if (applePaySupported) {
     return (
       <>
         <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />
-        <IsvGooglePayPaymentMethod {...props} />
-        <IsvApplePayPaymentMethod {...props} />
+        <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+        <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
       </>
     );
   } else {
     return (
       <>
         <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />
-        <IsvGooglePayPaymentMethod {...props} />
+        <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
       </>
     );
   }

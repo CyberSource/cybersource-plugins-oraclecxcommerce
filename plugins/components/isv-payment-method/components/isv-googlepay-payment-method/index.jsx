@@ -39,7 +39,9 @@ const IsvGooglePayPaymentMethod = props => {
     labelError,
     messageEmptyCart,
     labelNoDefaultBillingAddressAvailable,
-    textTotal
+    textTotal,
+    isvSelectedGenericPayment,
+    setIsvSelectedGenericPayment
   } = props;
   const {action, getState} = useContext(StoreContext);
   const {priceInfo = {}, paymentGroups = {}} = getCurrentOrder(getState());
@@ -293,17 +295,27 @@ const IsvGooglePayPaymentMethod = props => {
     if (
       googlePayRadioRef.current &&
       ((isDisplayGooglePay && !googlePayRadioRef.current.checked && !isGooglePayButtonHidden) ||
-        (googlePayRadioRef.current.checked && selectedPaymentType != PAYMENT_TYPE_GENERIC))
+        (googlePayRadioRef.current.checked && selectedPaymentType != PAYMENT_TYPE_GENERIC) ||
+      !googlePayRadioRef.current.checked
+      )
     ) {
       googlePayRadioRef.current.checked = false;
       setGooglePayButtonHidden(true);
+
+      //check if selected payment is googlePay
+      if (isvSelectedGenericPayment === 'googlePay') {
+        setIsvSelectedGenericPayment(null);
+      }
     }
-  }, [selectedPaymentType]);
+  }, [selectedPaymentType, isvSelectedGenericPayment]);
 
   //set selectedPayment as generic
   const onGooglePayPaymentSelection = useCallback(() => {
-    if (selectedPaymentType != PAYMENT_TYPE_GENERIC) updateSelectedPaymentType(PAYMENT_TYPE_GENERIC);
+    if (selectedPaymentType != PAYMENT_TYPE_GENERIC){
+     updateSelectedPaymentType(PAYMENT_TYPE_GENERIC);
+    }
     setGooglePayButtonHidden(false);
+    setIsvSelectedGenericPayment("googlePay");
   }, [selectedPaymentType, isGooglePayButtonHidden]);
 
   if (!isDisplayGooglePay) {

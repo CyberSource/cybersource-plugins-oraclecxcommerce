@@ -19,6 +19,7 @@ function validateCaptureContext(captureContext?: string, encryptedData?: string,
       iv
     })
   ) {
+    logger.error(`Transient token could not be verified`);
     throw new Error('Transient token could not be verified');
   }
 }
@@ -39,6 +40,7 @@ export default function validateTransientToken(req: Request, res: Response) {
     try {
       jwtService.verify(token, jwkToPem(<string>captureContext));
     } catch (err) {
+      
       throw new Error('Transient token is not valid: ' + err.message);
     }
   }

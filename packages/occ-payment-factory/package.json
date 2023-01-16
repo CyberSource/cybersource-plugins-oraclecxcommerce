@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/occ-payment-factory",
-    "version": "22.1.0",
+    "version": "23.1.0",
     "private": true,
     "description": "Oracle Commerce payment service factory",
     "repository": {
@@ -11,12 +11,12 @@
     "main": "cjs/indexPaymentFactory.js",
     "types": "cjs/indexPaymentFactory.d.ts",
     "devDependencies": {
-        "winston": "latest",
         "async": "^3.2.3",
         "fecha": "^4.2.0",
-        "is-stream": "^1.1.0",
+        "is-stream": "^3.0.0",
         "logform": "^2.1.1",
-        "one-time": "^1.0.0"
+        "one-time": "^1.0.0",
+        "winston": "latest"
     },
     "scripts": {
         "prebuild": "yarn clean",

@@ -39,7 +39,7 @@ let responseSetUp = '';
  */
 
 const IsvCheckoutContinueToReviewOrderButton = props => {
-  const {continueToPageAddress = '/checkout-review-order', actionContinueToReviewOrder, paymentGroups = {}} = props;
+  const {continueToPageAddress = '/checkout-review-order', actionContinueToReviewOrder, paymentGroups = {}, alertTechnicalProblemTryAgain} = props;
   const {payments = [], selectedPaymentType, addOrUpdatePaymentToContext = noop} = useContext(PaymentsContext) || {};
   const store = useContext(StoreContext);
   const {action, getState} = store;
@@ -215,6 +215,11 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
         });
         Cardinal.setup('init', {
           jwt: payerAuthToken.jwt
+        });
+        Cardinal.on('payments.validated', function (data) {
+          if(data.ErrorNumber != 0){
+            action('notify', {level: ERROR, message: alertTechnicalProblemTryAgain});
+          }
         });
         responseSetUp = await returnSetUp();
       }
