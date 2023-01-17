@@ -11,10 +11,13 @@ declare module 'cybersource-rest-client' {
         keyPass?: string;
         keyFileName?: string;
         keysDirectory?: string;
-        enableLog: boolean;
-        logFilename: string;
-        logDirectory: string;
-        logFileMaxSize: string;
+
+        logConfiguration:{
+            enableLog: boolean;
+            logFilename: string;
+            logDirectory: string;
+            logFileMaxSize: string;
+        };
     }
 
     export class ApiClient {

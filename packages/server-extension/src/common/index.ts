@@ -1,5 +1,5 @@
 import { RequestValidationError } from '../errors/index';
-import { MerchantConfig } from 'cybersource-rest-client';
+// import { MerchantConfig } from 'cybersource-rest-client';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { validationResult } from 'express-validator';
 
@@ -20,11 +20,13 @@ declare global {
   }
 }
 
-export interface RequestContext {
-  gatewaySettings: OCC.GatewaySettings;
-  merchantConfig: MerchantConfig;
-  channel: string;
-}
+export interface RequestContext extends Record<string, any> {}
+
+// export interface RequestContext  {
+//   gatewaySettings: OCC.GatewaySettings;
+//   merchantConfig: MerchantConfig;
+//   channel: string;
+// }
 
 export interface PaymentData {
   request?: Record<string, any>;

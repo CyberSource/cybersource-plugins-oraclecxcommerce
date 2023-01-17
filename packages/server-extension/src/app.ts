@@ -11,6 +11,10 @@ import validateWebhookMiddleware from './middlewares/validateWebhook';
 import ConsoleLogger from './common/logging/consoleLogger';
 import OccLogger from './common/logging/occLogger';
 
+// TODO:
+declare global {
+  var logger : any
+}
 
 function loadConfiguration(app: Application) {
   if (app.locals.env !== 'development') {

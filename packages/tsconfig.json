@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     /* Basic Options */
+    "useUnknownInCatchVariables": false,
     "target": "es2019",                       /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */
     "module": "esnext",                       /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
     "lib": [
@@ -23,7 +24,8 @@
 
     /* Module Resolution Options */
     "moduleResolution": "node",               /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    "baseUrl": "../",                         /* Base directory to resolve non-absolute module names. */
+    "baseUrl": "../",  
+    /* Base directory to resolve non-absolute module names. */
     "paths": {
       "@isv-occ-payment/*": [
         "packages/*/src",
@@ -58,5 +60,9 @@
     "packages/*/umd",
     "packages/*/esm",
     "packages/*/dist"
-  ]
+  ],
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true
+  }
 }

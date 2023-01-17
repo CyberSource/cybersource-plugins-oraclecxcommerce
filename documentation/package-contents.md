@@ -168,40 +168,173 @@ The payment gateway integration service introduces dependency to PSP REST SDK cl
 Find below the structure of the package:
 
 ```text
-.
-├── certs
-├── config
-│   ├── app.local.json // Configuration properties for local development
-│   └── app.prod.json // Configuration properties for OCC environment (applied for a deployed SSE)
-├── docs
-│   └── isv-occ-payment.postman_collection.json // Postman collection with all SSE endpoints available for testing
-├── jest.config.js
-├── jest.int.config.js // Unit tests setup
-├── jest.unit.config.js // Integration tests setup
-├── locales
-├── node_modules // Modules to be deployed to OCC along with custom SSE code
-├── nodemon.json
-├── package-lock.json
-├── package.json
-├── src
-│   ├── __tests__
-│   ├── app.ts // Main entry point for SSE in OCC env, being loaded on start-up
-│   ├── common
-│   ├── controllers // API endpoints
-│   ├── errors
-│   ├── index.ts
-│   ├── middlewares
-│   │   ├── contextLoader.ts // Initialize service logic
-│   │   ├── errorHandler.ts // Error handling logic
-│   │   ├── gatewaySettings.ts // Fetch gateway settings for a given channel (e.g. agent, preview)
-│   │   ├── logger.ts // Simple logger which can be disabled if not needed
-│   │   ├── merchantConfig.ts // Create PSP SK configuration out of gateway settings
-│   │   └── validateWebhook.ts // Validate Webhook signature
-│   ├── server.ts // Local development server
-│   ├── services // All payment integration logic resides here
-│   └── types
-│       └── occ-sdk.d.ts
-└── tsconfig.json
+server-extension
+ ┣ certs
+ ┃ ┣ applePayIdentityCert.pem
+ ┃ ┣ applePayIdentityKey.key
+ ┃ ┗ isv_hybris_test.p12
+ ┣ config
+ ┃ ┣ app.local.json
+ ┃ ┗ app.prod.json
+ ┣ docs
+ ┃ ┗ isv-occ-payment.postman_collection.json
+ ┣ locales
+ ┃ ┗ Resources_en.properties
+ ┣ src
+ ┃ ┣ common
+ ┃ ┃ ┣ logging
+ ┃ ┃ ┃ ┣ consoleLogger.ts
+ ┃ ┃ ┃ ┗ occLogger.ts
+ ┃ ┃ ┣ genericDispatcher.ts
+ ┃ ┃ ┗ index.ts
+ ┃ ┣ controllers
+ ┃ ┃ ┣ validation
+ ┃ ┃ ┃ ┣ applePaySchema.ts
+ ┃ ┃ ┃ ┣ capturePaymentSchema.ts
+ ┃ ┃ ┃ ┣ checkSchema.ts
+ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┣ flexCaptureContextSchema.ts
+ ┃ ┃ ┃ ┣ payerAuthSchema.ts
+ ┃ ┃ ┃ ┣ refundPaymentSchema.ts
+ ┃ ┃ ┃ ┗ reportSchema.ts
+ ┃ ┃ ┣ applePay.ts
+ ┃ ┃ ┣ flex.ts
+ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┣ payerAuth.ts
+ ┃ ┃ ┣ paymentCapture.ts
+ ┃ ┃ ┣ paymentMethods.ts
+ ┃ ┃ ┣ paymentRefund.ts
+ ┃ ┃ ┣ paymentRouter.js
+ ┃ ┃ ┗ report.ts
+ ┃ ┣ errors
+ ┃ ┃ ┣ handlers
+ ┃ ┃ ┃ ┣ api400ResponseHandler.ts
+ ┃ ┃ ┃ ┣ apiErrorResponseHandler.ts
+ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┣ defaultErrorHandler.ts
+ ┃ ┃ ┃ ┣ errorHandler.js
+ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┗ requestValidationErrorHandler.ts
+ ┃ ┃ ┣ apiExecutionError.ts
+ ┃ ┃ ┣ baseError.ts
+ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┗ requestValidationError.ts
+ ┃ ┣ middlewares
+ ┃ ┃ ┣ contextLoader.ts
+ ┃ ┃ ┣ errorHandler.ts
+ ┃ ┃ ┣ gatewaySettings.ts
+ ┃ ┃ ┣ logger.ts
+ ┃ ┃ ┣ merchantConfig.ts
+ ┃ ┃ ┗ validateWebhook.ts
+ ┃ ┣ services
+ ┃ ┃ ┣ occ
+ ┃ ┃ ┃ ┣ occClient.ts
+ ┃ ┃ ┃ ┗ webhookSignatureValidation.ts
+ ┃ ┃ ┣ payments
+ ┃ ┃ ┃ ┣ api
+ ┃ ┃ ┃ ┃ ┣ generateKey.ts
+ ┃ ┃ ┃ ┃ ┣ paymentCommand.ts
+ ┃ ┃ ┃ ┃ ┣ processAuthorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┣ processCapture.ts
+ ┃ ┃ ┃ ┃ ┣ processPayment.ts
+ ┃ ┃ ┃ ┃ ┗ processRefund.ts
+ ┃ ┃ ┃ ┣ converters
+ ┃ ┃ ┃ ┃ ┣ request
+ ┃ ┃ ┃ ┃ ┃ ┣ mappers
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ billingAddressMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ cardSelectionIndicatorMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ decisionManagerMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ deviceFingerprintMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericLineItemsMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ partnerMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthEnrollMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthValidationMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ plainCardPaymentMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ savedCardPaymentMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ savePaymentTokenMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ shippingAddressMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ transientTokenInfoMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ applepayAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ captureEndpoint.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ cardAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ googlepayAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ referenceInfoFallback.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ refund.ts
+ ┃ ┃ ┃ ┃ ┃ ┗ refundEndpoint.ts
+ ┃ ┃ ┃ ┃ ┣ response
+ ┃ ┃ ┃ ┃ ┃ ┣ card
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ authorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ refund.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ common
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericCardPayment.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ genericPayment.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ errors
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ apiCardError.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ apiGenericError.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ generic
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ refund.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ mappers
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleCardMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleGenericMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ savedCardPaymentMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ reports
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ reportDaily.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ reportOnDemand.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ captureEndpoint.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┗ refundEndpoint.ts
+ ┃ ┃ ┃ ┃ ┗ common.ts
+ ┃ ┃ ┃ ┣ paymentMethod
+ ┃ ┃ ┃ ┃ ┣ configBuilder.ts
+ ┃ ┃ ┃ ┃ ┗ paymentMethodService.ts
+ ┃ ┃ ┃ ┣ reports
+ ┃ ┃ ┃ ┃ ┣ dailyReport.ts
+ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┣ intervalService.ts
+ ┃ ┃ ┃ ┃ ┗ onDemandReport.ts
+ ┃ ┃ ┃ ┣ validators
+ ┃ ┃ ┃ ┃ ┣ authJwtValidator.ts
+ ┃ ┃ ┃ ┃ ┣ deviceFingerprintSessionIdValidator.ts
+ ┃ ┃ ┃ ┃ ┗ transientTokenValidator.ts
+ ┃ ┃ ┃ ┣ applePayService.ts
+ ┃ ┃ ┃ ┣ deviceFingerprintService.ts
+ ┃ ┃ ┃ ┣ flexService.ts
+ ┃ ┃ ┃ ┣ payerAuthService.ts
+ ┃ ┃ ┃ ┣ paymentCaptureService.ts
+ ┃ ┃ ┃ ┣ paymentContextBuilder.ts
+ ┃ ┃ ┃ ┣ paymentDispatcher.ts
+ ┃ ┃ ┃ ┗ paymentRefundService.ts
+ ┃ ┃ ┣ cacheService.ts
+ ┃ ┃ ┣ cryptoService.ts
+ ┃ ┃ ┣ jwtService.ts
+ ┃ ┃ ┗ loggingService.ts
+ ┃ ┣ types
+ ┃ ┃ ┗ occ-sdk.d.ts
+ ┃ ┣ app.ts
+ ┃ ┣ indexServerExtension.ts
+ ┃ ┗ server.ts
+ ┣ jest.config.js
+ ┣ jest.int.config.js
+ ┣ jest.unit.config.js
+ ┣ nodemon.json
+ ┣ package-lock.json
+ ┣ package.json
+ ┗ tsconfig.json
 ```
 
 ![Note](images/note.jpg) Please notice a Postman collection (`docs/isv-occ-payment.postman_collection.json`) is included into SSE package which can be used for testing and exploring the following API endpoints:
@@ -328,90 +461,97 @@ The overall UI integration flow is as follows:
 Find below the structure of the package
 
 ```text
-.
-└── packages/apps
-    └── core-commerce-reference-store
-        └── src
-          ├─ components
-          │  ├─ index.js
-          │  ├─ isv-checkout-continue-to-review-order-button
-          │  │  ├─ index.jsx
-          │  │  ├─ meta.js
-          │  │  └─ styles.css
-          │  ├─ isv-checkout-place-order-button
-          │  │  ├─ index.jsx
-          │  │  ├─ locales
-          │  │  │  └─ en.json
-          │  │  ├─ meta.js
-          │  │  └─ styles.css
-          │  ├─ isv-payment-method
-          │  │  ├─ components
-          │  │  │  ├─ isv-add-card-details
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-applepay-payment-method
-          │  │  │  │  ├─ applePay.css
-          │  │  │  │  ├─ applePay.js
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-checkout-card-details
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-checkout-saved-card-item
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-checkout-saved-cards
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-credit-card-payment-method
-          │  │  │  │  ├─ index.jsx
-          │  │  │  │  └─ IsvCreditCard.jsx
-          │  │  │  └─ isv-googlepay-payment-method
-          │  │  │     ├─ googlepay.css
-          │  │  │     ├─ googlePay.js
-          │  │  │     └─ index.jsx
-          │  │  ├─ cybersource
-          │  │  │  ├─ common.js
-          │  │  │  ├─ flexMicroForm.js
-          │  │  │  ├─ flexMicroFormAPI.js
-          │  │  │  └─ scriptLoader.js
-          │  │  ├─ index.jsx
-          │  │  ├─ locales
-          │  │  │  └─ en.json
-          │  │  ├─ meta.js
-          │  │  ├─ styles
-          │  │  │  └─ flex.css
-          │  │  └─ styles.css
-          │  └─ meta.js
-          ├─ endpoints
-          │  ├─ apple-pay-validation-endpoint
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  ├─ flex-microform-endpoint
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  ├─ index.js
-          │  ├─ meta.js
-          │  ├─ payer-auth-endpoint
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  └─ payment-method-config-endpoint
-          │     ├─ index.js
-          │     └─ meta.js
-          ├─ fetchers
-          │  ├─ flex-microform-fetcher
-          │  │  ├─ hook.js
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  ├─ hooks.js
-          │  ├─ index.js
-          │  ├─ meta.js
-          │  └─ payment-method-config-fetcher
-          │     ├─ hook.js
-          │     ├─ index.js
-          │     └─ meta.js
-          └─ selectors
-             ├─ flex-microform-selector
-             │   └─ index.js
-             ├─ index.js
-             └─ paymentMethod-config-selector
-                └─ index.js     
-      
+plugins
+ ┣ actions
+ ┃ ┣ apple-pay-validation-action
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ flex-microform-action
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ get-payer-auth-token-action
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ components
+ ┃ ┣ isv-checkout-continue-to-review-order-button
+ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┣ meta.js
+ ┃ ┃ ┗ styles.css
+ ┃ ┣ isv-checkout-place-order-button
+ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┣ meta.js
+ ┃ ┃ ┗ styles.css
+ ┃ ┣ isv-payment-method
+ ┃ ┃ ┣ components
+ ┃ ┃ ┃ ┣ isv-add-card-details
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-applepay-payment-method
+ ┃ ┃ ┃ ┃ ┣ applePay.css
+ ┃ ┃ ┃ ┃ ┣ applePay.js
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-checkout-card-details
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-checkout-saved-card-item
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-checkout-saved-cards
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-credit-card-payment-method
+ ┃ ┃ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┃ ┃ ┗ IsvCreditCard.jsx
+ ┃ ┃ ┃ ┗ isv-googlepay-payment-method
+ ┃ ┃ ┃ ┃ ┣ googlepay.css
+ ┃ ┃ ┃ ┃ ┣ googlePay.js
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┣ isv-payment-utility
+ ┃ ┃ ┃ ┣ common.js
+ ┃ ┃ ┃ ┣ flex-microform-api.js
+ ┃ ┃ ┃ ┣ flex-microform.js
+ ┃ ┃ ┃ ┗ script-loader.js
+ ┃ ┃ ┣ styles
+ ┃ ┃ ┃ ┗ flex.css
+ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┣ meta.js
+ ┃ ┃ ┗ styles.css
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ endpoints
+ ┃ ┣ apple-pay-validation-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ flex-microform-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ payer-auth-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ payment-method-config-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ fetchers
+ ┃ ┣ flex-microform-fetcher
+ ┃ ┃ ┣ hook.js
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ payment-method-config-fetcher
+ ┃ ┃ ┣ hook.js
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ hooks.js
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ selectors
+ ┃ ┣ flex-microform-selector
+ ┃ ┃ ┗ index.js
+ ┃ ┣ payment-method-config-selector
+ ┃ ┃ ┗ index.js
+ ┃ ┗ index.js
+ ┗ subscribers
+   ┣ index.js
+   ┗ meta.js
 ```
 
 
