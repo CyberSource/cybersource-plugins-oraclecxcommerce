@@ -1,9 +1,5 @@
 # ISV OCC Payment
 
-//TODO:
-//fixing build error -
-//all module to latest
-
 ## Documentation
 
 Please refer to the [official documentation](documentation/occ.md) to get all details about payment integration and installation steps.
