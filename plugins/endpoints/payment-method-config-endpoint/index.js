@@ -2,7 +2,7 @@ import {getBodyAsJson} from '@oracle-cx-commerce/endpoints/factory';
 import {populateError} from '@oracle-cx-commerce/endpoints/utils';
 
 /** This endpoint uses a public API for requesting contents from the url */
-const url = 'ccstorex/custom/isv-payment/v2/paymentMethods';
+const url = '/ccstorex/custom/isv-payment/v2/paymentMethods';
 
 /**
  * Convert response data into an object to be merged into the application state.
