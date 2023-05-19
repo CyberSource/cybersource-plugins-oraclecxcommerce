@@ -1,6 +1,7 @@
 import { PaymentContext } from '@server-extension/common';
 import { PtsV2PaymentsPost201Response } from 'cybersource-rest-client';
 import { responseCodeMappings, SUCCESS_RESPONSE_CODES } from '../common';
+import { addCustomProperties } from './customProperties'; 
 
 type PspResponse = PtsV2PaymentsPost201Response;
 
@@ -33,7 +34,8 @@ export default function convert(context: PaymentContext): OCC.GenericWebhookResp
     additionalProperties: {
       responseReason: paymentResponse.status,
       authAvsCode: processorInformation?.avs?.code,
-      authTime: paymentResponse.submitTimeUtc
+      authTime: paymentResponse.submitTimeUtc,
+      ...addCustomProperties(webhookRequest) 
     }
 
   };

@@ -3,13 +3,13 @@
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
 
-import {useNavigator} from '@oracle-cx-commerce/react-components/link';
-import React, {useContext, useState, useCallback} from 'react';
-import {PaymentsContext, StoreContext} from '@oracle-cx-commerce/react-ui/contexts';
-import {connect} from '@oracle-cx-commerce/react-components/provider';
-import {getCurrentOrder} from '@oracle-cx-commerce/commerce-utils/selector';
+import { useNavigator } from '@oracle-cx-commerce/react-components/link';
+import React, { useContext, useState, useCallback } from 'react';
+import { PaymentsContext, StoreContext } from '@oracle-cx-commerce/react-ui/contexts';
+import { connect } from '@oracle-cx-commerce/react-components/provider';
+import { getCurrentOrder } from '@oracle-cx-commerce/commerce-utils/selector';
 import Styled from '@oracle-cx-commerce/react-components/styled';
-import {noop} from '@oracle-cx-commerce/utils/generic';
+import { noop } from '@oracle-cx-commerce/utils/generic';
 import {
   deleteAppliedPaymentsByTypes,
   deleteAppliedPaymentsByIds,
@@ -28,8 +28,8 @@ import {
 } from '@oracle-cx-commerce/commerce-utils/constants';
 import PropTypes from 'prop-types';
 import css from './styles.css';
-import {createTokenAsync} from '../isv-payment-method/isv-payment-utility/flex-microform-api';
-import {replaceSpecialCharacter} from '../isv-payment-method/isv-payment-utility/common';
+import { createTokenAsync } from '../isv-payment-method/isv-payment-utility/flex-microform-api';
+import { replaceSpecialCharacter } from '../isv-payment-method/isv-payment-utility/common';
 const ERROR = 'error';
 let responseSetUp = '';
 
@@ -39,10 +39,10 @@ let responseSetUp = '';
  */
 
 const IsvCheckoutContinueToReviewOrderButton = props => {
-  const {continueToPageAddress = '/checkout-review-order', actionContinueToReviewOrder, paymentGroups = {}, alertTechnicalProblemTryAgain} = props;
-  const {payments = [], selectedPaymentType, addOrUpdatePaymentToContext = noop} = useContext(PaymentsContext) || {};
+  const { continueToPageAddress = '/checkout-review-order', actionContinueToReviewOrder, paymentGroups = {}, alertTechnicalProblemTryAgain } = props;
+  const { payments = [], selectedPaymentType, addOrUpdatePaymentToContext = noop } = useContext(PaymentsContext) || {};
   const store = useContext(StoreContext);
-  const {action, getState} = store;
+  const { action, getState } = store;
   //these payments can be combined with some other payment type like credit card, gift card etc.
   //so these payment type should not be deleted while applying new compatible payment type
   const compatiblePaymentTypes = [PAYMENT_TYPE_GIFTCARD, PAYMENT_TYPE_LOYALTYPOINTS, PAYMENT_TYPE_STORECREDIT];
@@ -64,7 +64,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
    */
   const applyPayments = paymentsToApply => {
     if (paymentsToApply.length > 0) {
-      action('applyPayments', {items: paymentsToApply}).then(response => {
+      action('applyPayments', { items: paymentsToApply }).then(response => {
         if (response.ok) {
           const order = getCurrentOrder(getState());
           // If entered payment details is complete, navigate to the review order page
@@ -73,7 +73,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           }
           setInProgress(false);
         } else {
-          action('notify', {level: ERROR, message: response.error.message});
+          action('notify', { level: ERROR, message: response.error.message });
           setInProgress(false);
         }
       });
@@ -93,7 +93,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       if (Object.values(paymentGroups).some(pGroup => pGroup.paymentMethod !== PAYMENT_TYPE_PAY_IN_STORE)) {
         const response = await deleteAppliedPaymentsByTypes(store);
         if (!response.ok) {
-          action('notify', {level: ERROR, message: response.error.message});
+          action('notify', { level: ERROR, message: response.error.message });
           isError = true;
         }
       }
@@ -111,7 +111,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       if (paymentGroupsToRemoved.length) {
         const response = await deleteAppliedPaymentsByIds(action, paymentGroupsToRemoved);
         if (!response.ok) {
-          action('notify', {level: ERROR, message: response.error.message});
+          action('notify', { level: ERROR, message: response.error.message });
           isError = true;
         }
       }
@@ -134,7 +134,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       return;
     }
     for (const payment of payments) {
-      const {paymentGroupId, ...paymentDetails} = payment;
+      const { paymentGroupId, ...paymentDetails } = payment;
       const existingPaymentGroup = paymentGroups[paymentGroupId];
       if (paymentGroupId && existingPaymentGroup) {
         // Remove existing applied credit card payment group and reapply if
@@ -148,17 +148,17 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           (!existingPaymentGroup.savedCardId && payment.savedCardId) ||
           (existingPaymentGroup.savedCardId && !payment.savedCardId)
         ) {
-          const response = await action('deleteAppliedPayment', {paymentGroupId});
+          const response = await action('deleteAppliedPayment', { paymentGroupId });
           if (response.ok) {
             paymentsToApply.push(paymentDetails);
           } else {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             isError = true;
             setInProgress(false);
             break;
           }
         } else {
-          await action('deleteAppliedPayment', {paymentGroupId});
+          await action('deleteAppliedPayment', { paymentGroupId });
           paymentsToApply.push(
             Object.fromEntries(Object.entries(paymentDetails).filter(arr => arr[0] != 'paymentGroupId'))
           );
@@ -180,7 +180,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       payerAuthConfiguration = [],
       updatedPayments;
     const deleteField = ['creditCardNumberData', 'securityCodeData', 'flexMicroForm', 'number'];
-    const {paymentMethods = []} = store.getState()?.paymentMethodConfigRepository;
+    const { paymentMethods = [] } = store.getState()?.paymentMethodConfigRepository;
     const payerAuth = store.getState().payerAuthRepository || {};
     const payerAuthToken = payerAuth.payerAuthToken || {};
     const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
@@ -188,7 +188,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       const {
         expiryMonth,
         expiryYear,
-        creditCardNumberData: {card} = {},
+        creditCardNumberData: { card } = {},
         flexMicroForm,
         customProperties
       } = cardPayment || {};
@@ -217,21 +217,23 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           jwt: payerAuthToken.jwt
         });
         Cardinal.on('payments.validated', function (data) {
-          if(data.ErrorNumber != 0){
-            action('notify', {level: ERROR, message: alertTechnicalProblemTryAgain});
+          if (data.ErrorNumber != 0) {
+            action('notify', { level: ERROR, message: alertTechnicalProblemTryAgain });
           }
         });
         responseSetUp = await returnSetUp();
       }
       //check for saved card return payment else create token for new card
       if (cardPayment.savedCardId) {
-        const {customProperties = {}} = cardPayment;
+        const { customProperties = {} } = cardPayment;
         cardPayment.customProperties = {
+          ...customProperties,
           referenceId: responseSetUp,
           ...(customProperties.deviceFingerprint?.deviceFingerprintEnabled &&
             customProperties.deviceFingerprint?.deviceFingerprintData)
         };
         replaceSpecialCharacter(cardPayment.customProperties);
+        delete cardPayment.customProperties["deviceFingerprint"];
         finalPayment = payments.filter(payment => payment.type !== PAYMENT_TYPE_CARD);
         finalPayment = [...finalPayment, cardPayment];
       } else {
@@ -251,7 +253,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           }
         };
         if (payerAuthEnabled && !cardPayment.hasOwnProperty('savedCardId')) {
-          store.getState().payerAuthRepository = {...payerAuth, transientToken: transientToken.encoded};
+          store.getState().payerAuthRepository = { ...payerAuth, transientToken: transientToken.encoded };
           cardPrefix = transientToken.decoded.data.number.substring(0, 6);
           Cardinal.trigger('bin.process', cardPrefix).then(function (results) {
             console.log(results);
@@ -306,7 +308,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
    * or there are no existing payment groups or there is a default payment group or appliedPaymentGroup
    */
   const isContinueToReviewOrderButtonDisabled = () => {
-    const {creditCardNumberData, securityCodeData, savedCardId, cardCVV} =
+    const { creditCardNumberData, securityCodeData, savedCardId, cardCVV } =
       (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     const microFormIsValid =
       creditCardNumberData && creditCardNumberData.valid && securityCodeData && securityCodeData.valid;
@@ -315,15 +317,15 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
     } else {
       return selectedPaymentType === PAYMENT_TYPE_CARD
         ? inProgress ||
-            (!isZeroValueOrder(props) &&
-              (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
-              selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
-              !microFormIsValid)
+        (!isZeroValueOrder(props) &&
+          (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
+          selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
+          !microFormIsValid)
         : inProgress ||
-            (!isZeroValueOrder(props) &&
-              (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
-              selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
-              payments.length === 0);
+        (!isZeroValueOrder(props) &&
+          (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
+          selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
+          payments.length === 0);
     }
   };
 
