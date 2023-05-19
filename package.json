@@ -1,6 +1,6 @@
 {
   "name": "isv-occ-payment",
-  "version": "23.1.1",
+  "version": "23.1.0",
   "description": "ISV Oracle Commerce Cloud Payment Plugin",
   "main": "index.js",
   "repository": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git",

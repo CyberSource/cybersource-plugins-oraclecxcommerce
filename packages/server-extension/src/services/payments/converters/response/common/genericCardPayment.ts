@@ -6,6 +6,7 @@ import {
   PtsV2PaymentsReversalsPost201Response
 } from 'cybersource-rest-client';
 import { pspResponseTypeMappings, responseCodeMappings } from '../common';
+import { addCustomProperties } from './customProperties'; 
 
 type PspResponse =
   | PtsV2PaymentsPost201Response
@@ -47,7 +48,8 @@ export default function convert(context: PaymentContext): OCC.GenericCardWebhook
       additionalProperties: {
         authAvsCode: processorInformation?.avs?.code,
         authCvResult: processorInformation?.cardVerification?.resultCode,
-        authTime: paymentResponse.submitTimeUtc
+        authTime: paymentResponse.submitTimeUtc,
+        ...addCustomProperties(webhookRequest) 
       }
     }
     
