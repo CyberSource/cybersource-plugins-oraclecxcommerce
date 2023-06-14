@@ -11,7 +11,6 @@ import validateWebhookMiddleware from './middlewares/validateWebhook';
 import ConsoleLogger from './common/logging/consoleLogger';
 import OccLogger from './common/logging/occLogger';
 
-// TODO:
 declare global {
   var logger : any
 }
@@ -27,17 +26,31 @@ function loadConfiguration(app: Application) {
 
 export default function configureApp(app: Application, baseRoutePath = '') {
   loadConfiguration(app);
-
-
-  app.use(contextLoaderMiddleware);
-  app.use(loggerMiddleware);
-  app.use(validateWebhookMiddleware);
-
   //added header
   app.use((req, res, next)=>{
     res.setHeader("X-Frame-Options", "same-origin");
     next();
   })
+
+  app.use((req, res, next) => {
+    const { MD } = req.body;
+    if (MD && typeof MD === "string") {
+      res.removeHeader('X-frame-Options');
+      console.log('Md data: '+MD);
+      const channelRegex = /channel=([^,]+)/i;
+      const match = MD.match(channelRegex);
+      const headerChannel =  match ? match[1]:null;
+       console.log("channel-", headerChannel);
+      if (headerChannel)
+        req.headers['channel'] = headerChannel;
+    }
+    next();
+  })
+
+
+  app.use(contextLoaderMiddleware);
+  app.use(loggerMiddleware);
+  app.use(validateWebhookMiddleware);
 
   app.use(gatewaySettings, merchantConfig);
 

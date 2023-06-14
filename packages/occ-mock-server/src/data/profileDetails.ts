@@ -1,0 +1,100 @@
+export default {
+    "lastPurchaseDate": "2023-05-24T11:45:20.000Z",
+    "GDPRProfileP13nConsentDate": null,
+    "GDPRProfileP13nConsentGranted": false,
+    "catalog": null,
+    "parentOrganization": null,
+    "shippingSurchargePriceList": null,
+    "firstPurchaseDate": "2023-04-28T07:47:08.000Z",
+    "profileType": null,
+    "loyaltyPrograms": [],
+    "translations": {},
+    "lastPurchaseAmount": 60.0,
+    "registrationDate": "2023-04-28T06:00:38.000Z",
+    "links": [
+        {
+            "rel": "self",
+            "href": "https://asbx88c1dev-store.occa.ocs.oraclecloud.com/ccapp/v1/profiles/10360494"
+        }
+    ],
+    "lifetimeAOV": 1247.0,
+    "id": "10360494",
+    "derivedSalePriceList": null,
+    "daytimeTelephoneNumber": null,
+    "customerContactId": null,
+    "taxExempt": false,
+    "devices": [],
+    "active": true,
+    "lastVisitDate": "2023-05-25T04:53:55.000Z",
+    "taxExemptionCode": null,
+    "previousVisitDate": "2023-05-24T11:27:48.000Z",
+    "firstName": "John",
+    "creditCards": [
+        {
+            "cardProps": {
+                "customerId": "FAB0EF82B54C6559E053AF598E0AE1B3"
+            },
+            "nameOnCard": "John",
+            "creditCardNumber": "xxxxxxxxxxxx1111",
+            "repositoryId": "usercc20004",
+            "id": "usercc20004"
+        }
+    ],
+    "lifetimeCurrencyCode": "USD",
+    "derivedTaxExemptionCode": null,
+    "userType": null,
+    "secondaryOrganizations": [],
+    "shippingAddresses": [
+        {
+            "country": "US",
+            "lastName": "Doe",
+            "types": [],
+            "address3": null,
+            "city": "Mountain View",
+            "address2": null,
+            "address1": "1295 Charleston Road,",
+            "postalCode": "94043",
+            "county": null,
+            "firstName": "John",
+            "externalAddressId": null,
+            "phoneNumber": null,
+            "repositoryId": "10626196",
+            "state": "CA"
+        }
+    ],
+    "derivedPriceListGroup": null,
+    "lastName": "Doe",
+    "gender": "unspecified",
+    "roles": [],
+    "numberOfOrders": 31,
+    "locale": "en",
+    "login": "test.email@gmail.com",
+    "receiveEmailDate": null,
+    "lifetimeSpend": 38657.0,
+    "email": "test.email@gmail.com",
+    "numberOfVisits": 209,
+    "receiveEmail": "no",
+    "priceListGroup": null,
+    "dateOfBirth": null,
+    "repositoryId": "10360494",
+    "shippingAddress": null,
+    "firstVisitDate": "2023-04-28T05:59:03.000Z",
+    "lastActivity": "2023-04-28T06:00:38.000Z",
+    "billingAddress": {
+        "country": "US",
+        "lastName": "Doe",
+        "types": [],
+        "address3": null,
+        "city": "Mountain View",
+        "address2": null,
+        "address1": "1295 Charleston Road,",
+        "postalCode": "94043",
+        "county": null,
+        "firstName": "John",
+        "externalAddressId": null,
+        "phoneNumber": null,
+        "repositoryId": "10362438",
+        "state": "CA"
+    },
+    "derivedShippingSurchargePriceList": null
+}

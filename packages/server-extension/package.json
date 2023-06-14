@@ -95,11 +95,12 @@
     "/ccstorex/custom/isv-payment/v2/payments",
     "/ccstorex/custom/isv-payment/v2/paymentMethods",
     "/ccstorex/custom/isv-payment/v2/applepay/validate",
-    "/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt",
     "/ccstorex/custom/isv-payment/v2/report/daily",
     "/ccstorex/custom/isv-payment/v2/report/onDemand",
     "/ccstorex/custom/isv-payment/v2/capture",
-    "/ccstorex/custom/isv-payment/v2/refund"
+    "/ccstorex/custom/isv-payment/v2/refund",
+    "/ccstorex/custom/isv-payment/v2/payerAuth/setup",
+    "/ccstorex/custom/isv-payment/v2/payerAuthReturnUrl"
   ],
   "whitelistUrls": [
     "https://apitest.cybersource.com",

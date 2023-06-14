@@ -106,11 +106,6 @@ The following settings can be configured in gateway:
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Credit Card**                     |                                                                                                                                                                                                                                                                                                                   |
 | **payerAuthEnabled**                | Enables payer authentication for credit cards                                                                                                                                                                                                                                                                     |
-| **payerAuthKeyId**                  | Cardinal Cruise Key ID. Request from PSP                                                                                                                                                                                                                                                                          |
-| **payerAuthKey**                    | Cardinal Cruise Key. Request from PSP                                                                                                                                                                                                                                                                             |
-| **secretKey3DS**                    | Required by OCC. Can be ignored                                                                                                                                                                                                                                                                                   |
-| **payerAuthOrgUnitId**              | Cardinal Cruise Org ID. Request from PSP                                                                                                                                                                                                                                                                          |
-| **songbirdUrl**                     | Cardinal Commerce browser SDK to control payer authentication process in UI                                                                                                                                                                                                                                       |
 | **flexSdkUrl**                      | Credit Card Flex SDK URL                                                                                                                                                                                                                                                                                          |
 | **isCVVRequiredForSavedCards**      | Is the CVV required when using a saved card.                                                                                                                                                                                                                                                                      |
 | **isCVVRequiredForScheduledOrders** | Is the CVV required for a Scheduled Order                                                                                                                                                                                                                                                                         |
@@ -129,7 +124,6 @@ The following settings can be configured in gateway:
 | **applePayInitiative**              | A predefined value that identifies the e-commerce application making the request. For ApplePay on the web use 'web'                                                                                                                                                                                               |
 | **applePayInitiativeContext**       | Fully qualified domain name associated with your Apple Pay Merchant Identity Certificate                                                                                                                                                                                                                          |
 | **applePaySupportedNetworks**       | ApplePay Supported Networks                                                                                                                                                                                                                                                                                       |
-| **applePaySdkUrl**                  | ApplePay SDK URL                                      |
 | **applePayDisplayName**    | Apple Pay display name |
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Decision Manager**                |                                                                                                                                                                                                                                                                                                                   |
@@ -142,7 +136,7 @@ The following settings can be configured in gateway:
 | **dailyReportName**                 | Daily Report Name                                                                                                                                                                                                                                                                                                 |
 
 
-![Important](images/important.jpg) `secretKey3DS`, `isCVVRequiredForSavedCards` and `isCVVRequiredForScheduledOrders` should be present in gateway settings in order for saved cards and Payer Authentication to be working
+![Important](images/important.jpg)  `isCVVRequiredForSavedCards` and `isCVVRequiredForScheduledOrders` should be present in gateway settings in order for saved cards to be working
 
 Please refer to the [Authentication](https://developer.cybersource.com/api/developer-guides/dita-gettingstarted/authentication.html) documentation to learn more about available authentication types. In case authentication type is JWT you should place `p12` key file in `packages/server-extension/certs` directory, the `keyFileName` setting should be equal to the file name without 'p12' extension. `keyAlias` and `keyPass` should be updated accordingly (usually same value as MID).
 
@@ -194,7 +188,6 @@ server-extension
  ┃ ┃ ┃ ┣ checkSchema.ts
  ┃ ┃ ┃ ┣ common.ts
  ┃ ┃ ┃ ┣ flexCaptureContextSchema.ts
- ┃ ┃ ┃ ┣ payerAuthSchema.ts
  ┃ ┃ ┃ ┣ refundPaymentSchema.ts
  ┃ ┃ ┃ ┗ reportSchema.ts
  ┃ ┃ ┣ applePay.ts
@@ -229,6 +222,7 @@ server-extension
  ┃ ┣ services
  ┃ ┃ ┣ occ
  ┃ ┃ ┃ ┣ occClient.ts
+ ┃ ┃ ┃ ┣ occClientStorefront.ts
  ┃ ┃ ┃ ┗ webhookSignatureValidation.ts
  ┃ ┃ ┣ payments
  ┃ ┃ ┃ ┣ api
@@ -274,6 +268,7 @@ server-extension
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ refund.ts
  ┃ ┃ ┃ ┃ ┃ ┣ common
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ customProperties.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericCardPayment.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ genericPayment.ts
  ┃ ┃ ┃ ┃ ┃ ┣ errors
@@ -308,13 +303,12 @@ server-extension
  ┃ ┃ ┃ ┃ ┣ intervalService.ts
  ┃ ┃ ┃ ┃ ┗ onDemandReport.ts
  ┃ ┃ ┃ ┣ validators
- ┃ ┃ ┃ ┃ ┣ authJwtValidator.ts
  ┃ ┃ ┃ ┃ ┣ deviceFingerprintSessionIdValidator.ts
  ┃ ┃ ┃ ┃ ┗ transientTokenValidator.ts
  ┃ ┃ ┃ ┣ applePayService.ts
  ┃ ┃ ┃ ┣ deviceFingerprintService.ts
  ┃ ┃ ┃ ┣ flexService.ts
- ┃ ┃ ┃ ┣ payerAuthService.ts
+ ┃ ┃ ┃ ┣ payerAuthSetupService.ts
  ┃ ┃ ┃ ┣ paymentCaptureService.ts
  ┃ ┃ ┃ ┣ paymentContextBuilder.ts
  ┃ ┃ ┃ ┣ paymentDispatcher.ts
@@ -332,7 +326,6 @@ server-extension
  ┣ jest.int.config.js
  ┣ jest.unit.config.js
  ┣ nodemon.json
- ┣ package-lock.json
  ┣ package.json
  ┗ tsconfig.json
 ```

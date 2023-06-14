@@ -3,9 +3,6 @@
 
 ## Oracle Commerce Cloud
 
-**Version 2.0.0**
-April 2023
-
 ## Contents
 
 | Documentation                                                  | Description                                                                                                                  |

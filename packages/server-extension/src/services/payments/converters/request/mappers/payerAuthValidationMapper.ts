@@ -1,10 +1,9 @@
 import { PaymentContext } from '@server-extension/common';
-import jwtService from '@server-extension/services/jwtService';
 import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { PaymentRequestMapper } from '../../common';
 
 export const payerAuthValidationMapper: PaymentRequestMapper = {
-  supports: (context: PaymentContext) => Boolean(context.webhookRequest.customProperties?.authJwt),
+  supports: (context: PaymentContext) => Boolean(context.webhookRequest.customProperties?.authenticationTransactionId),
 
   map: (context: PaymentContext) => {
     const { webhookRequest } = context;
@@ -14,15 +13,10 @@ export const payerAuthValidationMapper: PaymentRequestMapper = {
         actionList: ['VALIDATE_CONSUMER_AUTHENTICATION']
       },
       consumerAuthenticationInformation: {
-        authenticationTransactionId: getAuthenticationTransactionId(
-          webhookRequest.customProperties!.authJwt!
-        )
+        authenticationTransactionId: webhookRequest.customProperties!.authenticationTransactionId
       }
     };
   }
 };
 
-function getAuthenticationTransactionId(authJwt: string) {
-  const decoded = jwtService.decode(authJwt);
-  return decoded.payload.Payload.Payment.ProcessorTransactionId;
-}
+

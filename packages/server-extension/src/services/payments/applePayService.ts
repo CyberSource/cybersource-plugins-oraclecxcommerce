@@ -5,6 +5,7 @@ import path from 'path';
 import request from 'superagent';
 import httpProxy from 'superagent-proxy';
 
+
 const CERT_PATH = path.join(__dirname, '../../../certs/applePayIdentityCert.pem');
 const CERT = fs.readFileSync(CERT_PATH, 'utf8');
 const KEY_PATH = path.join(__dirname, '../../../certs/applePayIdentityKey.key');

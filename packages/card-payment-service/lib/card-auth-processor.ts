@@ -12,7 +12,6 @@
 
 import { PaymentProcessor } from '@isv-occ-payment/occ-payment-service';
 import validateTransientToken from '@isv-occ-payment/server-extension/cjs/services/payments/validators/transientTokenValidator';
-import validateAuthJwt from '@isv-occ-payment/server-extension/cjs/services/payments/validators/authJwtValidator';
 import validateDeviceFingerprintSessionId from '@isv-occ-payment/server-extension/cjs/services/payments/validators/deviceFingerprintSessionIdValidator';
 import cardAuthorizationRequest from '@isv-occ-payment/server-extension/cjs/services/payments/converters/request/cardAuthorization';
 import processPayment from '@isv-occ-payment/server-extension/cjs/services/payments/api/processPayment';
@@ -29,7 +28,6 @@ export class CardAuthProcessor extends PaymentProcessor {
       name: 'auth',
       middlewares: [
         validateTransientToken,
-        validateAuthJwt,
         validateDeviceFingerprintSessionId,
         cardAuthorizationRequest,
         processPayment,
