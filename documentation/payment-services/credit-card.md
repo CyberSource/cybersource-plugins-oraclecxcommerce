@@ -42,23 +42,14 @@ The following gateway settings apply to credit card payments
 |-------------------------------------|---------------------------------------------------------------------------------------------------|
 | **paymentMethodTypes**              | Enabled Payment Methods. 'Credit & Debit Card' should be enabled                                  |
 | **paymentOptions**                  | Payment options enabled for payment using Payment Widget. 'Credit & Debit Card' should be enabled |
-| **payerAuthEnabled**                | Enables payer authentication (3D Secure) for credit cards                                         |
-| **payerAuthKeyId**                  | Cardinal Cruise Key ID. Request value from PSP                                                    |
-| **payerAuthKey**                    | Cardinal Cruise Key. Request value from PSP                                                       |
-| **secretKey3DS**                    | Required by OCC. Can be ignored                                                                   |
-| **payerAuthOrgUnitId**              | Cardinal Cruise Org ID. Request value from PSP                                                    |
-| **songbirdUrl**                     | Cardinal Commerce browser SDK to control payer authentication process in UI                       |
+| **payerAuthEnabled**                | Enables payer authentication (3D Secure) for credit cards                                         |                                                                                                                     |            |
 | **saleEnabled**                     | Indicates if authorizing and taking payment will be done at the same time                         |
-| **flexSdkUrl**                      | Credit Card Flex SDK URL                                                                          |
 | **isCVVRequiredForSavedCards**      | Should be disabled as CVV is not required in backend                                              |
 | **isCVVRequiredForScheduledOrders** | Should be disabled as CVV is not required in backend                                              |
 
 Default values:
 
 - `payerAuthEnabled`: true. Payer authentication is enabled by default
-- `flexSdkUrl`: https://flex.cybersource.com/cybersource/assets/microform/0.11/flex-microform.min.js
-- `songbirdUrl`: https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js
-- `secretKey3DS`: random value. [Required by OCC](https://docs.oracle.com/en/cloud/saas/cx-commerce/20c/ccdev/incorporate-3d-secure-support.html) but not required by implementation and not used anywhere
 - `isCVVRequiredForSavedCards`: false
 - `isCVVRequiredForScheduledOrders`: false
 - `saleEnabled` - by default SALE is disabled for Card payments. Can be enabled in OCC Admin
@@ -99,9 +90,9 @@ Actions are used to call APIs but when the user performeces an action like click
 
 To read more about follow the next link.
 
-Understand OSF applications [CX-Commerce](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/dosfa/understand-osf-applications.html)
+Understand OSF applications [CX-Commerce](https://docs.oracle.com/en/cloud/saas/cx-commerce/22d/dosfa/understand-osf-applications.html)
 
-REST API for Oracle Commerce Cloud 21D [Oracle Commerce Cloud](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/cxocc/op-ccadmin-v1-merchant-paymenttypes-get.html)
+REST API for Oracle Commerce Cloud 22D [Oracle Commerce Cloud](https://docs.oracle.com/en/cloud/saas/cx-commerce/22d/cxocc/op-ccadmin-v1-merchant-paymenttypes-get.html)
 
 Microform Integration 0.11 Documentation [Microform 0.11](https://developer.cybersource.com/api/developer-guides/dita-flex/da-microform-integ/microform-integ.html)
 
@@ -113,7 +104,7 @@ plugins
  | ├── flex-microform-action
  | | ├── index.js
  | | └── meta.js
- | ├── get-payer-auth-token-action
+ | ├── get-payer-auth-setup-action
  | | ├── index.js
  | | └── meta.js
  | ├── .eslintrc
@@ -137,11 +128,15 @@ plugins
  | | | └── isv-credit-card-payment-method
  | | |   ├── index.jsx
  | | |   └── IsvCreditCard.jsx
- | | ├── cybersource
+ | | |-- isv-checkout-place-order-button
+ | | | ├── index.jsx
+ | | | ├── meta.js
+ | | | └── styles.css
+ | | ├── isv-payment-utility
  | | | ├── common.js
- | | | ├── flexMicroForm.js
- | | | ├── flexMicroFormAPI.js
- | | | └── scriptLoader.js
+ | | | ├── flex-microform.js
+ | | | ├── flex-microForm-api.js
+ | | | └── script-loader.js
  | | ├── styles
  | | | └── flex.css
  | | ├── index.jsx
@@ -154,7 +149,7 @@ plugins
  | ├── flex-microform-endpoint
  | | ├── index.js
  | | └── meta.js
- | ├── payer-auth-endpoint
+ | ├── payer-auth-setup-endpoint
  | | ├── index.js
  | | └── meta.js
  | ├── payment-method-config-endpoint
@@ -177,7 +172,7 @@ plugins
  └── selectors
    ├── flex-microform-selector
    | └── index.js
-   ├── paymentMethod-config-selector
+   ├── payment-method-config-selector
    | └── index.js
    └── index.js
 
@@ -186,9 +181,8 @@ plugins
 
 - Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint. Saved credit cards are also retrieved from OCC in case user is logged-in.
 - `Card` component renders by default list of saved cards if it is not empty and user is logged-in. Otherwise credit card form is rendered
-- Credit card form is managed by `CreditCardForm` component. Saved cards are managed by `SavedCardSelector` component. Shopper can switch between both components to choose preferable way to pay.
+- Credit card form is managed by `IsvCheckoutCardDetails` component. Saved cards are managed by `IsvCheckoutSavedCards` component. Shopper can switch between both components to choose preferable way to pay.
 - FlexMicroform is initialized by fetching keys from SSE using `/ccstorex/custom/isv-payment/v2/keys` endpoint
-- Credit card form is validated using rules defined in `payment-widget/widget/isv-occ-payment/js/components/Card/CreditCardForm/validator.ts`
 - Transient token is generated client side and is then included into payment details during order submission
 - In case shopper pays with saved card only savedCardId is sent and transient token is not generated. Shopper can also choose to set card as default
 
@@ -203,8 +197,7 @@ The list of handlers processing credit card Webhook requests in SSE can be found
 
 | **Operation**    | **Handlers**                    | **Description**                                                                                                  |
 |------------------|---------------------------------|------------------------------------------------------------------------------------------------------------------|
-| **card_0100**    | `validateTransientToken`        | validate transient token is valid by checking its signature                                                      |
-|                  | `validateAuthJwt`               | validate payer authentication. applies when Payer Authentication is enabled                                      |
+| **card_0100**    | `validateTransientToken`        | validate transient token is valid by checking its signature                                              
 |                  | `cardAuthorizationRequest`      | convert Webhook request into payment PSP request                                                                 |
 |                  | `processPayment`                | send payment request to PSP using client SDK                                                                     |
 |                  | `authorizationResponse`         | converts PSP response into Webhook response                                                                      |
@@ -222,13 +215,12 @@ The list of handlers processing credit card Webhook requests in SSE can be found
 ### Payer Authentication
 
 Consume authentication is supported through the means of [Cardinal Cruise](https://cardinaldocs.atlassian.net/wiki/spaces/CC/overview?mode=global) integration. According to documentation:
-> If you are using tokenization, you must use the Hybrid integration method.
+> If you are using tokenization, you must use the Direct integration method.
 
-Considering FlexMicroform is based on credit card tokenization and same is applicable to saved credit cards the Hybrid integration method has being considered for implementation. Please refer to the following documentation on how Hybrid integration method works:
+Considering FlexMicroform is based on credit card tokenization and same is applicable to saved credit cards the Direct integration method has being considered for implementation. Please refer to the following documentation on how Direct integration method works:
 
-- [Cardinal Cruise Hybrid](https://cardinaldocs.atlassian.net/wiki/spaces/CC/pages/360668/Cardinal+Cruise+Hybrid)
 - [Cybersource Payer Authentication using Simple Order API](https://developer.cybersource.com/library/documentation/dev_guides/Payer_Authentication_SO_API/Payer_Authentication_SO_API.pdf)
-- [Hybrid Payer Authentication](https://developer.cybersource.com/library/documentation/dev_guides/Payer_Authentication_SO_API/html/Topics/Hybrid_Payer_Authentication.htm)
+- [Direct Payer Authentication](https://developer.cybersource.com/content/dam/docs/cybs/en-us/payer-authentication/developer/all/rest/payer-auth.pdf)
 
 Although documents refer to Simple Order API (SOAP) same concepts apply to [REST API](https://developer.cybersource.com/api-reference-assets/index.html#payer-authentication)
 
@@ -236,39 +228,38 @@ Payer authentication services can be requested together with authorization servi
 
 Payer authentication is enabled by default using `payerAuthEnabled` gateway setting. It can be disabled in OCC Admin.
 
-![Important](../images/important.jpg) You should contact payment provider in order to enable Payer Authentication services for your merchant account and get values for the following gateway settings: `payerAuthKeyId`, `payerAuthKey`, `payerAuthOrgUnitId`
+![Important](../images/important.jpg) You should contact payment provider in order to enable Payer Authentication services for your merchant account
 
 Generally payer authentication services are executed together with credit card authorization:
 
-1. JWT token is created using existing order information using `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt` SSE endpoint
-2. Cardinal Cruise JS SDK library is included into storefront and is called to setup the payer auth process
-3. Credit card is tokenized as per process described in the [FlexMicroform Card Payments](#flexmicroform-card-payments) section
-4. Order is created and "Authorize" Webhook request is triggered
-5. Credit card Authorization service is called along with Payer Auth Enrollment
-6. In case credit card is enrolled in payer authentication authorization is rejected with specific reason code (10000). The reply from payment provider will contain all data needed to start consumer authentication flow in storefront
-7. Payer Auth data is included into Webhook response using custom payment properties
-8. In storefront Cardinal Cruise JS SDK continues the consumer authentication flow with the custom payment properties returned in Webhook response.
-9. Popup window is displayed to finish consumer authentication
-10. On successful authentication `authJwt` is returned and is included in custom payment request properties
-11. Card authorization is triggered again by calling order creation OCC operation
-12. "Authorize" Webhook request is triggered with `authJwt` being included in its payload
-13. Card authorization service is executed along with Payer Auth Validation service
+1. PayerAuth setup is created using card information using `/ccstorex/custom/isv-payment/v2/payerAuth/setup` SSE endpoint
+2. Credit card is tokenized as per process described in the [FlexMicroform Card Payments](#flexmicroform-card-payments) section
+3. Order is created and "Authorize" Webhook request is triggered
+4. Credit card Authorization service is called along with Payer Auth Enrollment
+5. In case credit card is enrolled in payer authentication, authorization is rejected with specific reason code (10000). The response from payment provider will contain all data needed to start consumer authentication flow in storefront
+6. Payer Auth data is included in Webhook response using custom payment properties
+7. In storefront Cardinal Cruise continues the consumer authentication flow with the custom payment properties returned in Webhook response.
+8. Popup window is displayed to finish consumer authentication
+9. On successful authentication `authentication transaction id` is returned and is included in custom payment request properties
+10. Card authorization is triggered again by calling order creation OCC operation
+11. "Authorize" Webhook request is triggered with `authentication transaction id` being included in its payload
+12. Card authorization service is executed along with Payer Auth Validation service
 
 The diagram below denotes all the steps involved:
 
 ![Payer Authentication](images/credit-card-payer-auth-payment-flow.png)
 
+*Note:* Local Instance doesn't support Payer Authentication with saved cards
+
 #### UI integration details
 
 The following UI component contains Payer Authentication integration logic `plugins/components/isv-payment-method/index.jsx` and `plugins/components/isv-place-order-button/index.jsx`.
 
-- Payer Authentication is initiated by generating a signed JWT token containing current order data. The following SSE endpoint is used `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt`
 - Payment details are being enhanced with validation JWT token once shopper finishes consumer authentication process
 
 #### Backend (SSE) integration details
 
 - `server-extension/src/controllers/payerAuth.ts` Controller for generating a signed PayerAuth JWT
-- `server-extension/src/services/payments/validators/authJwtValidator.ts` Component to validate authentication JWT (authJwt)
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthEnrollMapper.ts` Including payer auth reference id into PSP card authorization request
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthValidationMapper.ts` Including payer auth validation token into PSP card authorization request
 

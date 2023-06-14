@@ -10,7 +10,8 @@ const widgetResourceKeys = [
   'buttonScheduledOrder',
   'buttonSchedulingOrder',
   'headingPayment',
-  'messageFailed'
+  'messageFailed',
+  'alertActionCompletedSuccessfully'
 ];
 
 export default {

@@ -35,7 +35,6 @@ The following is required before going through installation steps:
 4. [Application Key](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/ccdev/register-applications.html)
 5. User credentials for OCC Admin
 
-> **_NOTE:_** The project in the document refers to 'isv-occ-sse' folder
 
 Install all the dependencies by running `yarn install` from the project's root.
 
@@ -59,7 +58,7 @@ To remove unrelated properties please consider the following:
     `googlePayMerchantName`,`googlePaySupportedNetworks`
     - Remove `googlepay` option from following properties: `paymentOptions`, `dmDecisionSkip`
 2. To exclude **ApplePay** payment settings remove the following from `packages/payment-gateway/gateway/isv-occ-gateway/config/config.json`
-    - configuration properties: `applePayMerchantId`,`applePayInitiative`, `applePayInitiativeContext`,`applePaySupportedNetworks`,`applePaySdkUrl`,`applePayDisplayName`
+    - configuration properties: `applePayMerchantId`,`applePayInitiative`, `applePayInitiativeContext`,`applePaySupportedNetworks`,`applePayDisplayName`
     - Remove `applepay` option from following properties: `paymentOptions`, `dmDecisionSkip`
 
 After adjusting payment gateway settings you should also remove respective properties from `packages/payment-gateway/settings.json`.
@@ -171,7 +170,7 @@ plugins/endpoints/index.js
 ![Endpoints index](images/endpoints-index.png)
 
 plugins/endpoints/meta.js
-![Components meta](images/components-meta.png)
+![Components meta](images/endpoints-meta.png)
 
 Copy plugins/selectors into your storefront code and export the selectors in the index file:
 

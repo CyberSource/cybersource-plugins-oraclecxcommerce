@@ -38,14 +38,12 @@ The following gateway settings apply to ApplePay payments
 | **applePayInitiative**        | A predefined value that identifies the e-commerce application making the request. For ApplePay on the web use 'web' |
 | **applePayInitiativeContext** | Fully qualified domain name associated with your Apple Pay Merchant Identity Certificate                            |
 | **applePaySupportedNetworks** | ApplePay Supported Networks                                                                                         |
-| **applePaySdkUrl**                  | ApplePay SDK URL                                      |
 | **applePayDisplayName**    | Apple Pay display name |
 
 Default values:
 
 - `applePayInitiative`: 'web'
 - `applePaySupportedNetworks`: 'visa,masterCard,amex,discover'. List of supported card networks. Can be updated in OCC Admin
-- `applePaySdkUrl`: 'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js'
 
 ### Setup ApplePay
 
@@ -121,9 +119,9 @@ plugins
  | | | | ├── applePay.css
  | | | | ├── applePay.js
  | | | | └── index.jsx
- | | ├── cybersource
+ | | ├── isv-payment-utility
  | | | ├── common.js
- | | | └── scriptLoader.js
+ | | | └── script-loader.js
  | | ├── index.jsx
  | | ├── meta.js
  | | └── styles.css
@@ -147,7 +145,7 @@ plugins
  | ├── index.js
  | └── meta.js
  └── selectors
-   ├── paymentMethod-config-selector
+   ├── payment-method-config-selector
    | └── index.js
    └── index.js
  ```

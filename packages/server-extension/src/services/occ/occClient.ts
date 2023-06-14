@@ -25,6 +25,7 @@ export class OccClient {
     });
   }
 
+
   requestGET(options: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.sdk.get({

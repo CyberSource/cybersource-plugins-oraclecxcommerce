@@ -8,6 +8,7 @@ import paymentCapture from './paymentCapture';
 import paymentRefund from './paymentRefund';
 import report from './report';
 import { paymentRouter } from '@server-extension/controllers/paymentRouter';
+import { asyncMiddleware } from '@server-extension/common';
 
 const router = Router();
 
@@ -19,7 +20,17 @@ router.use('/v2/capture', paymentCapture);
 router.use('/v2/refund', paymentRefund);
 router.use('/v2/report', report);
 
-router.post('/v2/payments', async function (
+router.post('/v2/payerAuthReturnUrl',(req,res)=>{
+  res.send(`<script>
+     window.parent.postMessage({
+    'messageType':'transactionValidation',
+    'message':'${req.body.TransactionId}'
+  },'*');
+  </script>`);
+
+})
+
+router.post('/v2/payments', asyncMiddleware(async function (
   req: Request,
   res: Response,
   next: NextFunction
@@ -31,7 +42,7 @@ router.post('/v2/payments', async function (
     Object.keys(obj).forEach(key => {
         if (typeof obj[key] === 'object' && obj[key] !== null) {
             iterateCustomProperties(obj[key])
-        } else {
+        } else if(typeof obj[key] === "string") {
           obj[key] = obj[key].replace(replaceCharacterRegex, "=");
         }
     });
@@ -45,7 +56,7 @@ router.post('/v2/payments', async function (
   } catch (err) {
     next(err);
   }
-});
+}));
 
 const allRoutes = router.use('/isv-payment', router);
 
