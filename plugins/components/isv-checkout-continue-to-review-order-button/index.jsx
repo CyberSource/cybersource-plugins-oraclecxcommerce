@@ -236,7 +236,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
         }
         cardPayment.customProperties = {
           ...updatedCustomProperties,
-          ...referenceId && {referenceId} 
+          ...referenceId && { referenceId }
 
         };
         replaceSpecialCharacter(cardPayment.customProperties);
@@ -247,9 +247,9 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
         transientToken = await createTokenAsync(flexMicroForm, options);
         if (payerAuthEnabled) {
           const setupResponse = await payerAuthSetup({ transientToken: transientToken.decoded.jti });
-          if (!setupResponse){
-           return false;
-           }
+          if (!setupResponse) {
+            return false;
+          }
           referenceId = setupResponse.referenceId;
           await deviceDataCollectionFunction();
           store.getState().payerAuthRepository = { transientToken: transientToken.encoded };
@@ -263,7 +263,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
             paymentType: PAYMENT_TYPE_CARD,
             transientTokenJwt: transientToken.encoded,
             ...updatedCustomProperties,
-            ...referenceId && {referenceId} 
+            ...referenceId && { referenceId }
           }
         };
 
@@ -422,7 +422,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
 
   return (
     <>
-      <iframe name='cardinalCollectionIframe' height="10" width="10" style={{ display: "none" }} />
+      <iframe name="cardinalCollectionIframe" height="10" width="10" sandbox style={{ display: "none" }} />
       <form id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST" action={deviceDataCollectionUrl}>
         <input type="hidden" name="JWT" value={token} />
       </form>

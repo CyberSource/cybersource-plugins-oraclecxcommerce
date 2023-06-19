@@ -21,10 +21,11 @@ router.use('/v2/refund', paymentRefund);
 router.use('/v2/report', report);
 
 router.post('/v2/payerAuthReturnUrl',(req,res)=>{
+  const transactionId = JSON.stringify(req.body?.TransactionId);
   res.send(`<script>
      window.parent.postMessage({
     'messageType':'transactionValidation',
-    'message':'${req.body.TransactionId}'
+    'message':'${transactionId}'
   },'*');
   </script>`);
 
