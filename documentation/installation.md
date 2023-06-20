@@ -118,8 +118,8 @@ Configure production settings in the following file `packages/server-extension/c
 - `logging.webhook.http` - Enable webhook request/response logging
 - `logging.api.error` - Enable logging for errors
 - `logging.api.access` - Enable logging for incoming requests
-- `payments.secret.key` - Webhook secret key
-
+- `payments.secret.key` - Webhook secret key (SHA512)
+ 
 ![Note](images/note.jpg) `packages/server-extension/config/app.local.json` is applied only in local development environment
 
 ### Deploy

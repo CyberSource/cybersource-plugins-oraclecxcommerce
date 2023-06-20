@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "439b9e2b-4d72-4655-9ff5-b8fc7c28d9ec",
-		"name": "ISV OCC Payment SSE v23.1.0",
+		"name": "ISV OCC Payment SSE Copy",
 		"description": "This collection is included into SSE package which can be used for testing and exploring the endpoints.\n\nThe following collection variables should be updated prior its running:\n\nOCC_ENVIRONMENT\nAPP_KEY\napplePayInitiativeContext",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -344,13 +344,13 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"const SECRET_KEY = 'RTEJttDeDOsnqtB6hzYe/xyV9JirrwrcfJF8kwpl807JWgogi5+k3U0QU5lGaHxya0OKCnXkb4o1Is3+sOX74w==';",
+							"const SECRET_KEY = \"3ftGntd9GSnlTJ+pWddY7xBgL9tx3VlwqJjW8h79nvD8qJsJ0gUBv32Pc2kYbFLDvfSwPzEOA3NE2NHyRbv1iw==\";",
 							"const PAYLOAD = pm.request.body.raw;",
 							"",
 							"const decoded_secret_key = Buffer.from(SECRET_KEY, 'base64');",
 							"",
 							"const secret_array=CryptoJS.lib.WordArray.create(decoded_secret_key);",
-							"var hash = CryptoJS.HmacSHA1(PAYLOAD, secret_array);",
+							"var hash = CryptoJS.HmacSHA512(PAYLOAD, secret_array);",
 							"",
 							"pm.collectionVariables.set(\"webhook_signature\", hash.toString(CryptoJS.enc.Base64));"
 						],
@@ -377,7 +377,7 @@
 						"type": "text"
 					},
 					{
-						"key": "x-oracle-cc-webhook-signature",
+						"key": "x-oracle-cc-webhook-signature-sha512",
 						"value": "{{webhook_signature}}",
 						"type": "text"
 					},
@@ -719,7 +719,7 @@
 	"variable": [
 		{
 			"key": "OCC_ENVIRONMENT",
-			"value": "https://asbx80c1dev-admin.occa.ocs.oraclecloud.com"
+			"value": ""
 		},
 		{
 			"key": "CHANNEL",

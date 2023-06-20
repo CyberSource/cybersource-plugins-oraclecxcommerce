@@ -258,12 +258,12 @@ const IsvCheckoutPlaceOrderButton = props => {
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
           let type = event.data.messageType;
-          if (type = 'transactionValidation') {
+          if (type === 'transactionValidation') {
             if (event.data.message != undefined) {
               frame.style.display = 'none';
               overlay.style.display = 'none';
               console.log(alertActionCompletedSuccessfully);
-              resolve(event.data.message);
+              resolve(JSON.parse(event.data.message));
             };
           };
         }, false);
@@ -330,7 +330,7 @@ const IsvCheckoutPlaceOrderButton = props => {
           <div className="Overlay">
             <Styled id="iframe" css={payerAuthCss}>
               <div className="Payer_Auth_Form" >
-                <iframe name="stepUpIframe" height={height} width={width} ></iframe>
+                <iframe name="stepUpIframe" height={height} width={width} sandbox></iframe>
                 <form id="stepUpForm" target="stepUpIframe" method="post" action={stepUpData.stepUpUrl}>
                   <input type="hidden" name="JWT" value={stepUpData.accessToken} />
                   <input type="hidden" name="MD" value={`orderId=${order.id},channel=${channel}`} />
