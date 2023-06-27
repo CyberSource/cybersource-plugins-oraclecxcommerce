@@ -8,5 +8,5 @@
     "logging.webhook.http": true,
     "logging.api.error": true,
     "logging.api.access": true,
-    "payments.secret.key": "++8yBg664IWNCW4TekEdOgsw8n2XG7zSxeuEgR8B9NeMtXOEpgUsY9FTCNMonCKHkLZxOyRV6nmf1bP6bYy90Q=="
+    "payments.secret.key": "3ftGntd9GSnlTJ+pWddY7xBgL9tx3VlwqJjW8h79nvD8qJsJ0gUBv32Pc2kYbFLDvfSwPzEOA3NE2NHyRbv1iw=="
 }

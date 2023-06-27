@@ -11,6 +11,9 @@ import validateWebhookMiddleware from './middlewares/validateWebhook';
 import ConsoleLogger from './common/logging/consoleLogger';
 import OccLogger from './common/logging/occLogger';
 
+declare global {
+  var logger: any
+}
 
 function loadConfiguration(app: Application) {
   if (app.locals.env !== 'development') {
@@ -23,17 +26,34 @@ function loadConfiguration(app: Application) {
 
 export default function configureApp(app: Application, baseRoutePath = '') {
   loadConfiguration(app);
+  //added header
+  app.use((req, res, next) => {
+    res.setHeader("X-Frame-Options", "same-origin");
+    next();
+  })
+
+  const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
+  const logger = LogFactory.logger();
+
+  app.use((req, res, next) => {
+    const { MD } = req.body;
+    if (MD && typeof MD === "string") {
+      res.removeHeader('X-frame-Options');
+      logger.debug('Md data: ' + MD);
+      const channelRegex = /channel=([^,]+)/i;
+      const match = MD.match(channelRegex);
+      const headerChannel = match ? match[1] : null;
+      logger.debug("channel- " + headerChannel);
+      if (headerChannel)
+        req.headers['channel'] = headerChannel;
+    }
+    next();
+  })
 
 
   app.use(contextLoaderMiddleware);
   app.use(loggerMiddleware);
   app.use(validateWebhookMiddleware);
-
-  //added header
-  app.use((req, res, next)=>{
-    res.setHeader("X-Frame-Options", "same-origin");
-    next();
-  })
 
   app.use(gatewaySettings, merchantConfig);
 

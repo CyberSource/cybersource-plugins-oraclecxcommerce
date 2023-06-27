@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -36,14 +36,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
 import { populateError } from '@oracle-cx-commerce/endpoints/utils';
-/** This endpoint uses a public API for requesting contents from the url */
-const url = '/ccstorex/custom/isv-payment/v2/keys';
+import { CHANNEL, FLEX_URL } from '../../components/constants';
 
-var processOutput = function (json) { return ({
-    flexMicroformRepository: {
-        flexContext: json
-    }
-}); };
+
+
+var processOutput = function (json) {
+    return ({
+        flexMicroformRepository: {
+            flexContext: json
+        }
+    });
+};
 /**
  * Return an object that implements the endpoint adapter interface.
  */
@@ -52,20 +55,20 @@ var flexMicroformEndpoint = {
      * Return a Fetch API Request object to be used for invoking the endpoint.
      *
      * @param payload Optional payload to be included in the request
-     * @param state The current application state
      * @return Request object for invoking the endpoint via Fetch API
      */
     getRequest: function (payload) {
         return __awaiter(this, void 0, void 0, function () {
             var myBody, myHeaders;
-            const channel = payload?.isPreview ? 'preview' : 'storefront';
+            const channel = payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT;
+            const targetOrigin = typeof window != 'undefined' ? window.location.origin : '';
             return __generator(this, function (_a) {
-                myBody = { targetOrigin: self.location.origin };
+                myBody = { targetOrigin };
                 myHeaders = new Headers();
-                myHeaders.append('channel', channel);
+                myHeaders.append('Channel', channel);
                 myHeaders.append('Accept', 'application/json');
                 myHeaders.append('Content-Type', 'application/json');
-                return [2 /*return*/, new Request(url, { method: 'POST', headers: myHeaders, body: JSON.stringify(myBody) })];
+                return [2 /*return*/, new Request(FLEX_URL, { method: 'POST', headers: myHeaders, body: JSON.stringify(myBody) })];
             });
         });
     },
@@ -73,8 +76,6 @@ var flexMicroformEndpoint = {
      * Return a Fetch API Response object containing data from the endpoint.
      *
      * @param response The Response object returned by the fetch call
-     * @param state The current application state
-     * @param payload Optional payload that was included in the request
      * @return Response object, augmented with an async getJson function to return
      * an object to be merged into the application state
      */
@@ -82,22 +83,24 @@ var flexMicroformEndpoint = {
         var _this = this;
         var json;
         var jsonCaptureContextProperties = {};
-        response.getJson = function () { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!(json === undefined)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, getBodyAsJson(response)];
-                    case 1:
-                        json = _a.sent();
-                        jsonCaptureContextProperties.captureContext = json.captureContext;
-                        jsonCaptureContextProperties.captureContextCipherEncrypted = json.cipher?.encrypted;
-                        jsonCaptureContextProperties.captureContextCipherIv = json.cipher?.iv;
-                        return [2 /*return*/, response.ok ? processOutput(jsonCaptureContextProperties) : populateError(response, json)];
-                    case 2: return [2 /*return*/, json];
-                }
+        response.getJson = function () {
+            return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (!(json === undefined)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, getBodyAsJson(response)];
+                        case 1:
+                            json = _a.sent();
+                            jsonCaptureContextProperties.captureContext = json.captureContext;
+                            jsonCaptureContextProperties.captureContextCipherEncrypted = json.cipher?.encrypted;
+                            jsonCaptureContextProperties.captureContextCipherIv = json.cipher?.iv;
+                            return [2 /*return*/, response.ok ? processOutput(jsonCaptureContextProperties) : populateError(response, json)];
+                        case 2: return [2 /*return*/, json];
+                    }
+                });
             });
-        }); };
+        };
         return response;
     }
 };

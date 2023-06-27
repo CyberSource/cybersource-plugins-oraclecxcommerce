@@ -1,7 +1,8 @@
 {
     "atg.server.admin.url": "http://localhost:5000",
+    "atg.server.url":"storefront-url(cloud)",
     "atg.application.credentials": {
-        "atg.application.token": "ApiKey"
+        "atg.application.token": "app-key"
     },
     "cache.service.ttl.secs": 0,
     "cache.gatewaysettings.ttl.secs": 0,

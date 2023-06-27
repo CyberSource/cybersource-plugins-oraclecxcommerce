@@ -195,9 +195,13 @@ CommerceSDK.prototype.login = function () {
     };
 
     CommerceSDK.printDebugMessage('Executing request', self.logger);
-
+   
+     
+    const applicationContext = self.applicationContext;
+    
     self.request({
-      url: '/ccadmin/v1/login',
+      
+      url: applicationContext.includes('ccapp')?'/ccapp/v1/login':'/ccadmin/v1/login',
       method: 'post',
       requestOptions: loginOptions,
       data: data,
@@ -340,7 +344,7 @@ CommerceSDK.prototype.request = function (args) {
   var requestData = args.data ? args.data : {};
   CommerceSDK.printDebugMessage('The request data value is :: ' + requestData, self.logger);
   var requestModule = getHttp(self.protocol);
-
+  
   var requestOptions = {
     hostname: self.hostname,
     port: self.port,
@@ -467,6 +471,8 @@ CommerceSDK.prototype.get = function (urlOptions) {
     urlOptions.url = urlOptions.url + appendChar + CommerceSDK.stringifyQueryString(data);
     urlOptions.data = null;
   }
+  
+ 
   var self = this;
   urlOptions.method = 'GET';
   var initPromise = self.init(urlOptions.url);

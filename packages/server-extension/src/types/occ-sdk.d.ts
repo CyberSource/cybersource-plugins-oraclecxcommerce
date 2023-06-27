@@ -113,6 +113,19 @@ declare namespace OCC {
     };
   }
 
+  export interface PayerAuthSetupRequest {
+    orderId:string;
+    transientToken: string;
+    savedCardId?: string;
+    profileId?: string;
+  }
+  export interface PayerAuthSetupResponse {
+    status: string;
+    accessToken: string;
+    referenceId: string;
+    deviceDataCollectionUrl: string;
+  }
+
   export interface CardDetails {
     expirationMonth: string;
     expirationYear: string;
@@ -205,6 +218,20 @@ declare namespace OCC {
     deviceFingerprintSessionId?: string;
     deviceFingerprintCipherEncrypted?: string;
     deviceFingerprintCipherIv?: string;
+    authenticationTransactionId?: string;
+    returnUrl?: string;
+    deviceChannel?: string;
+    httpBrowserJavaEnabled?: boolean;
+    httpAcceptBrowserValue?: string;
+    httpBrowserLanguage?: string;
+    httpBrowserColorDepth?: string;
+    httpBrowserScreenHeight?: string;
+    httpBrowserScreenWidth?: string;
+    httpBrowserTimeDifference?: string;
+    userAgentBrowserValue?: string;
+    ipAddress?: string;
+    httpBrowserJavaScriptEnabled?: boolean;
+    httpAcceptContent?: string;
   }
 
   export interface CaptureContextRequest {

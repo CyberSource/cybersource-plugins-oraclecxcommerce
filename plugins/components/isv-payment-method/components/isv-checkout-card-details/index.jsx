@@ -202,7 +202,7 @@ const IsvCheckoutCardDetails = props => {
       const currentYear = new Date().getUTCFullYear().toString();
       onInput({
         ...cardDetails,
-        expiryYear: cardDetails.expiryYear ? `${currentYear.substr(0, 2)}${cardDetails.expiryYear}` : '',
+        expiryYear: cardDetails.expiryYear ? `${currentYear.substring(0, 2)}${cardDetails.expiryYear}` : '',
         cardType: selectedCardType.repositoryId ? selectedCardType.repositoryId : '',
         type: PAYMENT_TYPE_CARD
       });

@@ -18,7 +18,10 @@ export const savedCardPaymentMapper: PaymentResponseMapper = {
 
     return {
       authorizationResponse: {
-        token: mapInstrumentIdentifier(res)
+        token: mapInstrumentIdentifier(res),
+        additionalSavedCardProperties:{
+          customerId:res.tokenInformation.customer.id
+        }
       }
     };
   }

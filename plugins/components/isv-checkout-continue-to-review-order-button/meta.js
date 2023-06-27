@@ -3,11 +3,11 @@
  */
 
 import * as resourceBundle from '@oracle-cx-commerce/resources';
-import {buildResources} from '@oracle-cx-commerce/resources/utils';
-import {mergeDefaultConfig} from '@oracle-cx-commerce/react-widgets/config';
+import { buildResources } from '@oracle-cx-commerce/resources/utils';
+import { mergeDefaultConfig } from '@oracle-cx-commerce/react-widgets/config';
 import config from '@oracle-cx-commerce/react-widgets/checkout/checkout-continue-to-review-order-button/config';
 
-const widgetResourceKeys = ['actionContinueToReviewOrder'];
+const widgetResourceKeys = ['actionContinueToReviewOrder','alertActionCompletedSuccessfully','messageFailed','alertActionCompletedSuccessfully'];
 
 export default {
   name: 'IsvCheckoutContinueToReviewOrderButton',

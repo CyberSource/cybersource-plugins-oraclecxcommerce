@@ -72,9 +72,9 @@ plugins
  | | | | ├── googlepay.css
  | | | | ├── googlePay.js
  | | | | └── index.jsx
- | | ├── cybersource
+ | | ├── isv-payment-utility
  | | | ├── common.js
- | | | └── scriptLoader.js
+ | | | └── script-loader.js
  | | ├── index.jsx
  | | ├── meta.js
  | | └── styles.css
@@ -95,7 +95,7 @@ plugins
  | ├── index.js
  | └── meta.js
  └── selectors
-   ├── paymentMethod-config-selector
+   ├── payment-method-config-selector
    | └── index.js
    └── index.js
 
@@ -104,7 +104,7 @@ plugins
 - Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint
 - GooglePay SDK is loaded (see `googlePaySdkUrl` gateway setting)
 - GooglePay button is added in case it is supported by shopper's device  otherwise a message is displayed saying the payment method is not supported
-- On clicking the either GooglePay button or 'Place Order' button payment is initiated by creating payment request and showing payment sheet (pop-up window) to the shopper
+- On clicking the GooglePay button payment is initiated by creating payment request and showing payment sheet (pop-up window) to the shopper
 - Once shopper proceeds with selected payment method from the sheet payment details are updated with encrypted payment token
 
 ### Backend (SSE) integration details

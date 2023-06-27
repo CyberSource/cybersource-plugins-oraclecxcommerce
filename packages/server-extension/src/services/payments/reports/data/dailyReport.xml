@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Report SYSTEM "https://api.cybersource.com/reporting/v3/dtds/cdr">
+<Report Name="Conversion Detail Report" 
+        Version="1.1" 
+        xmlns="https://api.cybersource.com/reporting/v3/dtds/cdr" 
+        MerchantID="wiproltd" 
+        ReportStartDate="2022-09-28T00:00:00Z+00:00" 
+        ReportEndDate="2022-09-29T00:00:00Z+00:00">
+  <Conversion RequestID="6643334400766105103954" MerchantReferenceNumber="CIXAG18" ConversionDate="2022-09-28T02:51:51Z">
+    <NewDecision>ACCEPT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+  <Conversion RequestID="6643349443746660204953" MerchantReferenceNumber="QNJAS22" ConversionDate="2022-09-28T03:16:28Z">
+    <NewDecision>ACCEPT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+  <Conversion RequestID="6643351693646401504951" MerchantReferenceNumber="EENDT23" ConversionDate="2022-09-28T03:20:10Z">
+    <NewDecision>REJECT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+  <Conversion RequestID="6642570266496131603954" MerchantReferenceNumber="WFPVH577" ConversionDate="2022-09-28T06:34:53Z">
+    <NewDecision>REJECT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+  <Conversion RequestID="6642429970746305203955" MerchantReferenceNumber="ENLLE574" ConversionDate="2022-09-28T07:55:12Z">
+    <NewDecision>ACCEPT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+  <Conversion RequestID="6643660616706729603955" MerchantReferenceNumber="NXRYF744" ConversionDate="2022-09-28T11:57:02Z">
+    <NewDecision>ACCEPT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+  <Conversion RequestID="6643360798476078004953" MerchantReferenceNumber="192" ConversionDate="2022-09-28T11:58:09Z">
+    <NewDecision>ACCEPT</NewDecision>
+    <OriginalDecision>REVIEW</OriginalDecision>
+    <Reviewer>sri_reddy</Reviewer>
+  </Conversion>
+</Report>

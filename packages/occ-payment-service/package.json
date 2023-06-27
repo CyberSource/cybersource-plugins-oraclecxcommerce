@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/occ-payment-service",
-    "version": "22.1.0",
+    "version": "23.1.0",
     "description": "Oracle Commerce payment service",
     "repository": {
         "type": "git",
@@ -10,8 +10,8 @@
     "main": "cjs/indexPaymentService.js",
     "types": "cjs/indexPaymentService.d.ts",
     "devDependencies": {
-        "sinon": "^9.2.4",
-        "node-mocks-http": "^1.10.1"
+        "node-mocks-http": "^1.10.1",
+        "sinon": "^14.0.2"
     },
     "scripts": {
         "prebuild": "yarn clean",

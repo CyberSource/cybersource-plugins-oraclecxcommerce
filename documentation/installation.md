@@ -28,14 +28,13 @@ Please pay attention to installation steps documented for both SSE and widgets (
 The following is required before going through installation steps:
 
 1. Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-2. NodeJS version: 14.19.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
+2. NodeJS version: 16.15.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
 3. OCC environment
     - OCC Admin interface: https://asbx80c1dev-admin-{env}.oraclecloud.com/occs-admin/
     - OCC Storefront: https://asbx80c1dev-store-{env}.oraclecloud.com
 4. [Application Key](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/ccdev/register-applications.html)
 5. User credentials for OCC Admin
 
-> **_NOTE:_** The project in the document refers to 'isv-occ-sse' folder
 
 Install all the dependencies by running `yarn install` from the project's root.
 
@@ -59,7 +58,7 @@ To remove unrelated properties please consider the following:
     `googlePayMerchantName`,`googlePaySupportedNetworks`
     - Remove `googlepay` option from following properties: `paymentOptions`, `dmDecisionSkip`
 2. To exclude **ApplePay** payment settings remove the following from `packages/payment-gateway/gateway/isv-occ-gateway/config/config.json`
-    - configuration properties: `applePayMerchantId`,`applePayInitiative`, `applePayInitiativeContext`,`applePaySupportedNetworks`,`applePaySdkUrl`,`applePayDisplayName`
+    - configuration properties: `applePayMerchantId`,`applePayInitiative`, `applePayInitiativeContext`,`applePaySupportedNetworks`,`applePayDisplayName`
     - Remove `applepay` option from following properties: `paymentOptions`, `dmDecisionSkip`
 
 After adjusting payment gateway settings you should also remove respective properties from `packages/payment-gateway/settings.json`.
@@ -119,8 +118,8 @@ Configure production settings in the following file `packages/server-extension/c
 - `logging.webhook.http` - Enable webhook request/response logging
 - `logging.api.error` - Enable logging for errors
 - `logging.api.access` - Enable logging for incoming requests
-- `payments.secret.key` - Webhook secret key
-
+- `payments.secret.key` - Webhook secret key (SHA512)
+ 
 ![Note](images/note.jpg) `packages/server-extension/config/app.local.json` is applied only in local development environment
 
 ### Deploy
@@ -171,7 +170,7 @@ plugins/endpoints/index.js
 ![Endpoints index](images/endpoints-index.png)
 
 plugins/endpoints/meta.js
-![Components meta](images/components-meta.png)
+![Components meta](images/endpoints-meta.png)
 
 Copy plugins/selectors into your storefront code and export the selectors in the index file:
 

@@ -35,11 +35,12 @@ function createMerchantConfig(settings: OCC.GatewaySettings): MerchantConfig {
     keyFileName: settings.keyFileName,
     keysDirectory: keysDirectory,
 
-    enableLog: false,
-    logFilename: settings.logFilename,
-    logDirectory: settings.logDirectory,
-    logFileMaxSize: settings.logFileMaxSize,
-
+    logConfiguration: {
+      enableLog: false,
+      logFilename: settings.logFilename,
+      logDirectory: settings.logDirectory,
+      logFileMaxSize: settings.logFileMaxSize,
+    },
     ...proxySettings()
   };
 }

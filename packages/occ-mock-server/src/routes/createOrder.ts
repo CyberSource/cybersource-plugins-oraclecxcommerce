@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import fetch from 'node-fetch';
+
+import { RequestInfo, RequestInit } from 'node-fetch';
+const fetch = (url: RequestInfo, init?: RequestInit) => import('node-fetch').then(({ default: fetch }) => fetch(url, init));
+
 import orderToWebhook from './converters/orderRequestToWebhook';
 import webhookToOrderResponse from './converters/webhookToOrderResponse';
 

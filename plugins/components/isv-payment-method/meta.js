@@ -5,6 +5,7 @@ import {buildResources} from '@oracle-cx-commerce/resources/utils';
 
 const widgetResourceKeys = [
   'actionCancel',
+  'alertTechnicalProblemTryAgain',
   'buttonSaveAndContinue',
   'closeLinkAltText',
   'headingAddBillingAddress',

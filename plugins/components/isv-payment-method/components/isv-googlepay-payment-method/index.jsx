@@ -1,9 +1,9 @@
 /* eslint-disable no-inner-declarations */
-import React, {useContext, useEffect, useState, useRef, useCallback} from 'react';
+import React, { useContext, useEffect, useState, useRef, useCallback } from 'react';
 import RadioButton from '@oracle-cx-commerce/react-components/radio';
 import CheckoutBillingAddress from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/components/checkout-billing-address';
-import {useNavigator} from '@oracle-cx-commerce/react-components/link';
-import {StoreContext, PaymentsContext} from '@oracle-cx-commerce/react-ui/contexts';
+import { useNavigator } from '@oracle-cx-commerce/react-components/link';
+import { StoreContext, PaymentsContext } from '@oracle-cx-commerce/react-ui/contexts';
 import {
   PAYMENT_STATE_INITIAL,
   PAYMENT_TYPE_PAY_IN_STORE,
@@ -20,9 +20,9 @@ import {
   deleteAppliedPaymentsByIds,
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
-import {getCurrentOrder} from '@oracle-cx-commerce/commerce-utils/selector';
-import {amdJsLoad} from '../../isv-payment-utility/script-loader';
-import {replaceSpecialCharacter} from '../../isv-payment-utility/common';
+import { getCurrentOrder } from '@oracle-cx-commerce/commerce-utils/selector';
+import { amdJsLoad } from '../../isv-payment-utility/script-loader';
+import { replaceSpecialCharacter } from '../../isv-payment-utility/common';
 import GooglePay from './googlePay';
 
 /**
@@ -39,10 +39,12 @@ const IsvGooglePayPaymentMethod = props => {
     labelError,
     messageEmptyCart,
     labelNoDefaultBillingAddressAvailable,
-    textTotal
+    textTotal,
+    isvSelectedGenericPayment,
+    setIsvSelectedGenericPayment
   } = props;
-  const {action, getState} = useContext(StoreContext);
-  const {priceInfo = {}, paymentGroups = {}} = getCurrentOrder(getState());
+  const { action, getState } = useContext(StoreContext);
+  const { priceInfo = {}, paymentGroups = {} } = getCurrentOrder(getState());
   const {
     payments = [],
     selectedPaymentType,
@@ -77,7 +79,7 @@ const IsvGooglePayPaymentMethod = props => {
    */
   const applyPayments = paymentsToApply => {
     if (paymentsToApply.length > 0) {
-      action('applyPayments', {items: paymentsToApply})
+      action('applyPayments', { items: paymentsToApply })
         .then(response => {
           if (response.ok) {
             const order = getCurrentOrder(getState());
@@ -88,12 +90,12 @@ const IsvGooglePayPaymentMethod = props => {
             }
             //setInProgress(false); //removed for hiding whole page till next page is loaded
           } else {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             setInProgress(false);
           }
         })
         .catch(err => {
-          action('notify', {level: ERROR, message: err.message});
+          action('notify', { level: ERROR, message: err.message });
           setInProgress(false);
         });
     } else if (isPaymentDetailsComplete(props)) {
@@ -115,7 +117,7 @@ const IsvGooglePayPaymentMethod = props => {
 
           //remove error - pgid not available in current order
           if (!response.ok) {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             isError = true;
             setInProgress(false);
           }
@@ -134,7 +136,7 @@ const IsvGooglePayPaymentMethod = props => {
         if (paymentGroupsToRemoved.length) {
           const response = await deleteAppliedPaymentsByIds(action, paymentGroupsToRemoved);
           if (!response.ok) {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             isError = true;
             setInProgress(false);
           }
@@ -142,7 +144,7 @@ const IsvGooglePayPaymentMethod = props => {
       }
       return isError;
     } catch (error) {
-      action('notify', {level: ERROR, message: error.message});
+      action('notify', { level: ERROR, message: error.message });
       let isError = true;
       setInProgress(false);
       return isError;
@@ -164,7 +166,7 @@ const IsvGooglePayPaymentMethod = props => {
       return;
     }
     for (const payment of payments) {
-      const {paymentGroupId, ...paymentDetails} = payment;
+      const { paymentGroupId, ...paymentDetails } = payment;
       paymentsToApply.push(paymentDetails);
     }
     if (!isError) {
@@ -199,13 +201,13 @@ const IsvGooglePayPaymentMethod = props => {
     setInProgress(true);
     //check if googlepay status is canceled
     if (data?.transactionState === 'CANCELED') {
-      action('notify', {level: ERROR, message: headingPayment + ' ' + labelError});
+      action('notify', { level: ERROR, message: headingPayment + ' ' + labelError });
       setInProgress(false);
       return;
     }
     //check if there is any error in googlepay payment repsonse
     if (data?.transactionState === 'ERROR') {
-      action('notify', {level: ERROR, message: headingPayment + ' ' + messageFailed});
+      action('notify', { level: ERROR, message: headingPayment + ' ' + messageFailed });
       setInProgress(false);
       return;
     }
@@ -222,10 +224,10 @@ const IsvGooglePayPaymentMethod = props => {
     switch (method) {
       case 'GOOGLEPAY_BUTTON_CLICK':
         if (!Object.keys(priceInfo).length) {
-          return action('notify', {level: ERROR, message: messageEmptyCart});
+          return action('notify', { level: ERROR, message: messageEmptyCart });
         }
         if (!Object.keys(billingAddress).length) {
-          return action('notify', {level: ERROR, message: labelNoDefaultBillingAddressAvailable});
+          return action('notify', { level: ERROR, message: labelNoDefaultBillingAddressAvailable });
         }
         const paymentData = {
           countryCode: billingAddress?.country,
@@ -277,14 +279,14 @@ const IsvGooglePayPaymentMethod = props => {
 
   //load googlepay script in html
   useEffect(() => {
-    if (googlePay && isDisplayGooglePay){
-    amdJsLoad(googlePayConfiguration[0].config.googlePaySdkUrl, 'GPayScript')
-      .then(() => {
-        googlePay.loadGooglePay(googlePayCallback);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    if (googlePay && isDisplayGooglePay) {
+      amdJsLoad(googlePayConfiguration[0].config.googlePaySdkUrl, 'GPayScript')
+        .then(() => {
+          googlePay.loadGooglePay(googlePayCallback);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }, [isDisplayGooglePay, googlePay]);
 
@@ -293,17 +295,27 @@ const IsvGooglePayPaymentMethod = props => {
     if (
       googlePayRadioRef.current &&
       ((isDisplayGooglePay && !googlePayRadioRef.current.checked && !isGooglePayButtonHidden) ||
-        (googlePayRadioRef.current.checked && selectedPaymentType != PAYMENT_TYPE_GENERIC))
+        (googlePayRadioRef.current.checked && selectedPaymentType != PAYMENT_TYPE_GENERIC) ||
+        !googlePayRadioRef.current.checked
+      )
     ) {
       googlePayRadioRef.current.checked = false;
       setGooglePayButtonHidden(true);
+
+      //check if selected payment is googlePay
+      if (isvSelectedGenericPayment === 'googlePay') {
+        setIsvSelectedGenericPayment(null);
+      }
     }
-  }, [selectedPaymentType]);
+  }, [selectedPaymentType, isvSelectedGenericPayment]);
 
   //set selectedPayment as generic
   const onGooglePayPaymentSelection = useCallback(() => {
-    if (selectedPaymentType != PAYMENT_TYPE_GENERIC) updateSelectedPaymentType(PAYMENT_TYPE_GENERIC);
+    if (selectedPaymentType != PAYMENT_TYPE_GENERIC) {
+      updateSelectedPaymentType(PAYMENT_TYPE_GENERIC);
+    }
     setGooglePayButtonHidden(false);
+    setIsvSelectedGenericPayment("googlePay");
   }, [selectedPaymentType, isGooglePayButtonHidden]);
 
   if (!isDisplayGooglePay) {
@@ -326,12 +338,11 @@ const IsvGooglePayPaymentMethod = props => {
             />
           </div>
           <div
-            className={`CheckoutCreditCard__AddCardDetailsContainer ${
-              isGooglePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
-            }`}
+            className={`CheckoutCreditCard__AddCardDetailsContainer ${isGooglePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
+              }`}
           >
             <div id="container-gpay"></div>
-            <CheckoutBillingAddress {...props} onInput={({billingAddress}) => setBillingAddress(billingAddress)} />
+            <CheckoutBillingAddress {...props} onInput={({ billingAddress }) => setBillingAddress(billingAddress)} />
           </div>
         </div>
         {inProgress && (

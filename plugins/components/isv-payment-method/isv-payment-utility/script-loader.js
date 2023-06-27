@@ -34,10 +34,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-export default function loadScript(url) {
+export default function loadScript(url,scriptId) {
     return new Promise(function (resolve, reject) {
+        var scriptExists = document.getElementById(scriptId);
+        if (scriptExists) {
+            return resolve();
+        }
         var scriptToLoad = document.createElement('script');
         scriptToLoad.setAttribute('src', url);
+        scriptToLoad.id=scriptId;
         scriptToLoad.onload = function () { return resolve(); };
         scriptToLoad.onerror = function () { return reject(); };
         document.body.appendChild(scriptToLoad);
@@ -63,7 +68,7 @@ export function amdJsLoad(url, globalEnvName) {
                                 }
                             })];
                     }
-                    return [4 /*yield*/, loadScript(url)];
+                    return [4 /*yield*/, loadScript(url, globalEnvName)];
                 case 1:
                     _a.sent();
                     return [2 /*return*/, window[globalEnvName]];
