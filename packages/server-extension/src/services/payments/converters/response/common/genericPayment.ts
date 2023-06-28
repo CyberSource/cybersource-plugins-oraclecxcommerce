@@ -9,7 +9,7 @@ export default function convert(context: PaymentContext): OCC.GenericWebhookResp
   const { webhookRequest } = context;
   const paymentResponse = <DeepRequired<PspResponse>>context.data.response;
   const responseCode = responseCodeMappings(paymentResponse.status, webhookRequest.transactionType);
-  const { processorInformation } = <DeepRequired<PtsV2PaymentsPost201Response>>paymentResponse;
+  const { processorInformation, errorInformation } = <DeepRequired<PtsV2PaymentsPost201Response>>paymentResponse;
   const success = SUCCESS_RESPONSE_CODES.includes(responseCode);
 
   return {
@@ -35,6 +35,7 @@ export default function convert(context: PaymentContext): OCC.GenericWebhookResp
       responseReason: paymentResponse.status,
       authAvsCode: processorInformation?.avs?.code,
       authTime: paymentResponse.submitTimeUtc,
+      dmMsg: errorInformation?.message,
       ...addCustomProperties(webhookRequest) 
     }
 

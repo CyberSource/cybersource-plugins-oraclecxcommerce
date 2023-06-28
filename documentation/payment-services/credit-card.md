@@ -74,6 +74,8 @@ The following describes the end to end use case with an option to save credit ca
 10. Shopper sees order confirmation and card is saved
 11. Saved card should become visible in shopper's profile
 
+**Note:** Saved Card feature is supported only during checkout
+
 ![Flex Microform](images/credit-card-payment-flow.png)
 
 #### UI integration details

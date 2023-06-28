@@ -336,8 +336,7 @@ server-extension
 |---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
 | `/ccstorex/custom/isv-payment/v2/paymentMethods`        | Returns list of supported payment types. Consumer: Payment Widget                                                               |
 | `/ccstorex/custom/isv-payment/v2/keys`                  | Generates Flex public key (capture context). Consumer: Payment Widget                                                           |
-| `/ccstorex/custom/isv-payment/v2/payments`              | Generic Payments Webhook handler endpoint. Consumer: OCC                                                                        |
-| `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt` | Generates JWT for payer authentication. Consumer: Payment Widget                                                                |
+| `/ccstorex/custom/isv-payment/v2/payments`              | Generic Payments Webhook handler endpoint.  Consumer: Payment Widget                                                                |
 | `/ccstorex/custom/isv-payment/v2/applepay/validate`     | Validates ApplePay session. Consumer: Payment Widget                                                                            |
 | `/ccstorex/custom/isv-payment/v2/report/daily`          | Returns daily conversion report for a given date. Consumer: Fulfillment                                                         |
 | `/ccstorex/custom/isv-payment/v2/report/onDemand`       | Returns conversion report for specified start and end dates. Applies only for less than 24 hour interval. Consumer: Fulfillment |
