@@ -12,6 +12,8 @@ In case merchants decide to settle authorization or issue a refund at fulfillmen
 - `/ccstorex/custom/isv-payment/v2/capture` - Settle authorization for a given authorization transaction id
 - `/ccstorex/custom/isv-payment/v2/refund` - Refund settled transaction for a given transaction id
 
+**Note:** Services triggered using OMS will not be updated in OCC
+
 Each endpoint accepts the the following parameters:
 
 - `currency` - Currency ISO code (three  characters long, uppercase)
