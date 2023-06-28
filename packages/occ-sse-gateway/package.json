@@ -1,6 +1,6 @@
 {
   "name": "@isv-occ-payment/occ-sse-gateway",
-  "version": "23.1.0",
+  "version": "23.2.0",
   "private": true,
   "description": "Oracle Commerce SSE payment gateway",
   "repository": {
@@ -51,9 +51,9 @@
     "ssl_port": "3001"
   },
   "dependencies": {
-    "@isv-occ-payment/occ-sdk": "23.1.0",
-    "@isv-occ-payment/payment-sdk": "23.1.0",
-    "@isv-occ-payment/server-extension": "23.1.0",
+    "@isv-occ-payment/occ-sdk": "23.2.0",
+    "@isv-occ-payment/payment-sdk": "23.2.0",
+    "@isv-occ-payment/server-extension": "23.2.0",
     "cybersource-rest-client": "0.0.43",
     "deepmerge": "^4.2.2",
     "express-validator": "6.14.2",
@@ -83,7 +83,9 @@
     "typescript-transform-paths": "^3.4.4",
     "winston": "latest"
   },
-  "authenticatedUrls": [],
+  "authenticatedUrls": [
+    
+  ],
   "publicUrls": [
     "/ccstorex/custom/isv-payment/v2/paymentMethods",
     "/ccstorex/custom/isv-payment/v2/keys",
@@ -92,10 +94,10 @@
     "/ccstorex/custom/isv-payment/v2/applepay/validate",
     "/ccstorex/custom/isv-payment/v2/report/daily",
     "/ccstorex/custom/isv-payment/v2/report/onDemand",
-    "/ccstorex/custom/isv-payment/v2/capture",
-    "/ccstorex/custom/isv-payment/v2/refund",
     "/ccstorex/custom/isv-payment/v2/payerAuth/setup",
-    "/ccstorex/custom/isv-payment/v2/payerAuthReturnUrl"
+    "/ccstorex/custom/isv-payment/v2/payerAuthReturnUrl",
+    "/ccstorex/custom/isv-payment/v2/capture",
+    "/ccstorex/custom/isv-payment/v2/refund"
   ],
   "whitelistUrls": [
     "https://apitest.cybersource.com",

@@ -1,4 +1,4 @@
-.flex-microform{
+.flex-microform {
     height: 42px;
     /* border: 1px solid #ccc; */
     border-radius: 5px;
@@ -8,7 +8,16 @@
     padding: 0.5rem 0.25rem;
 }
 
-.CheckoutCardDetails__CvvContainer .flex-microform{
+.CheckoutCardDetails__CvvContainer .flex-microform {
     max-width: 100px;
     text-align: center;
+}
+
+.CheckoutCardDetails_CardNumberNotSupported {
+    border: 1px solid #d1001a;
+    border-radius: var(--cc-border-radius);
+}
+
+.CheckoutCardDetails_CardNumberNotSupported .flex-microform {
+    border: none;
 }

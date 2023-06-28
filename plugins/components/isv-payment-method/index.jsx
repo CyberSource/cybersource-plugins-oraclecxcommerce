@@ -1,28 +1,30 @@
 /* eslint-disable no-inner-declarations */
-import React, {useContext, useEffect,useState} from 'react';
-import {StoreContext} from '@oracle-cx-commerce/react-ui/contexts';
-import {connect} from '@oracle-cx-commerce/react-components/provider';
-import { getGlobalContext} from '@oracle-cx-commerce/commerce-utils/selector';
-import {usePaymentMethodConfigFetcher} from '../../fetchers/hooks';
-import {getPaymentMethodConfigRepository} from '../../selectors';
+import React, { useContext, useEffect, useState } from 'react';
+import { StoreContext } from '@oracle-cx-commerce/react-ui/contexts';
+import { connect } from '@oracle-cx-commerce/react-components/provider';
+import { getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
+import { usePaymentMethodConfigFetcher } from '../../fetchers/hooks';
+import { getPaymentMethodConfigRepository } from '../../selectors';
 import IsvGooglePayPaymentMethod from './components/isv-googlepay-payment-method';
 import IsvCreditCardPaymentMethod from './components/isv-credit-card-payment-method';
 import IsvApplePayPaymentMethod from './components/isv-applepay-payment-method';
-import {amdJsLoad} from './isv-payment-utility/script-loader';
+import { amdJsLoad } from './isv-payment-utility/script-loader';
 
+import Styled from '@oracle-cx-commerce/react-components/styled';
+import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/styles.css';
 
 
 const IsvPaymentMethod = props => {
-  const {paymentMethods = [], deviceFingerprint = {}, alertTechnicalProblemTryAgain} = props || {};
+  const { paymentMethods = [], deviceFingerprint = {}, alertTechnicalProblemTryAgain } = props || {};
   const store = useContext(StoreContext);
-  const {action} = store;
-  const {isPreview} = getGlobalContext(store.getState());
+  const { action } = store;
+  const { isPreview } = getGlobalContext(store.getState());
   var payerAuthEnabled, flexSdkUrl;
   let creditCardConfiguration = [],
     applePayConfiguration = [];
   var applePayEnabled, creditCardEnabled = false, applePaySupported = false;
   const [isError, setError] = useState(false);
-  
+
 
   if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
     creditCardConfiguration = Object.entries(paymentMethods)
@@ -53,18 +55,18 @@ const IsvPaymentMethod = props => {
   }
 
   useEffect(() => {
-    if(creditCardEnabled){
-      action('flexMicroformAction', {isPreview}).then(response => {
+    if (creditCardEnabled) {
+      action('flexMicroformAction', { isPreview }).then(response => {
         if (!response.ok) {
           setError(true);
         }
       });
     }
-  },[creditCardEnabled]);
-  
+  }, [creditCardEnabled]);
+
   useEffect(() => {
     usePaymentMethodConfigFetcher(store).then(response => {
-      if(!response.ok) {
+      if (!response.ok) {
         setError(true);
       }
     });
@@ -81,21 +83,27 @@ const IsvPaymentMethod = props => {
   const [isvSelectedGenericPayment, setIsvSelectedGenericPayment] = useState();
 
   if (isError) {
-    action('notify', {level: 'error', message: alertTechnicalProblemTryAgain});
+    action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
     return null;
   } else if (applePaySupported) {
+    //TODO:  can we move this applePaySupported if block to single condition based render, same as CC
+
     return (
       <>
-        <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />
-        <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-        <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+        <Styled id="IsvPaymentMethod" css={css}>
+          {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
+          <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+          <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+        </Styled>
       </>
     );
   } else {
     return (
       <>
-        <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />
-        <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+        <Styled id="IsvPaymentMethod" css={css}>
+          {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
+          <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+        </Styled>
       </>
     );
   }
