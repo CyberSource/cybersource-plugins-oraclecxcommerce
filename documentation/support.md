@@ -1,21 +1,14 @@
 # Support
 
-For a support and bug fixes, please visit Cybersource support portal: [https://support.cybersource.com/](https://support.cybersource.com/)
-
-Cybersource Corporation HQ
-
-P.O. Box 8999
-
-San Francisco, CA 94128-8999
-
-Phone: 650-432-7350
-
-Toll Free: 1-800-530-9095
-
-Sales: 1-888-330-2300 (for new sales only)
-
-Customer Support: 1-800-709-7779 (for signed accounts only)
-
-Fax: 650-286-6641
-
-Email: sales@cybersource.com
+If you require support with this software, please contact GlobalPartnerSolutionsCS@visa.com and provide the following details:
+- Summary of the issue
+- Steps to reproduce the issue
+- Oracle Commerce Cloud Platform version: You can find Oracle Commerce Cloud Platform Version in Oracle Commerce Cloud Backoffice dashboard.
+![Version](images/version.png)
+- Plugin/ Extension version: Under Settings->Extension, find the version of the installed ISV Payment Gateway extension.
+![Extension Version](images/extension-version.png)
+- Cybersource Merchant ID: Under Settings->Payment Processing, Select the ISV OCC Payment from the Service Type dropdown, find the Merchant Id
+![Merchant Id](images/merchantId.png)
+- Order ID/ Merchant Reference Number: Order ID can be found in Order Confirmation Page or under Order History.
+- Configuration screenshots: Please provide screenshots of ISV OCC Gateway Configurations.
+- Log file and other relevant data: Download the **debug** and **error** logs from Oracle Commerce Cloud using getExtensionServerLogs admin endpoint.

@@ -28,9 +28,11 @@ export const payerAuthMapper: PaymentResponseMapper = {
           authenticationPath: consumerAuthenticationInformation.authenticationPath,
           proofXml: consumerAuthenticationInformation.proofXml,
           specificationVersion: consumerAuthenticationInformation.specificationVersion,
-          token: mapConsumerAuthToken(consumerAuthenticationInformation)
+          token: mapConsumerAuthToken(consumerAuthenticationInformation),
+          stepUpUrl:consumerAuthenticationInformation.stepUpUrl,
+          accessToken:consumerAuthenticationInformation.accessToken,
         },
-        customPaymentProperties: ['authenticationTransactionId', 'acsUrl', 'pareq', 'action']
+        customPaymentProperties: ['pareq', 'action','stepUpUrl','accessToken']
       }
     };
   }

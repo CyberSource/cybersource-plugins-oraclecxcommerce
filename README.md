@@ -9,7 +9,7 @@ Please refer to the [official documentation](documentation/occ.md) to get all de
 ## Prerequisites
 
 - Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-- NodeJS version: 14.19.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
+- NodeJS version: 16.15.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
 
 
 ## Install dependencies
@@ -25,14 +25,14 @@ yarn install
 Running `build` script from project's root will build code for all the packages
 
 ```bash
-yarn build
+yarn build:prod
 ```
 
 To build packages individually make sure you switch to respective package directory as shown below
 
 ```bash
 cd packages/<package_name>
-yarn build
+yarn build:prod
 yarn start
 ```
 

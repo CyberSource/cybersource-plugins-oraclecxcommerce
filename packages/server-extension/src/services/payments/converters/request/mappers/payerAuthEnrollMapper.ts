@@ -3,7 +3,8 @@ import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { PaymentRequestMapper } from '../../common';
 
 const isNotPayerAuthValidation = (webhookRequest: OCC.GenericPaymentWebhookRequest) =>
-  !Boolean(webhookRequest.customProperties?.authJwt);
+!Boolean(webhookRequest.customProperties?.authenticationTransactionId);
+
 
 export const payerAuthEnrollMapper: PaymentRequestMapper = {
   supports: (context: PaymentContext) =>
@@ -19,8 +20,23 @@ export const payerAuthEnrollMapper: PaymentRequestMapper = {
       },
       consumerAuthenticationInformation: {
         requestorId: 'requestorId',
-        referenceId: webhookRequest.customProperties?.referenceId
-      }
+        referenceId: webhookRequest.customProperties?.referenceId,
+        returnUrl:webhookRequest.customProperties?.returnUrl,
+        deviceChannel:webhookRequest.customProperties?.deviceChannel,
+      },
+      deviceInformation: {
+        httpBrowserJavaEnabled:webhookRequest.customProperties?.httpBrowserJavaEnabled,
+        httpAcceptBrowserValue:webhookRequest.customProperties?.httpAcceptBrowserValue,
+        httpBrowserLanguage:webhookRequest.customProperties?.httpBrowserLanguage,
+        httpBrowserColorDepth:webhookRequest.customProperties?.httpBrowserColorDepth,
+        httpBrowserScreenHeight:webhookRequest.customProperties?.httpBrowserScreenHeight,
+        httpBrowserScreenWidth:webhookRequest.customProperties?.httpBrowserScreenWidth,
+        httpBrowserTimeDifference:webhookRequest.customProperties?.httpBrowserTimeDifference,
+        userAgentBrowserValue:webhookRequest.customProperties?.userAgentBrowserValue,
+        ipAddress:webhookRequest.customProperties?.ipAddress,
+        httpBrowserJavaScriptEnabled:webhookRequest.customProperties?.httpBrowserJavaScriptEnabled,
+        httpAcceptContent:webhookRequest.customProperties?.httpAcceptContent
+       }
     };
   }
 };

@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/generic-payment-service",
-    "version": "22.1.0",
+    "version": "23.1.0",
     "description": "Generic SSE Payment Service",
     "repository": {
         "type": "git",
@@ -9,16 +9,16 @@
     "author": "ISV Payments",
     "main": "cjs/index.js",
     "dependencies": {
-        "@isv-occ-payment/occ-payment-service": "22.1.0",
-        "@isv-occ-payment/occ-sdk": "22.1.0",
-        "@isv-occ-payment/payment-sdk": "22.1.0",
-        "@isv-occ-payment/server-extension": "22.1.0",
-        "cybersource-rest-client": "0.0.20"
+        "@isv-occ-payment/occ-payment-service": "23.1.0",
+        "@isv-occ-payment/occ-sdk": "23.1.0",
+        "@isv-occ-payment/payment-sdk": "23.1.0",
+        "@isv-occ-payment/server-extension": "23.1.0",
+        "cybersource-rest-client": "0.0.43"
     },
     "devDependencies": {
         "node-mocks-http": "^1.10.1",
-        "sinon": "^9.2.4",
-        "typescript-transform-paths": "^2.0.0"
+        "sinon": "^14.0.2",
+        "typescript-transform-paths": "^3.4.4"
     },
     "scripts": {
         "prebuild": "yarn clean && mkdirp node_modules/@isv-occ-payment && symlink-dir ../occ-sdk node_modules/@isv-occ-payment/occ-sdk && symlink-dir ../payment-sdk node_modules/@isv-occ-payment/payment-sdk",

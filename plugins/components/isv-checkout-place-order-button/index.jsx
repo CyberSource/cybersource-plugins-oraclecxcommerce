@@ -1,16 +1,16 @@
 /*
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
-import {StoreContext, OrderContext, ContainerContext} from '@oracle-cx-commerce/react-ui/contexts';
-import React, {useState, useContext} from 'react';
+import { StoreContext, OrderContext, ContainerContext } from '@oracle-cx-commerce/react-ui/contexts';
+import React, { useState, useContext } from 'react';
 import Styled from '@oracle-cx-commerce/react-components/styled';
 import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/styles.css';
 import {
   handleOrderSubmitSuccess,
   handleOrderSubmitFailure
 } from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/utils';
-import {connect} from '@oracle-cx-commerce/react-components/provider';
-import {getComponentData} from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/selectors';
+import { connect } from '@oracle-cx-commerce/react-components/provider';
+import { getComponentData } from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/selectors';
 import {
   PAYMENT_METHOD_TOKENIZED_CREDIT_CARD,
   PAYMENT_METHOD_CREDIT_CARD,
@@ -19,11 +19,14 @@ import {
   PAYMENT_TYPE_INVOICE,
   PAYMENT_TYPE_CARD
 } from '@oracle-cx-commerce/commerce-utils/constants';
-import {useNavigator} from '@oracle-cx-commerce/react-components/link';
-import {noop, formatDate} from '@oracle-cx-commerce/utils/generic';
-import {getPayerAuthPaymentGroup} from '@oracle-cx-commerce/react-components/utils/payment';
-import {replaceSpecialCharacter} from '../isv-payment-method/isv-payment-utility/common';
-var responseJwt;
+import { useNavigator } from '@oracle-cx-commerce/react-components/link';
+import { noop, formatDate } from '@oracle-cx-commerce/utils/generic';
+import { getPayerAuthPaymentGroup } from '@oracle-cx-commerce/react-components/utils/payment';
+import { replaceSpecialCharacter } from '../isv-payment-method/isv-payment-utility/common';
+import payerAuthCss from './styles.css';
+import { getGlobalContext, getCurrentOrder } from '@oracle-cx-commerce/commerce-utils/selector';
+import { CHANNEL } from '../constants';
+var authTransactionId;
 /**
  * Widget to display place order button and handle order submission
  * @param {props} component props
@@ -39,29 +42,46 @@ const IsvCheckoutPlaceOrderButton = props => {
     buttonSchedulingOrder,
     currentOrderId,
     headingPayment,
-    messageFailed
+    messageFailed,
+    alertActionCompletedSuccessfully
   } = props;
   //context
-  const {paymentGroups = {}, shippingGroups = {}} = useContext(OrderContext);
-  const {guestEmailDetails = {}, setPlaceOrderInitiated = noop} = useContext(ContainerContext);
-  const {getState, action} = useContext(StoreContext);
+  const { paymentGroups = {}, shippingGroups = {} } = useContext(OrderContext);
+  const { guestEmailDetails = {}, setPlaceOrderInitiated = noop } = useContext(ContainerContext);
+  const { getState, action } = useContext(StoreContext);
   //selector data
-  const {authenticated, isCurrentOrderScheduled = false} = props;
+  const { authenticated, isCurrentOrderScheduled = false } = props;
   const submitButtonName = isCurrentOrderScheduled ? buttonScheduledOrder : buttonPlaceOrder;
   const processButtonName = isCurrentOrderScheduled ? buttonSchedulingOrder : buttonPlacingOrder;
   const [inProgress, setInProgress] = useState(false);
   const goToPage = useNavigator();
+  const [stepUpData, updateStepUpData] = useState(null);
+  const [height, setHeight] = useState(400);
+  const [width, setWidth] = useState(400);
+  const order = getCurrentOrder(getState());
+  const { isPreview } = getGlobalContext(getState());
+  const channel = isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT;
+  const isWindow = typeof window !== "undefined";
+  const windowSizeMap = {
+    '01': { width: 250, height: 400 },
+    '02': { width: 390, height: 400 },
+    '03': { width: 500, height: 600 },
+    '04': { width: 600, height: 400 },
+    '05': { width: isWindow ? window.innerWidth : 400, height: isWindow ? window.innerHeight : 400 },
+    '06': { width: 400, height: 400 }
+  };
+
   /**
    * Method to invoke when current order is converted(placed) as scheduled order
    */
   const placeScheduledOrder = () => {
-    const {scheduleInfo} = props;
+    const { scheduleInfo } = props;
     const schedulePayload = {
       ...scheduleInfo,
       startDate: formatDate(scheduleInfo.startDate),
       endDate: formatDate(scheduleInfo.endDate)
     };
-    const {daysInMonth, ...sceduleInfoFinal} = schedulePayload.schedule;
+    const { daysInMonth, ...sceduleInfoFinal } = schedulePayload.schedule;
     if (daysInMonth && daysInMonth.length === 0) {
       schedulePayload.schedule = sceduleInfoFinal;
     }
@@ -75,11 +95,11 @@ const IsvCheckoutPlaceOrderButton = props => {
           }
         };
         try {
-          action('saveComponentData', {...payload});
+          action('saveComponentData', { ...payload });
         } catch (error) {
           console.error(error);
         }
-        const messages = {alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs};
+        const messages = { alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs };
         handleOrderSubmitSuccess(goToPage, response, action, messages);
       } else {
         handleOrderSubmitFailure(action, goToPage, response);
@@ -97,7 +117,7 @@ const IsvCheckoutPlaceOrderButton = props => {
       //Exclude zero value payment groups or
       //Zero value with only one payment group
       if (paymentGroup.amount !== 0 || (paymentGroup.amount === 0 && Object.keys(paymentGroups).length === 1)) {
-        const {paymentGroupId, paymentMethod} = paymentGroup;
+        const { paymentGroupId, paymentMethod } = paymentGroup;
         if (paymentMethod === PAYMENT_METHOD_CREDIT_CARD || paymentMethod === PAYMENT_METHOD_TOKENIZED_CREDIT_CARD) {
           appliedPaymentGroups.push({
             type: PAYMENT_TYPE_CARD,
@@ -129,11 +149,11 @@ const IsvCheckoutPlaceOrderButton = props => {
       //Enable Place Order Button
       setPlaceOrderInitiated(false);
       if (response.ok === true) {
-        const messages = {alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs};
-        const {delta: {orderRepository = {}} = {}} = response;
-        const {orders = {}} = orderRepository;
+        const messages = { alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs };
+        const { delta: { orderRepository = {} } = {} } = response;
+        const { orders = {} } = orderRepository;
         const order = Object.values(orders || {})[0] || {};
-        const {paymentGroups = {}} = order;
+        const { paymentGroups = {} } = order;
         const payerAuthPaymentGroup = getPayerAuthPaymentGroup(paymentGroups);
         const responseUiIntervention = payerAuthPaymentGroup?.uiIntervention;
         if (responseUiIntervention) {
@@ -150,32 +170,40 @@ const IsvCheckoutPlaceOrderButton = props => {
 
   const payerAuthResponse = async payerAuthPaymentGroup => {
     const appliedPaymentGroups = [];
-    const {transientToken} = getState().payerAuthRepository;
-    const {flexContext} = getState().flexMicroformRepository;
-    const {deviceFingerprint} = getState().paymentMethodConfigRepository;
+    var transientToken = '';
+    if (!payerAuthPaymentGroup.savedCardId) {
+      transientToken = getState().payerAuthRepository?.transientToken;
+    }
+    const { flexContext } = getState().flexMicroformRepository;
+    const { deviceFingerprint } = getState().paymentMethodConfigRepository;
     const deleteField = [
       'captureContext',
       'captureContextCipherEncrypted',
       'captureContextCipherIv',
       'transientTokenJwt'
     ];
-    var responseCustomData, customProperties, paymentGroupId, paymentDetails, detailsToUpdate, payload, messages;
+    var customProperties, paymentGroupId, paymentDetails, detailsToUpdate, payload, messages;
     if (payerAuthPaymentGroup) {
-      responseCustomData = payerAuthPaymentGroup.customPaymentProperties;
-      Cardinal.continue(
-        'cca',
-        {
-          AcsUrl: responseCustomData.acsUrl,
-          Payload: responseCustomData.pareq
-        },
-        {
-          OrderDetails: {
-            TransactionId: responseCustomData.authenticationTransactionId
-          }
-        }
-      );
-      responseJwt = await returnJwt();
-      if (responseJwt) {
+      const stepUpDetails = payerAuthPaymentGroup.customPaymentProperties || {};
+      const stepUpPayload = {
+        accessToken: stepUpDetails.accessToken,
+        stepUpUrl: stepUpDetails.stepUpUrl,
+      }
+      try {
+        const decodedPareqValue = isWindow && window.atob(stepUpDetails.pareq);
+        const pareqJson = JSON.parse(decodedPareqValue);
+        const challengeWindowSize = pareqJson.challengeWindowSize;
+        const { width, height } = windowSizeMap[challengeWindowSize] || windowSizeMap['06'];
+        setWidth(width);
+        setHeight(height);
+      } catch (error) {
+        console.log(error);
+      }
+
+      updateStepUpData(stepUpPayload);
+
+      authTransactionId = await payerAuthValidation();
+      if (authTransactionId) {
         customProperties = {
           paymentType: PAYMENT_TYPE_CARD,
           captureContext: flexContext?.captureContext,
@@ -183,7 +211,7 @@ const IsvCheckoutPlaceOrderButton = props => {
           captureContextCipherIv: flexContext?.captureContextCipherIv,
           ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint?.deviceFingerprintData),
           transientTokenJwt: transientToken,
-          authJwt: responseJwt
+          authenticationTransactionId: authTransactionId
         };
         if (payerAuthPaymentGroup.savedCardId) {
           Object.keys(customProperties).forEach(key => {
@@ -195,9 +223,9 @@ const IsvCheckoutPlaceOrderButton = props => {
         replaceSpecialCharacter(customProperties);
         paymentGroupId = payerAuthPaymentGroup.paymentGroupId;
         paymentDetails = paymentGroups[payerAuthPaymentGroup.paymentGroupId];
-        const {...paymentDetailsToUpdate} = paymentDetails;
+        const { ...paymentDetailsToUpdate } = paymentDetails;
         paymentDetailsToUpdate.customProperties = customProperties;
-        detailsToUpdate = {paymentGroupId: payerAuthPaymentGroup.paymentGroupId, cardCVV: '123', customProperties};
+        detailsToUpdate = { paymentGroupId: payerAuthPaymentGroup.paymentGroupId, cardCVV: '123', customProperties };
         await action('updateAppliedPayment', detailsToUpdate);
         appliedPaymentGroups.push({
           type: PAYMENT_TYPE_CARD,
@@ -209,29 +237,44 @@ const IsvCheckoutPlaceOrderButton = props => {
         action('checkoutCart', payload).then(response => {
           setPlaceOrderInitiated(false);
           if (response.ok === true) {
-            messages = {alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs};
+            messages = { alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs };
             handleOrderSubmitSuccess(goToPage, response, action, messages);
           } else {
             handleOrderSubmitFailure(action, goToPage, response);
           }
         });
       } else {
-        action('notify', {level: 'error', message: headingPayment + ' ' + messageFailed});
+        action('notify', { level: 'error', message: headingPayment + ' ' + messageFailed });
       }
     }
   };
 
-  const returnJwt = async () => {
-    return new Promise(function (resolve, reject) {
-      Cardinal.on('payments.validated', function (data, jwt) {
-        if (data.ErrorNumber == 0) {
-          resolve(jwt);
-        } else {
-          reject(false);
-        }
-      });
-    });
-  };
+  async function payerAuthValidation() {
+    return new Promise((resolve) => {
+      const form = document.querySelector('#stepUpForm');
+      form.submit();
+      var frame = document.querySelector('.Payer_Auth_Form');
+      var overlay = document.querySelector('.Overlay')
+      if (typeof window !== 'undefined') {
+        window.addEventListener('message', (event) => {
+          let type = event.data.messageType;
+          if (type === 'transactionValidation') {
+            if (event.data.message != undefined) {
+              frame.style.display = 'none';
+              overlay.style.display = 'none';
+              console.log(alertActionCompletedSuccessfully);
+              resolve(JSON.parse(event.data.message));
+            };
+          };
+        }, false);
+      }
+      else {
+        resolve(false);
+      }
+    })
+  }
+
+
 
   //To invoke specific order method if scheduled order is enabled
   const selectedPlaceOrderMethod = () => {
@@ -247,11 +290,11 @@ const IsvCheckoutPlaceOrderButton = props => {
     const shippingGroupsPayload = [];
     for (const index of Object.keys(shippingGroups)) {
       const shippingGroup = shippingGroups[index] || {};
-      const {shippingGroupId = ''} = shippingGroup;
+      const { shippingGroupId = '' } = shippingGroup;
       const shippingAddress = {
         email: guestEmailDetails.emailAddress
       };
-      shippingGroupsPayload.push({shippingAddress, shippingGroupId});
+      shippingGroupsPayload.push({ shippingAddress, shippingGroupId });
     }
     const payload = {
       items: shippingGroupsPayload
@@ -261,7 +304,7 @@ const IsvCheckoutPlaceOrderButton = props => {
         //Invoke Place order method
         selectedPlaceOrderMethod();
       } else {
-        action('notify', {level: 'error', message: response.error.message});
+        action('notify', { level: 'error', message: response.error.message });
       }
     });
   };
@@ -281,17 +324,34 @@ const IsvCheckoutPlaceOrderButton = props => {
   };
 
   return (
-    <Styled id="CheckoutPlaceOrderButton" css={css}>
-      <div className="CheckoutPlaceOrderButton">
-        <button
-          type="button"
-          onClick={handlePlaceOrder}
-          disabled={inProgress || (!authenticated && !guestEmailDetails.isEmailValid)}
-        >
-          {inProgress ? processButtonName : submitButtonName}
-        </button>
-      </div>
-    </Styled>
+    <>
+      {stepUpData &&
+        <>
+          <div className="Overlay">
+            <Styled id="iframe" css={payerAuthCss}>
+              <div className="Payer_Auth_Form" >
+                <iframe name="stepUpIframe" height={height} width={width} sandbox></iframe>
+                <form id="stepUpForm" target="stepUpIframe" method="post" action={stepUpData.stepUpUrl}>
+                  <input type="hidden" name="JWT" value={stepUpData.accessToken} />
+                  <input type="hidden" name="MD" value={`orderId=${order.id},channel=${channel}`} />
+                </form>
+              </div>
+            </Styled>
+          </div>
+        </>
+      }
+      <Styled id="CheckoutPlaceOrderButton" css={css}>
+        <div className="CheckoutPlaceOrderButton">
+          <button
+            type="button"
+            onClick={handlePlaceOrder}
+            disabled={inProgress || (!authenticated && !guestEmailDetails.isEmailValid)}
+          >
+            {inProgress ? processButtonName : submitButtonName}
+          </button>
+        </div>
+      </Styled>
+    </>
   );
 };
 

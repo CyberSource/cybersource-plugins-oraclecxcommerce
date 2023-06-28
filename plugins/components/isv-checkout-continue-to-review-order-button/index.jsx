@@ -3,13 +3,13 @@
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
 
-import {useNavigator} from '@oracle-cx-commerce/react-components/link';
-import React, {useContext, useState, useCallback} from 'react';
-import {PaymentsContext, StoreContext} from '@oracle-cx-commerce/react-ui/contexts';
-import {connect} from '@oracle-cx-commerce/react-components/provider';
-import {getCurrentOrder} from '@oracle-cx-commerce/commerce-utils/selector';
+import { useNavigator } from '@oracle-cx-commerce/react-components/link';
+import React, { useContext, useState, useCallback, useEffect } from 'react';
+import { PaymentsContext, StoreContext } from '@oracle-cx-commerce/react-ui/contexts';
+import { connect } from '@oracle-cx-commerce/react-components/provider';
+import { getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import Styled from '@oracle-cx-commerce/react-components/styled';
-import {noop} from '@oracle-cx-commerce/utils/generic';
+import { noop } from '@oracle-cx-commerce/utils/generic';
 import {
   deleteAppliedPaymentsByTypes,
   deleteAppliedPaymentsByIds,
@@ -28,10 +28,12 @@ import {
 } from '@oracle-cx-commerce/commerce-utils/constants';
 import PropTypes from 'prop-types';
 import css from './styles.css';
-import {createTokenAsync} from '../isv-payment-method/isv-payment-utility/flex-microform-api';
-import {replaceSpecialCharacter} from '../isv-payment-method/isv-payment-utility/common';
+import { createTokenAsync } from '../isv-payment-method/isv-payment-utility/flex-microform-api';
+import { replaceSpecialCharacter } from '../isv-payment-method/isv-payment-utility/common';
+import { getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
+import { DDC_URL_PATTERN, DEVICE_CHANNEL, RETURN_URL, IP_ENDPOINT_URL } from '../constants';
 const ERROR = 'error';
-let responseSetUp = '';
+var cardinalUrl;
 
 /**
  * Widget for Continue To Review Order button, navigates to review order page on click after applying selected payment.
@@ -39,15 +41,37 @@ let responseSetUp = '';
  */
 
 const IsvCheckoutContinueToReviewOrderButton = props => {
-  const {continueToPageAddress = '/checkout-review-order', actionContinueToReviewOrder, paymentGroups = {}} = props;
-  const {payments = [], selectedPaymentType, addOrUpdatePaymentToContext = noop} = useContext(PaymentsContext) || {};
+  const { continueToPageAddress = '/checkout-review-order', actionContinueToReviewOrder, paymentGroups = {}, alertTechnicalProblemTryAgain, alertActionCompletedSuccessfully, messageFailed } = props;
+  const { payments = [], selectedPaymentType, addOrUpdatePaymentToContext = noop } = useContext(PaymentsContext) || {};
   const store = useContext(StoreContext);
-  const {action, getState} = store;
+  const { action, getState } = store;
   //these payments can be combined with some other payment type like credit card, gift card etc.
   //so these payment type should not be deleted while applying new compatible payment type
   const compatiblePaymentTypes = [PAYMENT_TYPE_GIFTCARD, PAYMENT_TYPE_LOYALTYPOINTS, PAYMENT_TYPE_STORECREDIT];
   const [inProgress, setInProgress] = useState(false);
   const goToPage = useNavigator();
+  const [deviceDataCollectionUrl, setDeviceDataCollectionUrl] = useState('');
+  const [token, setToken] = useState('');
+  const { isPreview } = getGlobalContext(store.getState());
+  const [ip, setIp] = useState('');
+  const isJavascriptEnabled = typeof window !== 'undefined'
+    && typeof window.document !== 'undefined'
+    && typeof window.document.createElement === 'function';
+
+  const order = getCurrentOrder(getState());
+  var payerAuthEnabled = false,
+    payerAuthConfiguration = [];
+  const { paymentMethods = [] } = store.getState().paymentMethodConfigRepository || {};
+  if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
+    payerAuthConfiguration = Object.entries(paymentMethods)
+      .map(entry => entry[1])
+      .filter(paymentMethod => paymentMethod.type === 'card');
+  } else if (Array.isArray(paymentMethods)) {
+    payerAuthConfiguration = paymentMethods?.filter(paymentMethod => paymentMethod.type === 'card') || [];
+  }
+  payerAuthConfiguration.forEach(key => {
+    payerAuthEnabled = key.config.payerAuthEnabled;
+  });
 
   /**
    * Navigates to the review order page
@@ -64,7 +88,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
    */
   const applyPayments = paymentsToApply => {
     if (paymentsToApply.length > 0) {
-      action('applyPayments', {items: paymentsToApply}).then(response => {
+      action('applyPayments', { items: paymentsToApply }).then(response => {
         if (response.ok) {
           const order = getCurrentOrder(getState());
           // If entered payment details is complete, navigate to the review order page
@@ -73,7 +97,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           }
           setInProgress(false);
         } else {
-          action('notify', {level: ERROR, message: response.error.message});
+          action('notify', { level: ERROR, message: response.error.message });
           setInProgress(false);
         }
       });
@@ -93,7 +117,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       if (Object.values(paymentGroups).some(pGroup => pGroup.paymentMethod !== PAYMENT_TYPE_PAY_IN_STORE)) {
         const response = await deleteAppliedPaymentsByTypes(store);
         if (!response.ok) {
-          action('notify', {level: ERROR, message: response.error.message});
+          action('notify', { level: ERROR, message: response.error.message });
           isError = true;
         }
       }
@@ -111,7 +135,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       if (paymentGroupsToRemoved.length) {
         const response = await deleteAppliedPaymentsByIds(action, paymentGroupsToRemoved);
         if (!response.ok) {
-          action('notify', {level: ERROR, message: response.error.message});
+          action('notify', { level: ERROR, message: response.error.message });
           isError = true;
         }
       }
@@ -134,7 +158,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       return;
     }
     for (const payment of payments) {
-      const {paymentGroupId, ...paymentDetails} = payment;
+      const { paymentGroupId, ...paymentDetails } = payment;
       const existingPaymentGroup = paymentGroups[paymentGroupId];
       if (paymentGroupId && existingPaymentGroup) {
         // Remove existing applied credit card payment group and reapply if
@@ -148,17 +172,17 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           (!existingPaymentGroup.savedCardId && payment.savedCardId) ||
           (existingPaymentGroup.savedCardId && !payment.savedCardId)
         ) {
-          const response = await action('deleteAppliedPayment', {paymentGroupId});
+          const response = await action('deleteAppliedPayment', { paymentGroupId });
           if (response.ok) {
             paymentsToApply.push(paymentDetails);
           } else {
-            action('notify', {level: ERROR, message: response.error.message});
+            action('notify', { level: ERROR, message: response.error.message });
             isError = true;
             setInProgress(false);
             break;
           }
         } else {
-          await action('deleteAppliedPayment', {paymentGroupId});
+          await action('deleteAppliedPayment', { paymentGroupId });
           paymentsToApply.push(
             Object.fromEntries(Object.entries(paymentDetails).filter(arr => arr[0] != 'paymentGroupId'))
           );
@@ -173,22 +197,18 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   }, []);
 
   async function createToken() {
-    var payerAuthEnabled = false,
-      transientToken = null,
-      cardPrefix = null;
+    var transientToken = null;
+    var referenceId = null;
     let finalPayment = payments,
-      payerAuthConfiguration = [],
       updatedPayments;
     const deleteField = ['creditCardNumberData', 'securityCodeData', 'flexMicroForm', 'number'];
-    const {paymentMethods = []} = store.getState()?.paymentMethodConfigRepository;
-    const payerAuth = store.getState().payerAuthRepository || {};
-    const payerAuthToken = payerAuth.payerAuthToken || {};
     const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     if (cardPayment) {
+
       const {
         expiryMonth,
         expiryYear,
-        creditCardNumberData: {card} = {},
+        creditCardNumberData: { card } = {},
         flexMicroForm,
         customProperties
       } = cardPayment || {};
@@ -197,61 +217,56 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
         expirationYear: expiryYear,
         type: card && card[0].cybsCardType
       };
-      if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
-        payerAuthConfiguration = Object.entries(paymentMethods)
-          .map(entry => entry[1])
-          .filter(paymentMethod => paymentMethod.type === 'card');
-      } else if (Array.isArray(paymentMethods)) {
-        payerAuthConfiguration = paymentMethods?.filter(paymentMethod => paymentMethod.type === 'card') || [];
-      }
-      payerAuthConfiguration.forEach(key => {
-        payerAuthEnabled = key.config.payerAuthEnabled;
-      });
-      if (payerAuthEnabled) {
-        Cardinal.configure({
-          logging: {
-            level: 'on'
-          }
-        });
-        Cardinal.setup('init', {
-          jwt: payerAuthToken.jwt
-        });
-        responseSetUp = await returnSetUp();
-      }
+      const { deviceFingerprint } = customProperties || {};
+      const updatedCustomProperties = {
+        ...payerAuthEnabled && getOptionalPayerAuthFields(),
+        ...customProperties,
+        ...(deviceFingerprint?.deviceFingerprintEnabled &&
+          deviceFingerprint?.deviceFingerprintData)
+      };
+
       //check for saved card return payment else create token for new card
       if (cardPayment.savedCardId) {
-        const {customProperties = {}} = cardPayment;
+        if (payerAuthEnabled) {
+          const profileId = getCurrentProfileId(getState());
+          const setupResponse = await payerAuthSetup({ savedCardId: cardPayment.savedCardId, profileId });
+          if (!setupResponse) return false;
+          referenceId = setupResponse.referenceId;
+          await deviceDataCollectionFunction();
+        }
         cardPayment.customProperties = {
-          referenceId: responseSetUp,
-          ...(customProperties.deviceFingerprint?.deviceFingerprintEnabled &&
-            customProperties.deviceFingerprint?.deviceFingerprintData)
+          ...updatedCustomProperties,
+          ...referenceId && { referenceId }
+
         };
         replaceSpecialCharacter(cardPayment.customProperties);
+        delete cardPayment.customProperties["deviceFingerprint"];
         finalPayment = payments.filter(payment => payment.type !== PAYMENT_TYPE_CARD);
         finalPayment = [...finalPayment, cardPayment];
       } else {
         transientToken = await createTokenAsync(flexMicroForm, options);
+        if (payerAuthEnabled) {
+          const setupResponse = await payerAuthSetup({ transientToken: transientToken.decoded.jti });
+          if (!setupResponse) {
+            return false;
+          }
+          referenceId = setupResponse.referenceId;
+          await deviceDataCollectionFunction();
+          store.getState().payerAuthRepository = { transientToken: transientToken.encoded };
+        }
         updatedPayments = {
           ...(payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)),
           cardNumber: transientToken.decoded.data.number.toLowerCase(),
           cardCVV: '',
           cardType: card && card[0].name,
           customProperties: {
-            ...customProperties,
             paymentType: PAYMENT_TYPE_CARD,
             transientTokenJwt: transientToken.encoded,
-            referenceId: responseSetUp,
-            ...(customProperties?.deviceFingerprint?.deviceFingerprintEnabled &&
-              customProperties?.deviceFingerprint?.deviceFingerprintData)
+            ...updatedCustomProperties,
+            ...referenceId && { referenceId }
           }
         };
-        if (payerAuthEnabled && !cardPayment.hasOwnProperty('savedCardId')) {
-          store.getState().payerAuthRepository = {...payerAuth, transientToken: transientToken.encoded};
-          cardPrefix = transientToken.decoded.data.number.substring(0, 6);
-          Cardinal.trigger('bin.process', cardPrefix).then(function (results) {
-            console.log(results);
-          });
-        }
+
         Object.keys(updatedPayments).forEach(key => {
           if (deleteField.includes(key)) {
             delete updatedPayments[key];
@@ -266,13 +281,41 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
     }
     return finalPayment;
   }
-
-  const returnSetUp = async () => {
-    return new Promise(function (resolve, reject) {
-      Cardinal.on('payments.setupComplete', function (setupCompleteData) {
-        resolve(setupCompleteData.sessionId);
-      });
-    });
+  const getOptionalPayerAuthFields = () => {
+    const isBrowser = typeof window !== "undefined";
+    var [returnUrl, deviceChannel, httpBrowserJavaEnabled, httpAcceptBrowserValue, httpBrowserLanguage,
+      httpBrowserColorDepth, httpBrowserScreenHeight, httpBrowserScreenWidth, httpBrowserTimeDifference,
+      userAgentBrowserValue, ipAddress, httpBrowserJavaScriptEnabled, httpAcceptContent] = Array(14).fill("");
+    if (isBrowser) {
+      returnUrl = window.location.origin + RETURN_URL;
+      deviceChannel = DEVICE_CHANNEL.BROWSER;
+      httpBrowserJavaEnabled = window.navigator.javaEnabled().toString();
+      httpAcceptBrowserValue = window.navigator.appVersion.toString();
+      httpBrowserLanguage = window.navigator.language.toString();
+      httpBrowserColorDepth = window.screen.colorDepth.toString();
+      httpBrowserScreenHeight = window.screen.height.toString();
+      httpBrowserScreenWidth = window.screen.width.toString();
+      httpBrowserTimeDifference = new Date().getTimezoneOffset().toString();
+      userAgentBrowserValue = window.navigator.userAgent.toString();
+      ipAddress = ip;
+      httpBrowserJavaScriptEnabled = isJavascriptEnabled.toString();
+      httpAcceptContent = userAgentBrowserValue;
+    }
+    return {
+      returnUrl,
+      deviceChannel,
+      httpBrowserJavaEnabled,
+      httpAcceptBrowserValue,
+      httpBrowserLanguage,
+      httpBrowserColorDepth,
+      httpBrowserScreenHeight,
+      httpBrowserScreenWidth,
+      httpBrowserTimeDifference,
+      userAgentBrowserValue,
+      ipAddress,
+      httpBrowserJavaScriptEnabled,
+      httpAcceptContent,
+    };
   };
 
   /**
@@ -301,7 +344,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
    * or there are no existing payment groups or there is a default payment group or appliedPaymentGroup
    */
   const isContinueToReviewOrderButtonDisabled = () => {
-    const {creditCardNumberData, securityCodeData, savedCardId, cardCVV} =
+    const { creditCardNumberData, securityCodeData, savedCardId, cardCVV } =
       (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     const microFormIsValid =
       creditCardNumberData && creditCardNumberData.valid && securityCodeData && securityCodeData.valid;
@@ -310,31 +353,92 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
     } else {
       return selectedPaymentType === PAYMENT_TYPE_CARD
         ? inProgress ||
-            (!isZeroValueOrder(props) &&
-              (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
-              selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
-              !microFormIsValid)
+        (!isZeroValueOrder(props) &&
+          (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
+          selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
+          !microFormIsValid)
         : inProgress ||
-            (!isZeroValueOrder(props) &&
-              (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
-              selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
-              payments.length === 0);
+        (!isZeroValueOrder(props) &&
+          (Object.keys(paymentGroups).length === 0 || getAmountRemainingPaymentGroup(props)) &&
+          selectedPaymentType !== PAYMENT_TYPE_PAY_LATER &&
+          payments.length === 0);
     }
   };
 
+  async function payerAuthSetup(payload) {
+    return new Promise((resolve) => {
+      action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
+        var payerAuthSetupData = false;
+        if (response.ok) {
+          const data = response.delta.payerAuthSetupRepository || {};
+          setDeviceDataCollectionUrl(data.deviceDataCollectionUrl || "");
+          cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
+          setToken(data.accessToken || "");
+          payerAuthSetupData = data || false;
+        } else {
+          action('notify', { level: ERROR, message: response.error.message });
+          setInProgress(false);
+        }
+        resolve(payerAuthSetupData);
+      });
+    });
+  };
+  async function deviceDataCollectionFunction() {
+    return new Promise((resolve) => {
+      const form = document.getElementById('cardinalCollectionForm');
+      form.submit();
+      if (typeof window !== 'undefined') {
+        window.addEventListener('message', (event) => {
+          if (event.origin === cardinalUrl) {
+            let data = JSON.parse(event.data);
+            if (data != undefined && data.Status) {
+              console.log(alertActionCompletedSuccessfully);
+              resolve();
+            }
+            console.log(alertActionCompletedSuccessfully, data);
+          };
+        }, false);
+      };
+
+    });
+  }
+  useEffect(() => {
+    if (!payerAuthEnabled) return;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', IP_ENDPOINT_URL);
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        setIp(data.ip);
+      } else {
+        console.error(messageFailed);
+      }
+    };
+    xhr.onerror = () => {
+      console.error(messageFailed);
+    };
+    xhr.send();
+  }, [payerAuthEnabled])
+
   return (
-    <Styled id="CheckoutContinueToReviewOrderButton" css={css}>
-      <div className="CheckoutContinueToReviewOrderButton">
-        <button
-          type="button"
-          className="CheckoutContinueToReviewOrderButton__Button"
-          disabled={isContinueToReviewOrderButtonDisabled()}
-          onClick={onContinueToReviewOrder}
-        >
-          {actionContinueToReviewOrder}
-        </button>
-      </div>
-    </Styled>
+    <>
+      <iframe name="cardinalCollectionIframe" height="10" width="10" sandbox style={{ display: "none" }} />
+      <form id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST" action={deviceDataCollectionUrl}>
+        <input type="hidden" name="JWT" value={token} />
+      </form>
+      <Styled id="CheckoutContinueToReviewOrderButton" css={css}>
+        <div className="CheckoutContinueToReviewOrderButton">
+          <button
+            type="button"
+            className="CheckoutContinueToReviewOrderButton__Button"
+            disabled={isContinueToReviewOrderButtonDisabled()}
+            onClick={onContinueToReviewOrder}
+          >
+            {actionContinueToReviewOrder}
+          </button>
+        </div>
+      </Styled>
+    </>
   );
 };
 

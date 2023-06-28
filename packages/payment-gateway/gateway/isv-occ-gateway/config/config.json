@@ -164,52 +164,6 @@
       "public": false
     },
     {
-      "id": "payerAuthKeyId",
-      "type": "stringType",
-      "labelResourceId": "payerAuthKeyIdLabel",
-      "helpTextResourceId": "payerAuthKeyIdHelpText",
-      "defaultValue": "payerAuthKeyId",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "payerAuthKey",
-      "type": "stringType",
-      "labelResourceId": "payerAuthKeyLabel",
-      "helpTextResourceId": "payerAuthKeyHelpText",
-      "defaultValue": "payerAuthKey",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "secretKey3DS",
-      "type": "passwordType",
-      "name": "secretKey",
-      "labelResourceId": "secretKeyLabel",
-      "helpTextResourceId": "secretKeyHelpTexts",
-      "defaultValue": "secretKey3DS",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "payerAuthOrgUnitId",
-      "type": "stringType",
-      "labelResourceId": "payerAuthOrgUnitIdLabel",
-      "helpTextResourceId": "payerAuthOrgUnitIdHelpText",
-      "defaultValue": "payerAuthOrgUnitId",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "songbirdUrl",
-      "type": "stringType",
-      "labelResourceId": "songbirdUrlLabel",
-      "helpTextResourceId": "songbirdUrlHelpText",
-      "defaultValue": "https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js",
-      "required": true,
-      "public": false
-    },
-    {
       "id": "saleEnabled",
       "type": "multiSelectOptionType",
       "name": "saleEnabled",
@@ -326,15 +280,6 @@
       "labelResourceId": "googlePaySupportedNetworksLabel",
       "helpTextResourceId": "googlePaySupportedNetworksHelpText",
       "defaultValue": "AMEX,DISCOVER,INTERAC,JCB,MASTERCARD,VISA",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "applePaySdkUrl",
-      "type": "stringType",
-      "labelResourceId": "applePaySdkUrlLabel",
-      "helpTextResourceId": "applePaySdkUrlHelpText",
-      "defaultValue": "https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js",
       "required": true,
       "public": false
     },

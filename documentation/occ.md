@@ -3,9 +3,6 @@
 
 ## Oracle Commerce Cloud
 
-**Version 1.0.0**
-October 2022
-
 ## Contents
 
 | Documentation                                                  | Description                                                                                                                  |
@@ -23,11 +20,6 @@ October 2022
 | [Reporting](business-services/reporting.md)                    | Additional Reporting APIs to allow fulfillment retrieve transactions reviewed in Decision Manager                            |
 | [Support](support.md)                                          | Support information                                                                                                          |
 
-## Recent Revisions to This Document
-
-| Release        | Release version | Changes         |
-|----------------|-----------------|-----------------|
-| October 2022 | 1.0.0           | Initial Release |
 
 ## Audience and Purpose
 

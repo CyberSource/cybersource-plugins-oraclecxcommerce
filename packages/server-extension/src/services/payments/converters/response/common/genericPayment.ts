@@ -1,14 +1,15 @@
 import { PaymentContext } from '@server-extension/common';
 import { PtsV2PaymentsPost201Response } from 'cybersource-rest-client';
 import { responseCodeMappings, SUCCESS_RESPONSE_CODES } from '../common';
+import { addCustomProperties } from './customProperties'; 
 
 type PspResponse = PtsV2PaymentsPost201Response;
 
 export default function convert(context: PaymentContext): OCC.GenericWebhookResponse {
   const { webhookRequest } = context;
   const paymentResponse = <DeepRequired<PspResponse>>context.data.response;
-
   const responseCode = responseCodeMappings(paymentResponse.status, webhookRequest.transactionType);
+  const { processorInformation } = <DeepRequired<PtsV2PaymentsPost201Response>>paymentResponse;
   const success = SUCCESS_RESPONSE_CODES.includes(responseCode);
 
   return {
@@ -31,7 +32,11 @@ export default function convert(context: PaymentContext): OCC.GenericWebhookResp
     },
 
     additionalProperties: {
-      responseReason: paymentResponse.status
+      responseReason: paymentResponse.status,
+      authAvsCode: processorInformation?.avs?.code,
+      authTime: paymentResponse.submitTimeUtc,
+      ...addCustomProperties(webhookRequest) 
     }
+
   };
 }

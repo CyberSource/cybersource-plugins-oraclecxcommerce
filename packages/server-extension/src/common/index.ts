@@ -1,5 +1,4 @@
 import { RequestValidationError } from '../errors/index';
-import { MerchantConfig } from 'cybersource-rest-client';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { validationResult } from 'express-validator';
 
@@ -20,11 +19,7 @@ declare global {
   }
 }
 
-export interface RequestContext {
-  gatewaySettings: OCC.GatewaySettings;
-  merchantConfig: MerchantConfig;
-  channel: string;
-}
+export interface RequestContext extends Record<string, any> {}
 
 export interface PaymentData {
   request?: Record<string, any>;
@@ -82,11 +77,9 @@ const replaceChar = (logData: any) => {
     if (typeof logData[key] === 'object' && logData[key] !== null) {
       replaceChar(logData[key])
     } else {
-      payload.forEach(data => {
-        if (data == key && logData[key] !== null) {
+        if (payload.includes(key) && logData[key] !== null && logData[key] === "string") {
           logData[key] = logData[key].replace(replaceCharacterRegex, "x");
         }
-      })
     }
   });
 }

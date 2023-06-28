@@ -3,7 +3,7 @@ import nconf from 'nconf';
 import validateWebHookPayloadSignature from '../services/occ/webhookSignatureValidation';
 
 const SKIP_HOSTS = ['localhost', '127.0.0.1'];
-const WEBHOOK_SIGNATURE_HEADER = 'x-oracle-cc-webhook-signature';
+const WEBHOOK_SIGNATURE_HEADER = 'x-oracle-cc-webhook-signature-sha512';
 
 function validateWebhook(req: Request, res: Response, next: NextFunction) {
   const confKey = getConfKeyFromUrl(req.url);

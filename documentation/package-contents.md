@@ -106,11 +106,6 @@ The following settings can be configured in gateway:
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Credit Card**                     |                                                                                                                                                                                                                                                                                                                   |
 | **payerAuthEnabled**                | Enables payer authentication for credit cards                                                                                                                                                                                                                                                                     |
-| **payerAuthKeyId**                  | Cardinal Cruise Key ID. Request from PSP                                                                                                                                                                                                                                                                          |
-| **payerAuthKey**                    | Cardinal Cruise Key. Request from PSP                                                                                                                                                                                                                                                                             |
-| **secretKey3DS**                    | Required by OCC. Can be ignored                                                                                                                                                                                                                                                                                   |
-| **payerAuthOrgUnitId**              | Cardinal Cruise Org ID. Request from PSP                                                                                                                                                                                                                                                                          |
-| **songbirdUrl**                     | Cardinal Commerce browser SDK to control payer authentication process in UI                                                                                                                                                                                                                                       |
 | **flexSdkUrl**                      | Credit Card Flex SDK URL                                                                                                                                                                                                                                                                                          |
 | **isCVVRequiredForSavedCards**      | Is the CVV required when using a saved card.                                                                                                                                                                                                                                                                      |
 | **isCVVRequiredForScheduledOrders** | Is the CVV required for a Scheduled Order                                                                                                                                                                                                                                                                         |
@@ -129,7 +124,6 @@ The following settings can be configured in gateway:
 | **applePayInitiative**              | A predefined value that identifies the e-commerce application making the request. For ApplePay on the web use 'web'                                                                                                                                                                                               |
 | **applePayInitiativeContext**       | Fully qualified domain name associated with your Apple Pay Merchant Identity Certificate                                                                                                                                                                                                                          |
 | **applePaySupportedNetworks**       | ApplePay Supported Networks                                                                                                                                                                                                                                                                                       |
-| **applePaySdkUrl**                  | ApplePay SDK URL                                      |
 | **applePayDisplayName**    | Apple Pay display name |
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Decision Manager**                |                                                                                                                                                                                                                                                                                                                   |
@@ -142,7 +136,7 @@ The following settings can be configured in gateway:
 | **dailyReportName**                 | Daily Report Name                                                                                                                                                                                                                                                                                                 |
 
 
-![Important](images/important.jpg) `secretKey3DS`, `isCVVRequiredForSavedCards` and `isCVVRequiredForScheduledOrders` should be present in gateway settings in order for saved cards and Payer Authentication to be working
+![Important](images/important.jpg)  `isCVVRequiredForSavedCards` and `isCVVRequiredForScheduledOrders` should be present in gateway settings in order for saved cards to be working
 
 Please refer to the [Authentication](https://developer.cybersource.com/api/developer-guides/dita-gettingstarted/authentication.html) documentation to learn more about available authentication types. In case authentication type is JWT you should place `p12` key file in `packages/server-extension/certs` directory, the `keyFileName` setting should be equal to the file name without 'p12' extension. `keyAlias` and `keyPass` should be updated accordingly (usually same value as MID).
 
@@ -168,40 +162,172 @@ The payment gateway integration service introduces dependency to PSP REST SDK cl
 Find below the structure of the package:
 
 ```text
-.
-├── certs
-├── config
-│   ├── app.local.json // Configuration properties for local development
-│   └── app.prod.json // Configuration properties for OCC environment (applied for a deployed SSE)
-├── docs
-│   └── isv-occ-payment.postman_collection.json // Postman collection with all SSE endpoints available for testing
-├── jest.config.js
-├── jest.int.config.js // Unit tests setup
-├── jest.unit.config.js // Integration tests setup
-├── locales
-├── node_modules // Modules to be deployed to OCC along with custom SSE code
-├── nodemon.json
-├── package-lock.json
-├── package.json
-├── src
-│   ├── __tests__
-│   ├── app.ts // Main entry point for SSE in OCC env, being loaded on start-up
-│   ├── common
-│   ├── controllers // API endpoints
-│   ├── errors
-│   ├── index.ts
-│   ├── middlewares
-│   │   ├── contextLoader.ts // Initialize service logic
-│   │   ├── errorHandler.ts // Error handling logic
-│   │   ├── gatewaySettings.ts // Fetch gateway settings for a given channel (e.g. agent, preview)
-│   │   ├── logger.ts // Simple logger which can be disabled if not needed
-│   │   ├── merchantConfig.ts // Create PSP SK configuration out of gateway settings
-│   │   └── validateWebhook.ts // Validate Webhook signature
-│   ├── server.ts // Local development server
-│   ├── services // All payment integration logic resides here
-│   └── types
-│       └── occ-sdk.d.ts
-└── tsconfig.json
+server-extension
+ ┣ certs
+ ┃ ┣ applePayIdentityCert.pem
+ ┃ ┣ applePayIdentityKey.key
+ ┃ ┗ isv_hybris_test.p12
+ ┣ config
+ ┃ ┣ app.local.json
+ ┃ ┗ app.prod.json
+ ┣ docs
+ ┃ ┗ isv-occ-payment.postman_collection.json
+ ┣ locales
+ ┃ ┗ Resources_en.properties
+ ┣ src
+ ┃ ┣ common
+ ┃ ┃ ┣ logging
+ ┃ ┃ ┃ ┣ consoleLogger.ts
+ ┃ ┃ ┃ ┗ occLogger.ts
+ ┃ ┃ ┣ genericDispatcher.ts
+ ┃ ┃ ┗ index.ts
+ ┃ ┣ controllers
+ ┃ ┃ ┣ validation
+ ┃ ┃ ┃ ┣ applePaySchema.ts
+ ┃ ┃ ┃ ┣ capturePaymentSchema.ts
+ ┃ ┃ ┃ ┣ checkSchema.ts
+ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┣ flexCaptureContextSchema.ts
+ ┃ ┃ ┃ ┣ refundPaymentSchema.ts
+ ┃ ┃ ┃ ┗ reportSchema.ts
+ ┃ ┃ ┣ applePay.ts
+ ┃ ┃ ┣ flex.ts
+ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┣ payerAuth.ts
+ ┃ ┃ ┣ paymentCapture.ts
+ ┃ ┃ ┣ paymentMethods.ts
+ ┃ ┃ ┣ paymentRefund.ts
+ ┃ ┃ ┣ paymentRouter.js
+ ┃ ┃ ┗ report.ts
+ ┃ ┣ errors
+ ┃ ┃ ┣ handlers
+ ┃ ┃ ┃ ┣ api400ResponseHandler.ts
+ ┃ ┃ ┃ ┣ apiErrorResponseHandler.ts
+ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┣ defaultErrorHandler.ts
+ ┃ ┃ ┃ ┣ errorHandler.js
+ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┗ requestValidationErrorHandler.ts
+ ┃ ┃ ┣ apiExecutionError.ts
+ ┃ ┃ ┣ baseError.ts
+ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┗ requestValidationError.ts
+ ┃ ┣ middlewares
+ ┃ ┃ ┣ contextLoader.ts
+ ┃ ┃ ┣ errorHandler.ts
+ ┃ ┃ ┣ gatewaySettings.ts
+ ┃ ┃ ┣ logger.ts
+ ┃ ┃ ┣ merchantConfig.ts
+ ┃ ┃ ┗ validateWebhook.ts
+ ┃ ┣ services
+ ┃ ┃ ┣ occ
+ ┃ ┃ ┃ ┣ occClient.ts
+ ┃ ┃ ┃ ┣ occClientStorefront.ts
+ ┃ ┃ ┃ ┗ webhookSignatureValidation.ts
+ ┃ ┃ ┣ payments
+ ┃ ┃ ┃ ┣ api
+ ┃ ┃ ┃ ┃ ┣ generateKey.ts
+ ┃ ┃ ┃ ┃ ┣ paymentCommand.ts
+ ┃ ┃ ┃ ┃ ┣ processAuthorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┣ processCapture.ts
+ ┃ ┃ ┃ ┃ ┣ processPayment.ts
+ ┃ ┃ ┃ ┃ ┗ processRefund.ts
+ ┃ ┃ ┃ ┣ converters
+ ┃ ┃ ┃ ┃ ┣ request
+ ┃ ┃ ┃ ┃ ┃ ┣ mappers
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ billingAddressMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ cardSelectionIndicatorMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ decisionManagerMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ deviceFingerprintMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericLineItemsMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ partnerMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthEnrollMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthValidationMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ plainCardPaymentMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ savedCardPaymentMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ savePaymentTokenMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ shippingAddressMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ transientTokenInfoMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ applepayAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ captureEndpoint.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ cardAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ googlepayAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ referenceInfoFallback.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ refund.ts
+ ┃ ┃ ┃ ┃ ┃ ┗ refundEndpoint.ts
+ ┃ ┃ ┃ ┃ ┣ response
+ ┃ ┃ ┃ ┃ ┃ ┣ card
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ authorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ refund.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ common
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ customProperties.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericCardPayment.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ genericPayment.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ errors
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ apiCardError.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ apiGenericError.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ generic
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ capture.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ genericAuthorization.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ refund.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ mappers
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleCardMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleGenericMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ savedCardPaymentMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ reports
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ reportDaily.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ reportOnDemand.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ captureEndpoint.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ common.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┃ ┗ refundEndpoint.ts
+ ┃ ┃ ┃ ┃ ┗ common.ts
+ ┃ ┃ ┃ ┣ paymentMethod
+ ┃ ┃ ┃ ┃ ┣ configBuilder.ts
+ ┃ ┃ ┃ ┃ ┗ paymentMethodService.ts
+ ┃ ┃ ┃ ┣ reports
+ ┃ ┃ ┃ ┃ ┣ dailyReport.ts
+ ┃ ┃ ┃ ┃ ┣ index.ts
+ ┃ ┃ ┃ ┃ ┣ intervalService.ts
+ ┃ ┃ ┃ ┃ ┗ onDemandReport.ts
+ ┃ ┃ ┃ ┣ validators
+ ┃ ┃ ┃ ┃ ┣ deviceFingerprintSessionIdValidator.ts
+ ┃ ┃ ┃ ┃ ┗ transientTokenValidator.ts
+ ┃ ┃ ┃ ┣ applePayService.ts
+ ┃ ┃ ┃ ┣ deviceFingerprintService.ts
+ ┃ ┃ ┃ ┣ flexService.ts
+ ┃ ┃ ┃ ┣ payerAuthSetupService.ts
+ ┃ ┃ ┃ ┣ paymentCaptureService.ts
+ ┃ ┃ ┃ ┣ paymentContextBuilder.ts
+ ┃ ┃ ┃ ┣ paymentDispatcher.ts
+ ┃ ┃ ┃ ┗ paymentRefundService.ts
+ ┃ ┃ ┣ cacheService.ts
+ ┃ ┃ ┣ cryptoService.ts
+ ┃ ┃ ┣ jwtService.ts
+ ┃ ┃ ┗ loggingService.ts
+ ┃ ┣ types
+ ┃ ┃ ┗ occ-sdk.d.ts
+ ┃ ┣ app.ts
+ ┃ ┣ indexServerExtension.ts
+ ┃ ┗ server.ts
+ ┣ jest.config.js
+ ┣ jest.int.config.js
+ ┣ jest.unit.config.js
+ ┣ nodemon.json
+ ┣ package.json
+ ┗ tsconfig.json
 ```
 
 ![Note](images/note.jpg) Please notice a Postman collection (`docs/isv-occ-payment.postman_collection.json`) is included into SSE package which can be used for testing and exploring the following API endpoints:
@@ -210,8 +336,7 @@ Find below the structure of the package:
 |---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
 | `/ccstorex/custom/isv-payment/v2/paymentMethods`        | Returns list of supported payment types. Consumer: Payment Widget                                                               |
 | `/ccstorex/custom/isv-payment/v2/keys`                  | Generates Flex public key (capture context). Consumer: Payment Widget                                                           |
-| `/ccstorex/custom/isv-payment/v2/payments`              | Generic Payments Webhook handler endpoint. Consumer: OCC                                                                        |
-| `/ccstorex/custom/isv-payment/v2/payerAuth/generateJwt` | Generates JWT for payer authentication. Consumer: Payment Widget                                                                |
+| `/ccstorex/custom/isv-payment/v2/payments`              | Generic Payments Webhook handler endpoint.  Consumer: Payment Widget                                                                |
 | `/ccstorex/custom/isv-payment/v2/applepay/validate`     | Validates ApplePay session. Consumer: Payment Widget                                                                            |
 | `/ccstorex/custom/isv-payment/v2/report/daily`          | Returns daily conversion report for a given date. Consumer: Fulfillment                                                         |
 | `/ccstorex/custom/isv-payment/v2/report/onDemand`       | Returns conversion report for specified start and end dates. Applies only for less than 24 hour interval. Consumer: Fulfillment |
@@ -328,90 +453,97 @@ The overall UI integration flow is as follows:
 Find below the structure of the package
 
 ```text
-.
-└── packages/apps
-    └── core-commerce-reference-store
-        └── src
-          ├─ components
-          │  ├─ index.js
-          │  ├─ isv-checkout-continue-to-review-order-button
-          │  │  ├─ index.jsx
-          │  │  ├─ meta.js
-          │  │  └─ styles.css
-          │  ├─ isv-checkout-place-order-button
-          │  │  ├─ index.jsx
-          │  │  ├─ locales
-          │  │  │  └─ en.json
-          │  │  ├─ meta.js
-          │  │  └─ styles.css
-          │  ├─ isv-payment-method
-          │  │  ├─ components
-          │  │  │  ├─ isv-add-card-details
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-applepay-payment-method
-          │  │  │  │  ├─ applePay.css
-          │  │  │  │  ├─ applePay.js
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-checkout-card-details
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-checkout-saved-card-item
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-checkout-saved-cards
-          │  │  │  │  └─ index.jsx
-          │  │  │  ├─ isv-credit-card-payment-method
-          │  │  │  │  ├─ index.jsx
-          │  │  │  │  └─ IsvCreditCard.jsx
-          │  │  │  └─ isv-googlepay-payment-method
-          │  │  │     ├─ googlepay.css
-          │  │  │     ├─ googlePay.js
-          │  │  │     └─ index.jsx
-          │  │  ├─ cybersource
-          │  │  │  ├─ common.js
-          │  │  │  ├─ flexMicroForm.js
-          │  │  │  ├─ flexMicroFormAPI.js
-          │  │  │  └─ scriptLoader.js
-          │  │  ├─ index.jsx
-          │  │  ├─ locales
-          │  │  │  └─ en.json
-          │  │  ├─ meta.js
-          │  │  ├─ styles
-          │  │  │  └─ flex.css
-          │  │  └─ styles.css
-          │  └─ meta.js
-          ├─ endpoints
-          │  ├─ apple-pay-validation-endpoint
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  ├─ flex-microform-endpoint
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  ├─ index.js
-          │  ├─ meta.js
-          │  ├─ payer-auth-endpoint
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  └─ payment-method-config-endpoint
-          │     ├─ index.js
-          │     └─ meta.js
-          ├─ fetchers
-          │  ├─ flex-microform-fetcher
-          │  │  ├─ hook.js
-          │  │  ├─ index.js
-          │  │  └─ meta.js
-          │  ├─ hooks.js
-          │  ├─ index.js
-          │  ├─ meta.js
-          │  └─ payment-method-config-fetcher
-          │     ├─ hook.js
-          │     ├─ index.js
-          │     └─ meta.js
-          └─ selectors
-             ├─ flex-microform-selector
-             │   └─ index.js
-             ├─ index.js
-             └─ paymentMethod-config-selector
-                └─ index.js     
-      
+plugins
+ ┣ actions
+ ┃ ┣ apple-pay-validation-action
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ flex-microform-action
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ get-payer-auth-token-action
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ components
+ ┃ ┣ isv-checkout-continue-to-review-order-button
+ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┣ meta.js
+ ┃ ┃ ┗ styles.css
+ ┃ ┣ isv-checkout-place-order-button
+ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┣ meta.js
+ ┃ ┃ ┗ styles.css
+ ┃ ┣ isv-payment-method
+ ┃ ┃ ┣ components
+ ┃ ┃ ┃ ┣ isv-add-card-details
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-applepay-payment-method
+ ┃ ┃ ┃ ┃ ┣ applePay.css
+ ┃ ┃ ┃ ┃ ┣ applePay.js
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-checkout-card-details
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-checkout-saved-card-item
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-checkout-saved-cards
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┃ ┣ isv-credit-card-payment-method
+ ┃ ┃ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┃ ┃ ┗ IsvCreditCard.jsx
+ ┃ ┃ ┃ ┗ isv-googlepay-payment-method
+ ┃ ┃ ┃ ┃ ┣ googlepay.css
+ ┃ ┃ ┃ ┃ ┣ googlePay.js
+ ┃ ┃ ┃ ┃ ┗ index.jsx
+ ┃ ┃ ┣ isv-payment-utility
+ ┃ ┃ ┃ ┣ common.js
+ ┃ ┃ ┃ ┣ flex-microform-api.js
+ ┃ ┃ ┃ ┣ flex-microform.js
+ ┃ ┃ ┃ ┗ script-loader.js
+ ┃ ┃ ┣ styles
+ ┃ ┃ ┃ ┗ flex.css
+ ┃ ┃ ┣ index.jsx
+ ┃ ┃ ┣ meta.js
+ ┃ ┃ ┗ styles.css
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ endpoints
+ ┃ ┣ apple-pay-validation-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ flex-microform-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ payer-auth-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ payment-method-config-endpoint
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ fetchers
+ ┃ ┣ flex-microform-fetcher
+ ┃ ┃ ┣ hook.js
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ payment-method-config-fetcher
+ ┃ ┃ ┣ hook.js
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┗ meta.js
+ ┃ ┣ hooks.js
+ ┃ ┣ index.js
+ ┃ ┗ meta.js
+ ┣ selectors
+ ┃ ┣ flex-microform-selector
+ ┃ ┃ ┗ index.js
+ ┃ ┣ payment-method-config-selector
+ ┃ ┃ ┗ index.js
+ ┃ ┗ index.js
+ ┗ subscribers
+   ┣ index.js
+   ┗ meta.js
 ```
 
 
