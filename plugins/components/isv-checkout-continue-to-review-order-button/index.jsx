@@ -404,13 +404,6 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   }
 
   useEffect(() => {
-    const isBrowser = typeof window !== "undefined";
-    if (isBrowser && window.self.location != window.top.location) {
-      window.top.location = window.self.location;
-    }
-  }, []);
-  
-  useEffect(() => {
     if (!payerAuthEnabled) return;
     const xhr = new XMLHttpRequest();
     xhr.open('GET', IP_ENDPOINT_URL);
@@ -427,6 +420,12 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
     };
     xhr.send();
   }, [payerAuthEnabled])
+  
+  useEffect(() => {
+    if (self != top) {
+      top.location = encodeURI(self.location);
+    }
+  }, []);
 
   return (
     <>
