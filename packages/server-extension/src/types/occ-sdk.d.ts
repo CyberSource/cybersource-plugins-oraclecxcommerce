@@ -80,6 +80,7 @@ declare namespace OCC {
     payerAuthOrgUnitId: string;
     payerAuthEnabled: boolean;
     paymentOptions: string;
+    paymentMethodTypes: string;
     googlePaySdkUrl: string;
     googlePayEnvironment: string;
     googlePayGateway: string;

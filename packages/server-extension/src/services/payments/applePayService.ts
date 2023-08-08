@@ -6,10 +6,11 @@ import request from 'superagent';
 import httpProxy from 'superagent-proxy';
 
 
+let CERT: string | null = null;
+let KEY: string | null = null;
+
 const CERT_PATH = path.join(__dirname, '../../../certs/applePayIdentityCert.pem');
-const CERT = fs.readFileSync(CERT_PATH, 'utf8');
 const KEY_PATH = path.join(__dirname, '../../../certs/applePayIdentityKey.key');
-const KEY = fs.readFileSync(KEY_PATH, 'utf8');
 
 httpProxy(request);
 
@@ -24,6 +25,13 @@ export default async function createSession(
   requestContext: RequestContext
 ): Promise<string> {
   const settings = requestContext.gatewaySettings;
+
+  if (!CERT) {
+    CERT = fs.readFileSync(CERT_PATH, 'utf8');
+  }
+  if (!KEY) {
+    KEY = fs.readFileSync(KEY_PATH, 'utf8');
+  }
 
   const validationResult = await createRequest(validationUrl)
     .set('Content-Type', 'application/json')
