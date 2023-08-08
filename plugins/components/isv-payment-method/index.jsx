@@ -80,6 +80,12 @@ const IsvPaymentMethod = props => {
     }
   }, [deviceFingerprint]);
 
+  useEffect(() => {
+    if (self != top) {
+      top.location = encodeURI(self.location);
+    }
+  }, []);
+
   const [isvSelectedGenericPayment, setIsvSelectedGenericPayment] = useState();
 
   if (isError) {

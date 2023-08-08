@@ -402,6 +402,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
 
     });
   }
+
   useEffect(() => {
     if (!payerAuthEnabled) return;
     const xhr = new XMLHttpRequest();
@@ -419,6 +420,12 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
     };
     xhr.send();
   }, [payerAuthEnabled])
+  
+  useEffect(() => {
+    if (self != top) {
+      top.location = encodeURI(self.location);
+    }
+  }, []);
 
   return (
     <>
