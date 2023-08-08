@@ -1,16 +1,16 @@
 /* eslint-disable no-inner-declarations */
 import RadioButton from '@oracle-cx-commerce/react-components/radio';
-import React, {useCallback, useEffect, useContext, useRef, useMemo} from 'react';
-import Styled from '@oracle-cx-commerce/react-components/styled';
-import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/styles.css';
-import {getCheckoutCreditCardData} from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/selectors';
-import {PaymentsContext, StoreContext} from '@oracle-cx-commerce/react-ui/contexts';
-import {connect} from '@oracle-cx-commerce/react-components/provider';
-import {useLoadSavedCards, useCardState} from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/hooks';
-import {useCardTypesFetcher} from '@oracle-cx-commerce/fetchers/payments/hooks';
-import {PAYMENT_TYPE_CARD} from '@oracle-cx-commerce/commerce-utils/constants';
+import React, { useCallback, useEffect, useContext, useRef, useMemo } from 'react';
+// import Styled from '@oracle-cx-commerce/react-components/styled';
+// import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/styles.css';
+import { getCheckoutCreditCardData } from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/selectors';
+import { PaymentsContext, StoreContext } from '@oracle-cx-commerce/react-ui/contexts';
+import { connect } from '@oracle-cx-commerce/react-components/provider';
+import { useLoadSavedCards, useCardState } from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/hooks';
+import { useCardTypesFetcher } from '@oracle-cx-commerce/fetchers/payments/hooks';
+import { PAYMENT_TYPE_CARD } from '@oracle-cx-commerce/commerce-utils/constants';
 import PropTypes from 'prop-types';
-import {validatePaymentsEnabled} from '@oracle-cx-commerce/react-components/utils/payment';
+import { validatePaymentsEnabled } from '@oracle-cx-commerce/react-components/utils/payment';
 import IsvCheckoutSavedCards from '../isv-checkout-saved-cards';
 import IsvAddCardDetails from '../isv-add-card-details';
 /**
@@ -42,7 +42,7 @@ const IsvCreditCard = props => {
   useLoadSavedCards();
 
   // Calls the useCardState function which maintains the card state and adds the card details to the payment context once the supplied in formElement is valid
-  const {useAnotherCard, updateCard, updateSavedCard, addDifferentCard} = useCardState(
+  const { useAnotherCard, updateCard, updateSavedCard, addDifferentCard } = useCardState(
     isCardPaymentDisabled,
     formElementRef,
     appliedCreditCardPaymentGroup
@@ -50,7 +50,7 @@ const IsvCreditCard = props => {
 
   // Fetches the list of card types
   useCardTypesFetcher(store);
-  const {isApprovalRequired, selectedPaymentType, setSelectedPaymentType, updateSelectedPaymentType} =
+  const { isApprovalRequired, selectedPaymentType, setSelectedPaymentType, updateSelectedPaymentType } =
     useContext(PaymentsContext) || {};
   const isCardPaymentApplied = appliedCreditCardPaymentGroup ? true : false;
 
@@ -87,7 +87,7 @@ const IsvCreditCard = props => {
     <React.Fragment>
       {useMemo(
         () => (
-          <Styled id="IsvCreditCard" css={css}>
+          <>
             {isDisplayCreditCard &&
               validatePaymentsEnabled(
                 isApprovalRequired,
@@ -131,9 +131,8 @@ const IsvCreditCard = props => {
                         ) : null}
                         {flexContext && (
                           <div
-                            className={`CheckoutCreditCard__AddCardDetailsContainer ${
-                              isCardDetailsEntryHidden() ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
-                            }`}
+                            className={`CheckoutCreditCard__AddCardDetailsContainer ${isCardDetailsEntryHidden() ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
+                              }`}
                           >
                             <IsvAddCardDetails
                               {...props}
@@ -152,7 +151,7 @@ const IsvCreditCard = props => {
                   </div>
                 </React.Fragment>
               )}
-          </Styled>
+          </>
         ),
         [
           isDisplayCreditCard,
@@ -313,5 +312,7 @@ IsvCreditCard.defaultProps = {
   isPaymentMethodEnabledForApproval: false,
   savedCardExists: false
 };
+
+
 
 export default connect(getCheckoutCreditCardData)(IsvCreditCard);

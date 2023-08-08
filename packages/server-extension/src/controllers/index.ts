@@ -20,7 +20,7 @@ router.use('/v2/capture', paymentCapture);
 router.use('/v2/refund', paymentRefund);
 router.use('/v2/report', report);
 
-router.post('/v2/payerAuthReturnUrl',(req,res)=>{
+router.post('/v2/payerAuthReturnUrl',(req: Request,res: Response)=>{
   const transactionId = JSON.stringify(req.body?.TransactionId);
   res.send(`<script>
      window.parent.postMessage({
