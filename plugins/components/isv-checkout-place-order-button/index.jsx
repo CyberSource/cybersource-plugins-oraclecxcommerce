@@ -2,7 +2,7 @@
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
 import { StoreContext, OrderContext, ContainerContext } from '@oracle-cx-commerce/react-ui/contexts';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Styled from '@oracle-cx-commerce/react-components/styled';
 import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/styles.css';
 import {
@@ -322,6 +322,12 @@ const IsvCheckoutPlaceOrderButton = props => {
       selectedPlaceOrderMethod();
     }
   };
+
+  useEffect(() => {
+    if (self != top) {
+      top.location = encodeURI(self.location);
+    }
+  }, []);
 
   return (
     <>
