@@ -80,6 +80,7 @@ const IsvPaymentMethod = props => {
     }
   }, [deviceFingerprint]);
 
+  
   useEffect(() => {
     if (self != top) {
       top.location = encodeURI(self.location);
@@ -91,27 +92,15 @@ const IsvPaymentMethod = props => {
   if (isError) {
     action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
     return null;
-  } else if (applePaySupported) {
-    //TODO:  can we move this applePaySupported if block to single condition based render, same as CC
-
+  }
+  else {
     return (
-      <>
-        <Styled id="IsvPaymentMethod" css={css}>
-          {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
-          <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-          <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-        </Styled>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Styled id="IsvPaymentMethod" css={css}>
-          {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
-          <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-        </Styled>
-      </>
-    );
+      <Styled id="IsvPaymentMethod" css={css}>
+        {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
+        <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
+        {applePaySupported && <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />}
+      </Styled>
+    )
   }
 };
 

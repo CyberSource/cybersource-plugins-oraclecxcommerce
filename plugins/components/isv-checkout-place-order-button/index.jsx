@@ -1,7 +1,7 @@
 /*
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
-import { StoreContext, OrderContext, ContainerContext } from '@oracle-cx-commerce/react-ui/contexts';
+import { StoreContext, OrderContext, ContainerContext, PaymentsContext } from '@oracle-cx-commerce/react-ui/contexts';
 import React, { useState, useContext, useEffect } from 'react';
 import Styled from '@oracle-cx-commerce/react-components/styled';
 import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/styles.css';
@@ -17,16 +17,22 @@ import {
   PAYMENT_METHOD_INVOICE_REQUEST,
   PAYMENT_METHOD_ONLINE_PAYMENT_GROUP,
   PAYMENT_TYPE_INVOICE,
-  PAYMENT_TYPE_CARD
+  PAYMENT_TYPE_CARD,
 } from '@oracle-cx-commerce/commerce-utils/constants';
 import { useNavigator } from '@oracle-cx-commerce/react-components/link';
 import { noop, formatDate } from '@oracle-cx-commerce/utils/generic';
 import { getPayerAuthPaymentGroup } from '@oracle-cx-commerce/react-components/utils/payment';
-import { replaceSpecialCharacter } from '../isv-payment-method/isv-payment-utility/common';
+import { replaceSpecialCharacter } from '../isv-common';
 import payerAuthCss from './styles.css';
-import { getGlobalContext, getCurrentOrder } from '@oracle-cx-commerce/commerce-utils/selector';
+import { getGlobalContext, getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { CHANNEL } from '../constants';
+import { DDC_URL_PATTERN, RETURN_URL } from '../constants';
+import { getIpAddress, getOptionalPayerAuthFields } from '../isv-common';
+
 var authTransactionId;
+const ERROR = 'error';
+var cardinalUrl;
+let scaRequiredCount = 1;
 /**
  * Widget to display place order button and handle order submission
  * @param {props} component props
@@ -43,7 +49,8 @@ const IsvCheckoutPlaceOrderButton = props => {
     currentOrderId,
     headingPayment,
     messageFailed,
-    alertActionCompletedSuccessfully
+    alertActionCompletedSuccessfully,
+    continueToPageAddress = '/checkout-payment'
   } = props;
   //context
   const { paymentGroups = {}, shippingGroups = {} } = useContext(OrderContext);
@@ -70,6 +77,17 @@ const IsvCheckoutPlaceOrderButton = props => {
     '05': { width: isWindow ? window.innerWidth : 400, height: isWindow ? window.innerHeight : 400 },
     '06': { width: 400, height: 400 }
   };
+  const [deviceDataCollectionUrl, setDeviceDataCollectionUrl] = useState('');
+  const [token, setToken] = useState('');
+  const { payments = [] } = useContext(PaymentsContext) || {};
+  const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
+
+  const goToPaymentPage = () => {
+    const pageAddress = continueToPageAddress.split('/');
+    const pageName = pageAddress.length > 1 ? pageAddress[1] : pageAddress[0];
+    goToPage(pageName);
+  };
+
 
   /**
    * Method to invoke when current order is converted(placed) as scheduled order
@@ -167,10 +185,13 @@ const IsvCheckoutPlaceOrderButton = props => {
       }
     });
   };
-
   const payerAuthResponse = async payerAuthPaymentGroup => {
     const appliedPaymentGroups = [];
     var transientToken = '';
+    const scaDetails = payerAuthPaymentGroup?.customPaymentProperties || {};
+    if (scaDetails.scaRequired) {
+      return handleSca(payerAuthPaymentGroup);
+    }
     if (!payerAuthPaymentGroup.savedCardId) {
       transientToken = getState().payerAuthRepository?.transientToken;
     }
@@ -186,8 +207,8 @@ const IsvCheckoutPlaceOrderButton = props => {
     if (payerAuthPaymentGroup) {
       const stepUpDetails = payerAuthPaymentGroup.customPaymentProperties || {};
       const stepUpPayload = {
-        accessToken: stepUpDetails.accessToken,
-        stepUpUrl: stepUpDetails.stepUpUrl,
+        accessToken: stepUpDetails?.accessToken,
+        stepUpUrl: stepUpDetails?.stepUpUrl,
       }
       try {
         const decodedPareqValue = isWindow && window.atob(stepUpDetails.pareq);
@@ -211,8 +232,11 @@ const IsvCheckoutPlaceOrderButton = props => {
           captureContextCipherIv: flexContext?.captureContextCipherIv,
           ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint?.deviceFingerprintData),
           transientTokenJwt: transientToken,
-          authenticationTransactionId: authTransactionId
+          authenticationTransactionId: authTransactionId,
+          ...payerAuthPaymentGroup.customPaymentProperties?.pauseRequestId && { pauseRequestId: payerAuthPaymentGroup.customPaymentProperties.pauseRequestId },
+          ...payerAuthPaymentGroup.customPaymentProperties?.challengeCode === '04' && { challengeCode: payerAuthPaymentGroup.customPaymentProperties?.challengeCode }
         };
+
         if (payerAuthPaymentGroup.savedCardId) {
           Object.keys(customProperties).forEach(key => {
             if (deleteField.includes(key)) {
@@ -237,8 +261,19 @@ const IsvCheckoutPlaceOrderButton = props => {
         action('checkoutCart', payload).then(response => {
           setPlaceOrderInitiated(false);
           if (response.ok === true) {
-            messages = { alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs };
-            handleOrderSubmitSuccess(goToPage, response, action, messages);
+            const { delta: { orderRepository = {} } = {} } = response;
+            const { orders = {} } = orderRepository;
+            const order = Object.values(orders || {})[0] || {};
+            const { paymentGroups = {} } = order;
+            const payerAuthPaymentGroups = getPayerAuthPaymentGroup(paymentGroups);
+            const scaDetails = payerAuthPaymentGroups?.customPaymentProperties || {};
+            if (scaDetails.scaRequired) {
+              handleSca(payerAuthPaymentGroups);
+            }
+            else {
+              messages = { alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs };
+              handleOrderSubmitSuccess(goToPage, response, action, messages);
+            }
           } else {
             handleOrderSubmitFailure(action, goToPage, response);
           }
@@ -248,13 +283,143 @@ const IsvCheckoutPlaceOrderButton = props => {
       }
     }
   };
+  async function handleSca(payerAuthPaymentGroup) {
+    var setupResponse;
+    if (scaRequiredCount <= 1) {
+      scaRequiredCount++;
+    }
+    else {
+      scaRequiredCount--;
+      action('notify', { level: 'error', message: headingPayment + ' ' + messageFailed });
+      return goToPaymentPage();
+    }
+    const { deviceFingerprint } = getState().paymentMethodConfigRepository;
+    const updatedCustomProperties = {
+      ...cardPayment.customProperties,
+      returnUrl: window.location.origin + RETURN_URL,
+      challengeCode: '04',
+      ...(deviceFingerprint?.deviceFingerprintEnabled &&
+        deviceFingerprint?.deviceFingerprintData),
+      ...{ ...getOptionalPayerAuthFields(), ipAddress: await getIpAddress(true) }
+    };
+
+    if (payerAuthPaymentGroup.savedCardId) {
+      const profileId = getCurrentProfileId(getState());
+      setupResponse = await payerAuthSetup({ savedCardId: payerAuthPaymentGroup.savedCardId, profileId });
+      if (setupResponse.referenceId) {
+        cardPayment.customProperties = {
+          ...updatedCustomProperties,
+          referenceId: setupResponse.referenceId,
+        }
+      }
+
+    }
+    else {
+      const token = getState().payerAuthRepository?.jti;
+      const { flexContext } = getState().flexMicroformRepository;
+      setupResponse = await payerAuthSetup({ transientToken: token });
+      if (setupResponse.referenceId) {
+        cardPayment.customProperties = {
+          ...updatedCustomProperties,
+          referenceId: setupResponse.referenceId,
+          transientTokenJwt: getState().payerAuthRepository?.transientToken,
+          paymentType: PAYMENT_TYPE_CARD,
+          captureContext: flexContext?.captureContext,
+          captureContextCipherEncrypted: flexContext?.captureContextCipherEncrypted,
+          captureContextCipherIv: flexContext?.captureContextCipherIv,
+        }
+      }
+    }
+
+    await callDeviceDataCollection();
+    replaceSpecialCharacter(cardPayment.customProperties);
+
+    var paymentGroupId = payerAuthPaymentGroup.paymentGroupId;
+    var paymentDetails = paymentGroups[payerAuthPaymentGroup.paymentGroupId];
+    const { ...paymentDetailsToUpdate } = paymentDetails;
+    paymentDetailsToUpdate.customProperties = cardPayment.customProperties;
+    var detailsToUpdate = { paymentGroupId: payerAuthPaymentGroup.paymentGroupId, customProperties: cardPayment.customProperties, cardCVV: '123' };
+    await action('updateAppliedPayment', detailsToUpdate);
+    const appliedPaymentGroups = [];
+
+    appliedPaymentGroups.push({
+      type: PAYMENT_TYPE_CARD,
+      paymentGroupId
+    });
+    var payload = {
+      payments: appliedPaymentGroups
+    };
+
+    action('checkoutCart', payload).then(response => {
+      //Enable Place Order Button
+      setPlaceOrderInitiated(false);
+      if (response.ok === true) {
+        const messages = { alertOrderNotPlacedPaymentDeclined, alertTechnicalProblemContactUs };
+        const { delta: { orderRepository = {} } = {} } = response;
+        const { orders = {} } = orderRepository;
+        const order = Object.values(orders || {})[0] || {};
+        const { paymentGroups = {} } = order;
+        const payerAuthPaymentGroup = getPayerAuthPaymentGroup(paymentGroups);
+        const responseUiIntervention = payerAuthPaymentGroup?.uiIntervention;
+        if (responseUiIntervention) {
+          payerAuthResponse(payerAuthPaymentGroup);
+        } else {
+          setInProgress(false);
+          handleOrderSubmitSuccess(goToPage, response, action, messages);
+        }
+      } else {
+        handleOrderSubmitFailure(action, goToPage, response);
+      }
+    });
+  }
+
+
+  async function payerAuthSetup(payload) {
+    return new Promise((resolve) => {
+      action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
+        var payerAuthSetupData = false;
+        if (response.ok) {
+          const data = response.delta.payerAuthSetupRepository || {};
+          setDeviceDataCollectionUrl(data.deviceDataCollectionUrl || "");
+          cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
+          setToken(data.accessToken || "");
+          payerAuthSetupData = data || false;
+        } else {
+          action('notify', { level: ERROR, message: response.error.message });
+          setInProgress(false);
+        }
+        resolve(payerAuthSetupData);
+      });
+    });
+  };
+  async function callDeviceDataCollection() {
+    return new Promise((resolve) => {
+      const form = document.getElementById('cardinalCollectionForm');
+      form.submit();
+      if (typeof window !== 'undefined') {
+        window.addEventListener('message', (event) => {
+          if (event.origin === cardinalUrl) {
+            let data = JSON.parse(event.data);
+            if (data != undefined && data.Status) {
+              console.log(alertActionCompletedSuccessfully);
+              resolve();
+            }
+            console.log(alertActionCompletedSuccessfully, data);
+          };
+        }, false);
+      };
+
+    });
+  }
 
   async function payerAuthValidation() {
     return new Promise((resolve) => {
       const form = document.querySelector('#stepUpForm');
       form.submit();
       var frame = document.querySelector('.Payer_Auth_Form');
-      var overlay = document.querySelector('.Overlay')
+      var overlay = document.querySelector('.Overlay');
+      frame.style.display = 'block';
+      overlay.style.display = 'block';
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
           let type = event.data.messageType;
@@ -273,8 +438,6 @@ const IsvCheckoutPlaceOrderButton = props => {
       }
     })
   }
-
-
 
   //To invoke specific order method if scheduled order is enabled
   const selectedPlaceOrderMethod = () => {
@@ -331,6 +494,10 @@ const IsvCheckoutPlaceOrderButton = props => {
 
   return (
     <>
+      <iframe name="cardinalCollectionIframe" height="10" width="10" sandbox style={{ display: "none" }} />
+      <form id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST" action={deviceDataCollectionUrl}>
+        <input type="hidden" name="JWT" value={token} />
+      </form>
       {stepUpData &&
         <>
           <div className="Overlay">

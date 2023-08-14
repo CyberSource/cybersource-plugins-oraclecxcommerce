@@ -106,6 +106,7 @@ The following settings can be configured in gateway:
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Credit Card**                     |                                                                                                                                                                                                                                                                                                                   |
 | **payerAuthEnabled**                | Enables payer authentication for credit cards                                                                                                                                                                                                                                                                     |
+| **scaEnabled**                | If enabled card holder will be 3DS Challenged when saving a card                                                                                                                                                                                                                                                                      |
 | **flexSdkUrl**                      | Credit Card Flex SDK URL                                                                                                                                                                                                                                                                                          |
 | **isCVVRequiredForSavedCards**      | Is the CVV required when using a saved card.                                                                                                                                                                                                                                                                      |
 | **isCVVRequiredForScheduledOrders** | Is the CVV required for a Scheduled Order                                                                                                                                                                                                                                                                         |
@@ -282,6 +283,7 @@ server-extension
  ┃ ┃ ┃ ┃ ┃ ┣ mappers
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ scaMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleCardMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleGenericMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ savedCardPaymentMapper.ts

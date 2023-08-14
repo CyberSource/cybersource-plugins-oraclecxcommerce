@@ -6,15 +6,21 @@ export const mapConsumerAuthToken = (info: Record<string, any>): string => {
   return info.token;
 };
 
-export const payerAuthMapper: PaymentResponseMapper = {
-  supports: (context: PaymentContext) =>
-    Boolean(context.data.response?.status == 'PENDING_AUTHENTICATION'),
+const getPauseRequestId = (res: PtsV2PaymentsPost201Response, context: PaymentContext) => {
+  const { webhookRequest } = context;
+  return res?.riskInformation?.profile?.action == 'PAYERAUTH_INVOKE' || res?.riskInformation?.profile?.action == 'PAYERAUTH_EXTERNAL' || webhookRequest.customProperties?.challengeCode == '04' ? { pauseRequestId: res.id } : {};
+}
 
+export const payerAuthMapper: PaymentResponseMapper = {
+  supports: (context: PaymentContext) => {
+    const response = <DeepRequired<PtsV2PaymentsPost201Response>>context.data.response;
+    const { consumerAuthenticationInformation } = response;
+    return Boolean((response?.status == 'PENDING_AUTHENTICATION' || response?.riskInformation?.profile?.action === 'PAYERAUTH_INVOKE' || response?.riskInformation?.profile?.action === 'PAYERAUTH_EXTERNAL') && response?.riskInformation?.profile?.action !== 'PAYERAUTH_SKIP' && consumerAuthenticationInformation?.acsUrl)
+  },
   map: (context: PaymentContext) => {
     const res = <DeepRequired<PtsV2PaymentsPost201Response>>context.data.response;
     const { consumerAuthenticationInformation } = res;
-
-    return {
+   return {
       authorizationResponse: {
         additionalProperties: {
           action: 'validateConsumerAuthentication',
@@ -29,10 +35,13 @@ export const payerAuthMapper: PaymentResponseMapper = {
           proofXml: consumerAuthenticationInformation.proofXml,
           specificationVersion: consumerAuthenticationInformation.specificationVersion,
           token: mapConsumerAuthToken(consumerAuthenticationInformation),
-          stepUpUrl:consumerAuthenticationInformation.stepUpUrl,
-          accessToken:consumerAuthenticationInformation.accessToken,
+          stepUpUrl: consumerAuthenticationInformation.stepUpUrl,
+          accessToken: consumerAuthenticationInformation.accessToken,
+          ...getPauseRequestId(res, context),
+          ...context.webhookRequest.customProperties?.challengeCode && {challengeCode : '04'}
+
         },
-        customPaymentProperties: ['pareq', 'action','stepUpUrl','accessToken']
+        customPaymentProperties: ['pareq', 'action', 'stepUpUrl', 'accessToken', 'pauseRequestId','challengeCode']
       }
     };
   }

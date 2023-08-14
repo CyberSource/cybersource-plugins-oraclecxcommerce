@@ -36,7 +36,6 @@ app.use(cors());
 
 // Enable 'bodyParser' for dev environment
 app.use(bodyParser.json());
-
 nconf
   .file({ file: path.join(__dirname, '../config/app.local.json') })
   .argv()

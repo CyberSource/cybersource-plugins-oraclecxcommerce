@@ -6,6 +6,8 @@ import { responseCodeMappings } from '../common';
 const isNotPendingReview = (context: PaymentContext) =>
   !Boolean(context.data.response?.status == 'AUTHORIZED_PENDING_REVIEW');
 
+
+
 export const saleGenericMapper: PaymentResponseMapper = {
   supports: (context: PaymentContext) =>
     context.isValidForPaymentMode('saleEnabled') && isNotPendingReview(context),

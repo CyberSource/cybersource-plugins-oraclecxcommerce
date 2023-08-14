@@ -9,11 +9,16 @@ const isNotPayerAuthEnrollment = (context: PaymentContext) =>
 const isNotPendingReview = (context: PaymentContext) =>
   !Boolean(context.data.response?.status == 'AUTHORIZED_PENDING_REVIEW');
 
+const isNotScaChallenged = (context: PaymentContext) =>
+   !Boolean(context.data.response?.errorInformation?.reason == 'CUSTOMER_AUTHENTICATION_REQUIRED');
+
 export const saleCardMapper: PaymentResponseMapper = {
   supports: (context: PaymentContext) =>
     context.isValidForPaymentMode('saleEnabled') &&
     isNotPayerAuthEnrollment(context) &&
-    isNotPendingReview(context),
+    isNotPendingReview(context) && 
+    isNotScaChallenged(context),
+
 
   map: (context: PaymentContext) => {
     const paymentResponse = <DeepRequired<PtsV2PaymentsPost201Response>>context.data.response;

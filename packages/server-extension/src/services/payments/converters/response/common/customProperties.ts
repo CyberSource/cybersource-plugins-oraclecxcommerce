@@ -10,7 +10,13 @@ const isvPaymentCustomProperties: String[] = [
     "authJwt",
     "deviceFingerprintSessionId",
     "deviceFingerprintCipherEncrypted",
-    "deviceFingerprintCipherIv"
+    "deviceFingerprintCipherIv",
+    "authTime",
+    "dmMsg",
+    "stepUpUrl",
+    "authenticationTransactionId",
+    "pareq",
+    "accessToken"
 ]
 export const addCustomProperties = (webhookRequest: OCC.GenericPaymentWebhookRequest) => {
     const { customProperties } = webhookRequest || {};

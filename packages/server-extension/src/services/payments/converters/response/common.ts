@@ -17,10 +17,10 @@ export const responseCodeMappings = (status: string, transactionType: string) =>
     DECLINED_0200: '12000',
     DECLINED_0400: '7000',
     DECLINED: '9000',
-    INVALID_REQUEST: '9000'
+    INVALID_REQUEST: '9000',
   };
-
   return mapping[status + '_' + transactionType] ?? mapping[status];
+
 };
 
 type PspResponseType =

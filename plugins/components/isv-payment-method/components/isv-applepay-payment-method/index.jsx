@@ -21,7 +21,7 @@ import {
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
 import { getCurrentOrder, getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
-import { replaceSpecialCharacter } from '../../isv-payment-utility/common';
+import { replaceSpecialCharacter } from '../../../isv-common';
 import ApplePay from './applePay';
 
 /**
@@ -263,7 +263,6 @@ const IsvApplePayPaymentMethod = props => {
     }
   }, [isDisplayApplePay, billingAddress]);
 
-  //hide applepay button if applepay radio button is not checked
   useEffect(() => {
     if (applePayRadioRef.current && (
       (isDisplayApplePay && !applePayRadioRef.current.checked && !isApplePayButtonHidden) ||
@@ -303,7 +302,7 @@ const IsvApplePayPaymentMethod = props => {
               value={PAYMENT_TYPE_GENERIC}
               labelText={labelApplePay}
               onChange={onApplePayPaymentSelection}
-              optionInputRef={applePayRadioRef} //added new Ref and use to hide show button
+              optionInputRef={applePayRadioRef}
             />
           </div>
           <div
