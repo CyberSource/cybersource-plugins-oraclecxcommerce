@@ -16,7 +16,6 @@ const { errorHandler } = require('../errors/handlers/errorHandler');
  * @param {Object} res - Transaction response
  */
 async function paymentRouteHandler(req, res) {
-  //const logger = (global.occ.logger) ? global.occ.logger : console;
   const logger = LogFactory.logger();
 
   //Get gateway module name
@@ -33,8 +32,6 @@ async function paymentRouteHandler(req, res) {
     throw new Error('Missing gateway module name');
   }
 
-  // Set payment type
-  // const paymentType = req.params.paymentType;
   logger.debug(
     `${req.method} ${req.path}; order=${req.body.orderId}; paymentGroup=${req.body.paymentId}`
   );

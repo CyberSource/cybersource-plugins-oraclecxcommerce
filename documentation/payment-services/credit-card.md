@@ -9,6 +9,8 @@
    3. [Payer Authentication](#payer-authentication)
       1. [UI integration details](#ui-integration-details-1)
       2. [Backend (SSE) integration details](#backend-sse-integration-details-1)
+      3. [Response code 478](#response-code-478)
+      4. [Strong Customer Authentication (SCA)](#strong-customer-authentication)
    4. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
 
 ## Description
@@ -42,7 +44,8 @@ The following gateway settings apply to credit card payments
 |-------------------------------------|---------------------------------------------------------------------------------------------------|
 | **paymentMethodTypes**              | Enabled Payment Methods. 'Credit & Debit Card' should be enabled                                  |
 | **paymentOptions**                  | Payment options enabled for payment using Payment Widget. 'Credit & Debit Card' should be enabled |
-| **payerAuthEnabled**                | Enables payer authentication (3D Secure) for credit cards                                         |                                                                                                                     |            |
+| **payerAuthEnabled**                | Enables payer authentication (3D Secure) for credit cards                                         |
+| **scaEnabled**                      | If enabled card holder will be 3DS Challenged when saving a card                                  |
 | **saleEnabled**                     | Indicates if authorizing and taking payment will be done at the same time                         |
 | **isCVVRequiredForSavedCards**      | Should be disabled as CVV is not required in backend                                              |
 | **isCVVRequiredForScheduledOrders** | Should be disabled as CVV is not required in backend                                              |
@@ -50,6 +53,7 @@ The following gateway settings apply to credit card payments
 Default values:
 
 - `payerAuthEnabled`: true. Payer authentication is enabled by default
+- `scaEnabled` : false
 - `isCVVRequiredForSavedCards`: false
 - `isCVVRequiredForScheduledOrders`: false
 - `saleEnabled` - by default SALE is disabled for Card payments. Can be enabled in OCC Admin
@@ -135,7 +139,6 @@ plugins
  | | | ├── meta.js
  | | | └── styles.css
  | | ├── isv-payment-utility
- | | | ├── common.js
  | | | ├── flex-microform.js
  | | | ├── flex-microForm-api.js
  | | | └── script-loader.js
@@ -145,7 +148,9 @@ plugins
  | | ├── meta.js
  | | └── styles.css
  | ├── .eslintrc
+ | ├── constants.js
  | ├── index.js
+ | ├── isv-common.js
  | └── meta.js
  ├── endpoints
  | ├── flex-microform-endpoint
@@ -261,9 +266,19 @@ The following UI component contains Payer Authentication integration logic `plug
 
 #### Backend (SSE) integration details
 
-- `server-extension/src/controllers/payerAuth.ts` Controller for generating a signed PayerAuth JWT
+- `server-extension/src/controllers/payerAuth.ts` Controller for payer auth setup
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthEnrollMapper.ts` Including payer auth reference id into PSP card authorization request
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthValidationMapper.ts` Including payer auth validation token into PSP card authorization request
+
+#### Strong Customer Authentication (SCA)
+
+When `Payer Authentication` is enabled, if a transaction gets declined with the reason as Strong Customer Authentication required, then another request will be sent from Oracle Commerce Cloud automatically for the same order and the customer will be 3DS challenged. 
+
+In case merchants would like the cardholder to be 3DS Challenged when saving a card `scaEnabled` gateway setting can be updated to enable it for credit cards.
+
+In case 'Enforce Customer Authentication' is enabled for credit cards, '10000' response code is sent back in Webhook response so that OCC becomes aware of that.
+
+*Note:* The `scaEnabled` setting is applicable only if `Payer Authentication` is enabled.
 
 ### Capturing funds during authorization (SALE)
 

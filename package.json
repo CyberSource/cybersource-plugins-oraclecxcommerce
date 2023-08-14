@@ -68,7 +68,6 @@
   "dependencies": {
     "@popperjs/core": "^2.11.6",
     "jwt-decode": "^3.1.2",
-    "request":"^2.88.2",
     "tsc-alias": "^1.7.1"
     
   },

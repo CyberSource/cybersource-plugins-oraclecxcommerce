@@ -82,6 +82,8 @@
     "deviceFingerprintOrgIdLabel": "Device Fingerprint Organization Id",
     "deviceFingerprintOrgIdHelpText": "",
     "deviceFingerprintEnabledLabel": "Device Fingerprint Enabled",
-    "deviceFingerprintEnabledHelpText": ""
+    "deviceFingerprintEnabledHelpText": "",
+    "scaEnabledLabel": "Enforce Strong Customer Authentication",
+    "scaEnabledHelpText": "If enabled, card holder will be 3DS Challenged when saving a card"
   }
 }

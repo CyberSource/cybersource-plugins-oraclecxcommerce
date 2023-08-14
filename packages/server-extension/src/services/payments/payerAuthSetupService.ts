@@ -39,9 +39,8 @@ async function buildSetupPayload(setupRequestPayload: OCC.PayerAuthSetupRequest)
             code: orderId
         },
         ...transientToken && { tokenInformation: { transientToken: transientToken } },
-
         //For saved card
-        ...customerId && { paymentInformation: { customer: { customerId } } }
+        ...customerId && { paymentInformation: { customer: { customerId } } },
     }
 }
 

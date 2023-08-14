@@ -1,8 +1,6 @@
 /* eslint-disable no-inner-declarations */
 import RadioButton from '@oracle-cx-commerce/react-components/radio';
 import React, { useCallback, useEffect, useContext, useRef, useMemo } from 'react';
-// import Styled from '@oracle-cx-commerce/react-components/styled';
-// import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/styles.css';
 import { getCheckoutCreditCardData } from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/selectors';
 import { PaymentsContext, StoreContext } from '@oracle-cx-commerce/react-ui/contexts';
 import { connect } from '@oracle-cx-commerce/react-components/provider';
@@ -312,7 +310,5 @@ IsvCreditCard.defaultProps = {
   isPaymentMethodEnabledForApproval: false,
   savedCardExists: false
 };
-
-
 
 export default connect(getCheckoutCreditCardData)(IsvCreditCard);
