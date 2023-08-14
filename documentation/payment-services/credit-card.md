@@ -139,7 +139,6 @@ plugins
  | | | ├── meta.js
  | | | └── styles.css
  | | ├── isv-payment-utility
- | | | ├── common.js
  | | | ├── flex-microform.js
  | | | ├── flex-microForm-api.js
  | | | └── script-loader.js
@@ -151,7 +150,7 @@ plugins
  | ├── .eslintrc
  | ├── constants.js
  | ├── index.js
- | ├── isv-comman.js
+ | ├── isv-common.js
  | └── meta.js
  ├── endpoints
  | ├── flex-microform-endpoint
