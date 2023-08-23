@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { validatePaymentsEnabled } from '@oracle-cx-commerce/react-components/utils/payment';
 import IsvCheckoutSavedCards from '../isv-checkout-saved-cards';
 import IsvAddCardDetails from '../isv-add-card-details';
+import { getSavedCardsForProfile } from '@oracle-cx-commerce/commerce-utils/selector';
 /**
  * Credit Card widget allows to enter card details or select a saved card. Contains nested components for saved cards, card details, billing address and
  * save card to profile.
@@ -35,6 +36,15 @@ const IsvCreditCard = props => {
 
   const formElementRef = useRef(null);
   const store = useContext(StoreContext);
+  const { savedCardsMap, currentSiteSavedCardIds = [] } = getSavedCardsForProfile(store.getState());
+  let savedCards = false;
+  if (currentSiteSavedCardIds) {
+    currentSiteSavedCardIds.forEach(cardId => {
+      if (savedCardsMap[cardId]?.savedCardId) {
+        savedCards = true;
+      }
+    });
+  };
 
   // Fetches the saved cards for the profile for a logged in user
   useLoadSavedCards();
@@ -78,8 +88,8 @@ const IsvCreditCard = props => {
    * @returns {boolean} true if the card details section is to be hidden
    */
   const isCardDetailsEntryHidden = useCallback(() => {
-    return selectedPaymentType !== PAYMENT_TYPE_CARD || (!useAnotherCard && savedCardExists);
-  }, [selectedPaymentType, savedCardExists, useAnotherCard]);
+    return selectedPaymentType !== PAYMENT_TYPE_CARD || (!useAnotherCard && savedCards);
+  }, [selectedPaymentType, savedCards, useAnotherCard]);
 
   return (
     <React.Fragment>
@@ -95,7 +105,7 @@ const IsvCreditCard = props => {
               ) && (
                 <React.Fragment>
                   <div className="CheckoutCreditCard CheckoutPaymentsGroup">
-                    {!savedCardExists && (
+                    {!savedCards && (
                       <div className="CheckoutCreditCard__RadioButtonContainer">
                         <RadioButton
                           id={`checkout-creditCard-${id}`}
@@ -110,7 +120,7 @@ const IsvCreditCard = props => {
                     )}
                     <form ref={formElementRef} noValidate>
                       <React.Fragment>
-                        {isLoggedIn && savedCardExists && flexContext ? (
+                        {isLoggedIn && savedCards && flexContext ? (
                           <>
                             <IsvCheckoutSavedCards
                               {...props}
@@ -135,7 +145,7 @@ const IsvCreditCard = props => {
                             <IsvAddCardDetails
                               {...props}
                               onInput={updateCard}
-                              useAnotherCard={savedCardExists ? useAnotherCard : true}
+                              useAnotherCard={savedCards ? useAnotherCard : true}
                               isPaymentDisabled={isCardPaymentDisabled}
                               selectedPaymentType={selectedPaymentType}
                               flexContext={flexContext}
