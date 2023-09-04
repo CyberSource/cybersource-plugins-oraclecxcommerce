@@ -3,7 +3,7 @@
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
 import { useNavigator } from '@oracle-cx-commerce/react-components/link';
-import React, { useContext, useState, useCallback, useEffect } from 'react';
+import React, { useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { PaymentsContext, StoreContext } from '@oracle-cx-commerce/react-ui/contexts';
 import { connect } from '@oracle-cx-commerce/react-components/provider';
 import { getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
@@ -34,6 +34,7 @@ import { DDC_URL_PATTERN } from '../constants';
 import { getIpAddress, getOptionalPayerAuthFields } from '../isv-common';
 const ERROR = 'error';
 var cardinalUrl;
+let payerAuthSetupData = false;
 
 /**
  * Widget for Continue To Review Order button, navigates to review order page on click after applying selected payment.
@@ -50,8 +51,8 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   const compatiblePaymentTypes = [PAYMENT_TYPE_GIFTCARD, PAYMENT_TYPE_LOYALTYPOINTS, PAYMENT_TYPE_STORECREDIT];
   const [inProgress, setInProgress] = useState(false);
   const goToPage = useNavigator();
-  const [deviceDataCollectionUrl, setDeviceDataCollectionUrl] = useState('');
-  const [token, setToken] = useState('');
+  const ddcFormRef = useRef(null);
+  const ddcInputRef = useRef(null);
   const { isPreview } = getGlobalContext(store.getState());
   const [ipAddress, setIpAddress] = useState('');
 
@@ -329,12 +330,9 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   async function payerAuthSetup(payload) {
     return new Promise((resolve) => {
       action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
-        var payerAuthSetupData = false;
         if (response.ok) {
           const data = response.delta.payerAuthSetupRepository || {};
-          setDeviceDataCollectionUrl(data.deviceDataCollectionUrl || "");
           cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
-          setToken(data.accessToken || "");
           payerAuthSetupData = data || false;
         } else {
           action('notify', { level: ERROR, message: response.error.message });
@@ -346,8 +344,13 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   };
   async function callDeviceDataCollection() {
     return new Promise((resolve) => {
-      const form = document.getElementById('cardinalCollectionForm');
-      form.submit();
+      if (!ddcInputRef.current || !ddcFormRef.current) {
+        return;
+      }
+      ddcFormRef.current.action = payerAuthSetupData.deviceDataCollectionUrl || '';
+      ddcInputRef.current.value = payerAuthSetupData.accessToken || '';
+      ddcFormRef.current.submit();
+
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
           if (event.origin === cardinalUrl) {
@@ -373,7 +376,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       });
   }, [payerAuthEnabled])
 
-  
+
   useEffect(() => {
     if (self != top) {
       top.location = encodeURI(self.location);
@@ -383,8 +386,8 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   return (
     <>
       <iframe name="cardinalCollectionIframe" height="10" width="10" sandbox style={{ display: "none" }} />
-      <form id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST" action={deviceDataCollectionUrl}>
-        <input type="hidden" name="JWT" value={token} />
+      <form ref={ddcFormRef} id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST">
+        <input ref={ddcInputRef} type="hidden" name="JWT" />
       </form>
       <Styled id="CheckoutContinueToReviewOrderButton" css={css}>
         <div className="CheckoutContinueToReviewOrderButton">
