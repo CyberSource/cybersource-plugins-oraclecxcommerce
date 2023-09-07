@@ -9,8 +9,7 @@
    3. [Payer Authentication](#payer-authentication)
       1. [UI integration details](#ui-integration-details-1)
       2. [Backend (SSE) integration details](#backend-sse-integration-details-1)
-      3. [Response code 478](#response-code-478)
-      4. [Strong Customer Authentication (SCA)](#strong-customer-authentication)
+      3. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
    4. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
 
 ## Description
@@ -276,7 +275,7 @@ When `Payer Authentication` is enabled, if a transaction gets declined with the 
 
 In case merchants would like the cardholder to be 3DS Challenged when saving a card `scaEnabled` gateway setting can be updated to enable it for credit cards.
 
-In case 'Enforce Customer Authentication' is enabled for credit cards, '10000' response code is sent back in Webhook response so that OCC becomes aware of that.
+In case 'Strong Customer Authentication' is enabled for credit cards, '10000' response code is sent back in Webhook response so that OCC becomes aware of that.
 
 *Note:* The `scaEnabled` setting is applicable only if `Payer Authentication` is enabled.
 

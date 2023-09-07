@@ -2,7 +2,7 @@
  ** Copyright (c) 2020 Oracle and/or its affiliates.
  */
 import { StoreContext, OrderContext, ContainerContext, PaymentsContext } from '@oracle-cx-commerce/react-ui/contexts';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import Styled from '@oracle-cx-commerce/react-components/styled';
 import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-place-order-button/styles.css';
 import {
@@ -33,6 +33,7 @@ var authTransactionId;
 const ERROR = 'error';
 var cardinalUrl;
 let scaRequiredCount = 1;
+let payerAuthSetupData = false;
 /**
  * Widget to display place order button and handle order submission
  * @param {props} component props
@@ -62,7 +63,10 @@ const IsvCheckoutPlaceOrderButton = props => {
   const processButtonName = isCurrentOrderScheduled ? buttonSchedulingOrder : buttonPlacingOrder;
   const [inProgress, setInProgress] = useState(false);
   const goToPage = useNavigator();
-  const [stepUpData, updateStepUpData] = useState(null);
+  const ddcFormRef = useRef(null);
+  const ddcInputRef = useRef(null);
+  const stepUpFormRef = useRef(null);
+  const stepUpInputRef = useRef(null);
   const [height, setHeight] = useState(400);
   const [width, setWidth] = useState(400);
   const order = getCurrentOrder(getState());
@@ -77,8 +81,6 @@ const IsvCheckoutPlaceOrderButton = props => {
     '05': { width: isWindow ? window.innerWidth : 400, height: isWindow ? window.innerHeight : 400 },
     '06': { width: 400, height: 400 }
   };
-  const [deviceDataCollectionUrl, setDeviceDataCollectionUrl] = useState('');
-  const [token, setToken] = useState('');
   const { payments = [] } = useContext(PaymentsContext) || {};
   const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
 
@@ -206,9 +208,9 @@ const IsvCheckoutPlaceOrderButton = props => {
     var customProperties, paymentGroupId, paymentDetails, detailsToUpdate, payload, messages;
     if (payerAuthPaymentGroup) {
       const stepUpDetails = payerAuthPaymentGroup.customPaymentProperties || {};
-      const stepUpPayload = {
-        accessToken: stepUpDetails?.accessToken,
-        stepUpUrl: stepUpDetails?.stepUpUrl,
+      if (stepUpInputRef.current && stepUpFormRef.current) {
+        stepUpFormRef.current.action = stepUpDetails?.stepUpUrl;
+        stepUpInputRef.current.value = stepUpDetails?.accessToken;
       }
       try {
         const decodedPareqValue = isWindow && window.atob(stepUpDetails.pareq);
@@ -221,7 +223,6 @@ const IsvCheckoutPlaceOrderButton = props => {
         console.log(error);
       }
 
-      updateStepUpData(stepUpPayload);
 
       authTransactionId = await payerAuthValidation();
       if (authTransactionId) {
@@ -377,12 +378,9 @@ const IsvCheckoutPlaceOrderButton = props => {
   async function payerAuthSetup(payload) {
     return new Promise((resolve) => {
       action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
-        var payerAuthSetupData = false;
         if (response.ok) {
           const data = response.delta.payerAuthSetupRepository || {};
-          setDeviceDataCollectionUrl(data.deviceDataCollectionUrl || "");
           cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
-          setToken(data.accessToken || "");
           payerAuthSetupData = data || false;
         } else {
           action('notify', { level: ERROR, message: response.error.message });
@@ -394,8 +392,12 @@ const IsvCheckoutPlaceOrderButton = props => {
   };
   async function callDeviceDataCollection() {
     return new Promise((resolve) => {
-      const form = document.getElementById('cardinalCollectionForm');
-      form.submit();
+      if (!ddcInputRef.current || !ddcFormRef.current) {
+        return;
+      }
+      ddcFormRef.current.action = payerAuthSetupData.deviceDataCollectionUrl || '';
+      ddcInputRef.current.value = payerAuthSetupData.accessToken || '';
+      ddcFormRef.current.submit();
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
           if (event.origin === cardinalUrl) {
@@ -414,8 +416,7 @@ const IsvCheckoutPlaceOrderButton = props => {
 
   async function payerAuthValidation() {
     return new Promise((resolve) => {
-      const form = document.querySelector('#stepUpForm');
-      form.submit();
+      stepUpFormRef.current.submit();
       var frame = document.querySelector('.Payer_Auth_Form');
       var overlay = document.querySelector('.Overlay');
       frame.style.display = 'block';
@@ -495,24 +496,22 @@ const IsvCheckoutPlaceOrderButton = props => {
   return (
     <>
       <iframe name="cardinalCollectionIframe" height="10" width="10" sandbox style={{ display: "none" }} />
-      <form id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST" action={deviceDataCollectionUrl}>
-        <input type="hidden" name="JWT" value={token} />
+      <form ref={ddcFormRef} id="cardinalCollectionForm" target="cardinalCollectionIframe" name="deviceData" method="POST">
+        <input ref={ddcInputRef} type="hidden" name="JWT" />
       </form>
-      {stepUpData &&
-        <>
-          <div className="Overlay">
-            <Styled id="iframe" css={payerAuthCss}>
-              <div className="Payer_Auth_Form" >
-                <iframe name="stepUpIframe" height={height} width={width} sandbox></iframe>
-                <form id="stepUpForm" target="stepUpIframe" method="post" action={stepUpData.stepUpUrl}>
-                  <input type="hidden" name="JWT" value={stepUpData.accessToken} />
-                  <input type="hidden" name="MD" value={`orderId=${order.id},channel=${channel}`} />
-                </form>
-              </div>
-            </Styled>
-          </div>
-        </>
-      }
+      <>
+        <div className="Overlay">
+          <Styled id="iframe" css={payerAuthCss}>
+            <div className="Payer_Auth_Form" >
+              <iframe name="stepUpIframe" height={height} width={width} sandbox></iframe>
+              <form ref={stepUpFormRef} id="stepUpForm" target="stepUpIframe" method="post" >
+                <input ref={stepUpInputRef} type="hidden" name="JWT" />
+                <input type="hidden" name="MD" value={`orderId=${order.id},channel=${channel}`} />
+              </form>
+            </div>
+          </Styled>
+        </div>
+      </>
       <Styled id="CheckoutPlaceOrderButton" css={css}>
         <div className="CheckoutPlaceOrderButton">
           <button
