@@ -10,6 +10,7 @@
   "keyFileName": "keyFileName",
   "runEnvironment": "apitest.cybersource.com",
   "payerAuthEnabled": true,
+  "scaEnabled": false,
   "saleEnabled": "card",
   "flexSdkUrl": "https://flex.cybersource.com/cybersource/assets/microform/0.11/flex-microform.min.js",
   "isCVVRequiredForSavedCards": false,
