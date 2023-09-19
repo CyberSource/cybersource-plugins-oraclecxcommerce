@@ -26,7 +26,6 @@ function loadConfiguration(app: Application) {
 
 export default function configureApp(app: Application, baseRoutePath = '') {
   loadConfiguration(app);
-  //added header
   app.use((req, res, next) => {
     res.setHeader("X-Frame-Options", "same-origin");
     next();

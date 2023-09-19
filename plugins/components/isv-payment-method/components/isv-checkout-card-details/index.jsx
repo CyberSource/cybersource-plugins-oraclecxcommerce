@@ -280,18 +280,24 @@
     * @param {Object} event The event object
     */
    const onCardNumberChange = data => {
-     const cardData = data.card?.[0];
-     setSelectedCardType((''));
-     if (cardTypes && Object.keys(cardTypes).includes(cardData?.name)) {
-       setCardTypeNotEnabled(false);
-       updateState('creditCardNumberData', data);
-       setSelectedCardType((cardData && cardData.name) || '');
-     }
-     else {
-       setCardTypeNotEnabled(true);
-       updateState('creditCardNumberData', null);
-     }
-   };
+    const cardData = data.card && data.card[0];
+    setCardTypeNotEnabled(true);
+    if (cardTypes) {
+      const enabledCardTypes = Object.keys(cardTypes);
+      for (const card of enabledCardTypes) {
+        if (cardTypes[card].code === cardData?.cybsCardType) {
+          setCardTypeNotEnabled(false);
+          updateState('creditCardNumberData', data);
+          setSelectedCardType(cardTypes[card].value);
+          break;
+        }
+        else {
+          setSelectedCardType('');
+          updateState('creditCardNumberData', null);
+        }
+      }
+    }
+  }
    const onSecurityCodeChange = data => {
      updateState('securityCodeData', data);
    };
