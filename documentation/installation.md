@@ -27,7 +27,7 @@ Please pay attention to installation steps documented for both SSE and widgets (
 
 The following is required before going through installation steps:
 
-1. Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+1. Yarn version: [1.22.18](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
 2. NodeJS version: 16.15.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
 3. OCC environment
     - OCC Admin interface: https://asbx80c1dev-admin-{env}.oraclecloud.com/occs-admin/

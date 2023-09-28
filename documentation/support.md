@@ -8,7 +8,7 @@ If you require support with this software, please contact GlobalPartnerSolutions
 - Plugin/ Extension version: Under Settings->Extension, find the version of the installed ISV Payment Gateway extension.
 ![Extension Version](images/extension-version.png)
 - Cybersource Merchant ID: Under Settings->Payment Processing, Select the ISV OCC Payment from the Service Type dropdown, find the Merchant Id
-![Merchant Id](images/merchantId.png)
+![Merchant Id](images/merchant-id.png)
 - Order ID/ Merchant Reference Number: Order ID can be found in Order Confirmation Page or under Order History.
 - Configuration screenshots: Please provide screenshots of ISV OCC Gateway Configurations.
 - Log file and other relevant data: Download the **debug** and **error** logs from Oracle Commerce Cloud using getExtensionServerLogs admin endpoint.
