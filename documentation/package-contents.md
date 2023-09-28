@@ -21,7 +21,7 @@ The CLI tool is a combined version of utilities shared in the following communit
 By running `yarn occ` you will get the list of supported commands
 
 ```bash
-yarn run v1.22.4
+yarn run v1.22.18
 $ node ./bin/index.js
 Usage: index [options] [command]
 
