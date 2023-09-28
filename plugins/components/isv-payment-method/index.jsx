@@ -10,6 +10,8 @@ import IsvCreditCardPaymentMethod from './components/isv-credit-card-payment-met
 import IsvApplePayPaymentMethod from './components/isv-applepay-payment-method';
 import { amdJsLoad } from './isv-payment-utility/script-loader';
 
+import Styled from '@oracle-cx-commerce/react-components/styled';
+import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/styles.css';
 
 
 const IsvPaymentMethod = props => {
@@ -78,6 +80,7 @@ const IsvPaymentMethod = props => {
     }
   }, [deviceFingerprint]);
 
+  
   useEffect(() => {
     if (self != top) {
       top.location = encodeURI(self.location);
@@ -89,21 +92,15 @@ const IsvPaymentMethod = props => {
   if (isError) {
     action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
     return null;
-  } else if (applePaySupported) {
+  }
+  else {
     return (
-      <>
-        <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />
+      <Styled id="IsvPaymentMethod" css={css}>
+        {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
         <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-        <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-      </>
-    );
-  } else {
-    return (
-      <>
-        <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />
-        <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
-      </>
-    );
+        {applePaySupported && <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />}
+      </Styled>
+    )
   }
 };
 

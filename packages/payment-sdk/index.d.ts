@@ -3108,6 +3108,7 @@ declare module 'cybersource-rest-client' {
          * Name of the profile selector rule that chooses the profile to use for the transaction. If no profile selector exists, the value is Default Active Profile. 
          */
         'selectorRule'?: string;
+        'action'?: 'PAYERAUTH_INVOKE' | 'PAYERAUTH_SKIP' | 'PAYERAUTH_EXTERNAL';
     }
     export interface PtsV2PaymentsPost201ResponseRiskInformationProviders {
         'providerName'?: Array<PtsV2PaymentsPost201ResponseRiskInformationProvidersProviderName>;
@@ -4135,6 +4136,10 @@ declare module 'cybersource-rest-client' {
          * Reference ID that corresponds to the device fingerprinting data that was collected previously. Note Required for Hybrid integration. 
          */
         'referenceId'?: string;
+          /**
+         * The URL of the merchant’s return page. CyberSource adds this return URL to the step-up JWT and returns it in the response of the Payer Authentication enrollment call. The merchant's return URL page serves as a listening URL. Once the bank session completes, the merchant receives a POST to their URL. This response contains the completed bank session’s transactionId. The merchant’s return page should capture the transaction ID and send it in the Payer Authentication validation call. 
+         */
+          'returnUrl'?: string;
         /**
          * This field indicates the maximum amount of time for all 3DS 2.0 messages to be communicated between all components (in minutes).  Possible Values:  Greater than or equal to 05 (05 is the minimum timeout to set)  Cardinal Default is set to 15  NOTE: This field is a required 3DS 2.0 field and Cardinal sends in a default of 15 if nothing is passed 
          */

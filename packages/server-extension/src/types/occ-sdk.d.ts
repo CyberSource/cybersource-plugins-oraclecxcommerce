@@ -80,6 +80,7 @@ declare namespace OCC {
     payerAuthOrgUnitId: string;
     payerAuthEnabled: boolean;
     paymentOptions: string;
+    paymentMethodTypes: string;
     googlePaySdkUrl: string;
     googlePayEnvironment: string;
     googlePayGateway: string;
@@ -232,6 +233,13 @@ declare namespace OCC {
     ipAddress?: string;
     httpBrowserJavaScriptEnabled?: boolean;
     httpAcceptContent?: string;
+
+    pauseRequestId?:string;
+    stepUpUrl?: string;
+    accessToken?: string;
+    pareq?: string;
+    challengeCode?: string;
+
   }
 
   export interface CaptureContextRequest {

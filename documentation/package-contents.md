@@ -21,7 +21,7 @@ The CLI tool is a combined version of utilities shared in the following communit
 By running `yarn occ` you will get the list of supported commands
 
 ```bash
-yarn run v1.22.4
+yarn run v1.22.18
 $ node ./bin/index.js
 Usage: index [options] [command]
 
@@ -106,6 +106,7 @@ The following settings can be configured in gateway:
 |                                     |                                                                                                                                                                                                                                                                                                                   |
 | **Credit Card**                     |                                                                                                                                                                                                                                                                                                                   |
 | **payerAuthEnabled**                | Enables payer authentication for credit cards                                                                                                                                                                                                                                                                     |
+| **scaEnabled**                | If enabled card holder will be 3DS Challenged when saving a card                                                                                                                                                                                                                                                                      |
 | **flexSdkUrl**                      | Credit Card Flex SDK URL                                                                                                                                                                                                                                                                                          |
 | **isCVVRequiredForSavedCards**      | Is the CVV required when using a saved card.                                                                                                                                                                                                                                                                      |
 | **isCVVRequiredForScheduledOrders** | Is the CVV required for a Scheduled Order                                                                                                                                                                                                                                                                         |
@@ -282,6 +283,7 @@ server-extension
  ┃ ┃ ┃ ┃ ┃ ┣ mappers
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ index.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ payerAuthMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ scaMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleCardMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ saleGenericMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ savedCardPaymentMapper.ts

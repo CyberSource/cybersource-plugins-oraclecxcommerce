@@ -2,6 +2,13 @@ import { PaymentContext } from '@server-extension/common';
 import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { PaymentRequestMapper } from '../../common';
 
+
+const getPauseRequestId = (context: PaymentContext) => {
+  const pauseRequestId = context.webhookRequest.customProperties?.pauseRequestId;
+  return pauseRequestId ? { clientReferenceInformation: { pauseRequestId } } : {};
+}
+
+
 export const payerAuthValidationMapper: PaymentRequestMapper = {
   supports: (context: PaymentContext) => Boolean(context.webhookRequest.customProperties?.authenticationTransactionId),
 
@@ -14,7 +21,8 @@ export const payerAuthValidationMapper: PaymentRequestMapper = {
       },
       consumerAuthenticationInformation: {
         authenticationTransactionId: webhookRequest.customProperties!.authenticationTransactionId
-      }
+      },
+      ...getPauseRequestId(context)
     };
   }
 };

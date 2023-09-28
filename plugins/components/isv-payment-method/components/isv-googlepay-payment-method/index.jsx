@@ -22,7 +22,7 @@ import {
 } from '@oracle-cx-commerce/react-components/utils/payment';
 import { getCurrentOrder } from '@oracle-cx-commerce/commerce-utils/selector';
 import { amdJsLoad } from '../../isv-payment-utility/script-loader';
-import { replaceSpecialCharacter } from '../../isv-payment-utility/common';
+import { replaceSpecialCharacter } from '../../../isv-common';
 import GooglePay from './googlePay';
 
 /**

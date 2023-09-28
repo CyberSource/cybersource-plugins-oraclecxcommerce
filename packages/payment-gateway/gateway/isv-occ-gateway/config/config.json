@@ -164,6 +164,14 @@
       "public": false
     },
     {
+      "id": "scaEnabled",
+      "type": "booleanType",
+      "labelResourceId": "scaEnabledLabel",
+      "helpTextResourceId": "scaEnabledHelpText",
+      "defaultValue": false,
+      "public": false
+    },
+    {
       "id": "saleEnabled",
       "type": "multiSelectOptionType",
       "name": "saleEnabled",

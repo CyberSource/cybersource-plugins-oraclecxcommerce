@@ -1,7 +1,6 @@
 import {mergeDefaultConfig} from '@oracle-cx-commerce/react-widgets/config';
 import * as resourceBundle from '@oracle-cx-commerce/resources';
 import {buildResources} from '@oracle-cx-commerce/resources/utils';
-//import config from './config';
 
 const widgetResourceKeys = [
   'actionCancel',
@@ -80,5 +79,4 @@ export default {
   pageTypes: ['checkout-payment', 'pending-payment'],
   availableToAllPages: false,
   resources: buildResources(resourceBundle, widgetResourceKeys),
-  //yconfig: mergeDefaultConfig(config)
 };

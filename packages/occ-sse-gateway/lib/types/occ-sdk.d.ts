@@ -45,7 +45,7 @@ declare interface GooglePayConfig {
 
 declare interface ApplePayConfig {
   applePaySdkUrl: string;
-  applePayDisplayName:string;
+  applePayDisplayName: string;
   applePaySupportedNetworks: string;
 }
 
@@ -80,6 +80,7 @@ declare namespace OCC {
     payerAuthOrgUnitId: string;
     payerAuthEnabled: boolean;
     paymentOptions: string;
+    paymentMethodTypes: string;
     googlePaySdkUrl: string;
     googlePayEnvironment: string;
     googlePayGateway: string;
@@ -113,7 +114,7 @@ declare namespace OCC {
     };
   }
 
-    export interface PayerAuthSetupRequest {
+  export interface PayerAuthSetupRequest {
     orderId:string;
     transientToken: string;
     savedCardId?: string;
@@ -149,6 +150,21 @@ declare namespace OCC {
     firstName: string;
     city: string;
     country: string;
+  }
+
+  export type genericItems = Array<item>;
+
+  export interface item {
+    id: String,
+    rawTotalPrice: Number,
+    price: Number,
+    productId: String,
+    catRefId: String,
+    unitPrice: String,
+    quantity: Number,
+    displayName: String,
+    description: String,
+    options: []
   }
 
   export interface ShippingAddress {
@@ -217,6 +233,12 @@ declare namespace OCC {
     ipAddress?: string;
     httpBrowserJavaScriptEnabled?: boolean;
     httpAcceptContent?: string;
+    pauseRequestId?: string;
+
+     stepUpUrl?: string;
+     accessToken?: string;
+     pareq?: string;
+     challengeCode?: string;
   }
 
   export interface CaptureContextRequest {
