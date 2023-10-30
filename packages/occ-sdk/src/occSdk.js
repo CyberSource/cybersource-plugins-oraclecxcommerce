@@ -343,6 +343,12 @@ CommerceSDK.prototype.request = function (args) {
   CommerceSDK.printDebugMessage('The request method is :: ' + requestMethod, self.logger);
   var requestData = args.data ? args.data : {};
   CommerceSDK.printDebugMessage('The request data value is :: ' + requestData, self.logger);
+  
+  // if(self.applicationContext === '/ccapp'){
+  //   self.protocol = 'https:'
+  // }
+
+
   var requestModule = getHttp(self.protocol);
   
   var requestOptions = {
@@ -474,7 +480,7 @@ CommerceSDK.prototype.get = function (urlOptions) {
   
  
   var self = this;
-  urlOptions.method = 'GET';
+  urlOptions.method = 'GET'; 
   var initPromise = self.init(urlOptions.url);
   initPromise
     .then(function (success) {
@@ -657,6 +663,7 @@ CommerceSDK.prototype.init = function (endpoint) {
           resolve(true);
         })
         .catch(function (err) {
+          console.log("error from 1st match" , err)
           CommerceSDK.printError(
             'There was an error while trying to initialize ',
             err,

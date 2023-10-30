@@ -1,6 +1,6 @@
 {
   "name": "isv-occ-payment",
-  "version": "23.2.0",
+  "version": "23.3.0",
   "description": "ISV Oracle Commerce Cloud Payment Plugin",
   "main": "index.js",
   "repository": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git",
@@ -63,7 +63,8 @@
     "test:unit": "lerna run test:unit --stream",
     "tsc": "tsc -p ./tsconfig.json",
     "upload-custom-typeahead-keywords": "occ upload-custom-typeahead-keywords",
-    "upload-search-config": "occ upload-search-config"
+    "upload-search-config": "occ upload-search-config",
+    "start-sse": "yarn workspace @isv-occ-payment/server-extension start:watch --inspect"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",

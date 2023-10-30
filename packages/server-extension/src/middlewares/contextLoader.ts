@@ -9,7 +9,7 @@ function contextLoader(req: Request, res: Response, next: NextFunction) {
   const requestContext: RequestContext = req.app.locals;
   const { logger } = res.locals;
 
-  requestContext.channel = req.body?.channel || req.headers['channel'];
+  requestContext.channel = req.body?.channel || req.headers['channel'] || 'storefront';
   
   loggingService.init(logger);
   occClient.init(logger);

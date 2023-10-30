@@ -128,6 +128,7 @@ declare namespace OCC {
   }
 
   export interface CardDetails {
+    additionalSavedCardProperties: any;
     expirationMonth: string;
     expirationYear: string;
     cvv?: string;
@@ -551,6 +552,109 @@ declare namespace OCC {
     newDecision: string;
     originalDecision: string;
   }
+
+ export interface Notification {
+    notificationId: string;
+    retryNumber: number;
+    eventType: string;
+    eventDate: string;
+    webhookId: string;
+    payloads: Payload[];
+}
+
+export interface Payload {
+    data: {
+        _links: Links;
+        id: string;
+        type: string;
+        version: string;
+    };
+    organizationId: string;
+}
+
+export interface Links  {
+    paymentInstruments?: Link[];
+    instrumentIdentifiers?: Link[];
+    customers?: Link[];
+}
+
+
+export interface Link  {
+    href: string;
+}
+
+export interface card  {
+    expirationYear: string;
+    tokenExpiryDate: string;
+    gatewayConfigId: string;
+    expirationMonth: string;
+    creditCardType: string;
+    source: string;
+    iin: string;
+    token: string;
+    cardProps: object;
+    nameOnCard: string;
+    creditCardNumber: string;
+    repositoryId: string;
+    additionalInfo: string;
+    nickname: string;
+    tokenCreatedDate: string;
+    cardSavedDate: string;
+    id: string;
+    expirationDayOfMonth: string;
+}
+export interface SubscriptionDetailsResponse {
+  organizationId:string;
+  productId:string;
+  eventTypes:string[];
+  webhookId:string;
+  webhookUrl:string;
+  healthCheckUrl:string;
+  createdOn:string;
+  status:string;
+  retryPolicy:Object;
+  securityPolicy:Object;
+  version:string;
+  deliveryType:string;
+  notificationScope:string;
+}
+ export interface keyGenerationResponse{
+  submitTimeUtc:string;
+  status:string;
+  keyInformation:keyInformation;
+ }
+
+ export interface keyInformation{
+  provider:string;
+  tenant:string;
+  organizationId:string;
+  keyId:string;
+  key:string;
+  keyType:string;
+  status:string;
+  expirationDate:string;  
+ }
+ export interface webhookSubscriptionResponse{
+  organizationId:string,
+  productId: string,
+  eventTypes: string[],
+  webhookId: string,
+  name: string,
+  webhookUrl: string,
+  healthCheckUrl: string,
+  createdOn: string,
+  status: string,
+  description: string,
+  retryPolicy: Object,
+  securityPolicy: Object,
+  version: string,
+  deliveryType: string,
+  notificationScope: string
+ }
+
+
+
+
 }
 
 declare namespace Express {
@@ -558,3 +662,5 @@ declare namespace Express {
     rawBody: string;
   }
 }
+
+
