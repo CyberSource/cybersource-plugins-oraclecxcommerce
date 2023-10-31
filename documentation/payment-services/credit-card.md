@@ -290,16 +290,6 @@ Before a MID can be enabled for Network Tokenization, it must be provisioned wit
 
 Plug-in would need to subscribe to the necessary webhook notifications and ingest them for changes to the card. Subscription is created automatically when Authorization is processed, while the Webhook Subscription feature is enabled.  
 
-Follow the below steps to configure Network Tokenization: 
- 1. Enable the Network Token Updates checkbox in the Back Office configuration. 
- 2. Navigate to Business Center → Payment Configuration → Webhook Settings. Click on Create. 
- 3. Enter the URL to receive the webhook notifications in “URL” field: 
-   URL: https://asbx80c1dev-admin-{env}.oraclecloud.com/ccstorex/custom/isv-payment/v2/webhook/tokenUpdate 
- 4. Turn on the Enable switch. 
- 5. Select the Shared Secret key from the list. 
- 6. Click Save. 
- 
-
 The following describes the Network Token update process:
 1. When the plugin receives a webhook notification for an update, it will fetch the payment instrument and instrument identifier from the notification payload.
 2. The "Retrieve Instrument Identifier" service will be called to fetch card details using the payment instrument and instrument identifier obtained above.

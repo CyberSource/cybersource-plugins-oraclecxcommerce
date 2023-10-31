@@ -38,7 +38,7 @@ export default function configureApp(app: Application, baseRoutePath = '') {
     const { MD } = req.body;
     if (MD && typeof MD === 'string') {
       res.removeHeader('X-frame-Options');
-      logger.debug('Md data: ' + MD);
+      logger.debug('Md data: ' + encodeURI(MD));
       const match = MD.match(CHANNEL_REGEX);
       const headerChannel = match ? match[1] : null;
       logger.debug('channel- ' + headerChannel);
@@ -47,7 +47,6 @@ export default function configureApp(app: Application, baseRoutePath = '') {
     }
     next();
   })
-
 
   app.use(contextLoaderMiddleware);
   app.use(loggerMiddleware);

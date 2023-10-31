@@ -43,7 +43,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
     if (!res?.processorInformation?.paymentAccountReferenceNumber) {
       return;
     }
-    if (!context.requestContext.gatewaySettings?.networkTokenEnabled) {
+    if (!context.requestContext.gatewaySettings?.networkTokenUpdates) {
       logger.debug("Webhook Subscription :  Network token option not enabled");
       return;
     }
