@@ -19,7 +19,7 @@ declare global {
   }
 }
 
-export interface RequestContext extends Record<string, any> {}
+export interface RequestContext extends Record<string, any> { }
 
 export interface PaymentData {
   request?: Record<string, any>;
@@ -77,9 +77,10 @@ const replaceChar = (logData: any) => {
     if (typeof logData[key] === 'object' && logData[key] !== null) {
       replaceChar(logData[key])
     } else {
-        if (payload.includes(key) && logData[key] !== null && logData[key] === "string") {
-          logData[key] = logData[key].replace(replaceCharacterRegex, "x");
-        }
+      if (payload.includes(key) && logData[key] !== null && logData[key] === "string") {
+        logData[key] = logData[key].replace(replaceCharacterRegex, "x");
+      }
     }
   });
 }
+export const CHANNEL_REGEX = /channel=([^,]+)/i;

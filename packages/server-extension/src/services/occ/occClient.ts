@@ -24,7 +24,7 @@ export class OccClient {
       url: `/ccadmin/v1/orders/${orderId}`
     });
   }
-
+ 
 
   requestGET(options: any): Promise<any> {
     return new Promise((resolve, reject) => {

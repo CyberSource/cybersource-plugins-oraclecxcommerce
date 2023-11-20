@@ -8,7 +8,10 @@ import paymentCapture from './paymentCapture';
 import paymentRefund from './paymentRefund';
 import report from './report';
 import { paymentRouter } from '@server-extension/controllers/paymentRouter';
-import { asyncMiddleware } from '@server-extension/common';
+import {  asyncMiddleware } from '@server-extension/common';
+import webhookRouter from './webhookRouter';
+
+
 
 const router = Router();
 
@@ -19,8 +22,11 @@ router.use('/v2/payerAuth', payerAuth);
 router.use('/v2/capture', paymentCapture);
 router.use('/v2/refund', paymentRefund);
 router.use('/v2/report', report);
+router.use('/v2/webhook',webhookRouter);
 
-router.post('/v2/payerAuthReturnUrl',(req: Request,res: Response)=>{
+
+
+router.post('/v2/payerAuthReturnUrl', (req: Request, res: Response) => {
   const transactionId = JSON.stringify(req.body?.TransactionId);
   res.send(`<script>
      window.parent.postMessage({
@@ -29,7 +35,9 @@ router.post('/v2/payerAuthReturnUrl',(req: Request,res: Response)=>{
   },'*');
   </script>`);
 
-})
+});
+
+
 
 router.post('/v2/payments', asyncMiddleware(async function (
   req: Request,
@@ -37,15 +45,15 @@ router.post('/v2/payments', asyncMiddleware(async function (
   next: NextFunction
 ) {
 
-  const replaceCharacterRegex = /~W!C@O#n/g;  
+  const replaceCharacterRegex = /~W!C@O#n/g;
 
   const iterateCustomProperties = (obj: any) => {
     Object.keys(obj).forEach(key => {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-            iterateCustomProperties(obj[key])
-        } else if(typeof obj[key] === "string") {
-          obj[key] = obj[key].replace(replaceCharacterRegex, "=");
-        }
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        iterateCustomProperties(obj[key])
+      } else if (typeof obj[key] === "string") {
+        obj[key] = obj[key].replace(replaceCharacterRegex, "=");
+      }
     });
   };
 

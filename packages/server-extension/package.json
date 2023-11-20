@@ -1,6 +1,6 @@
 {
   "name": "@isv-occ-payment/server-extension",
-  "version": "23.2.0",
+  "version": "23.3.0",
   "private": true,
   "description": "Payment Server Extension",
   "repository": {
@@ -48,17 +48,18 @@
     "test:coverage:int": "yarn test:int --coverage",
     "test:coverage:unit": "yarn test:unit --coverage",
     "test:int": "yarn test -c jest.int.config.js",
-    "test:unit": "yarn test -c jest.unit.config.js"
+    "test:unit": "yarn test -c jest.unit.config.js",
+    "test:sud": "node ./src/controllers/SubscribeApi.js"
   },
   "config": {
     "port": "3000",
     "ssl_port": "3001"
   },
   "dependencies": {
-    "@isv-occ-payment/occ-payment-factory": "23.2.0",
-    "@isv-occ-payment/occ-sdk": "23.2.0",
-    "@isv-occ-payment/payment-gateway": "23.2.0",
-    "@isv-occ-payment/payment-sdk": "23.2.0",
+    "@isv-occ-payment/occ-payment-factory": "23.3.0",
+    "@isv-occ-payment/occ-sdk": "23.3.0",
+    "@isv-occ-payment/payment-gateway": "23.3.0",
+    "@isv-occ-payment/payment-sdk": "23.3.0",
     "cybersource-rest-client": "0.0.43",
     "deepmerge": "^4.2.2",
     "express-validator": "6.14.2",
@@ -102,7 +103,8 @@
     "/ccstorex/custom/isv-payment/v2/payerAuth/setup",
     "/ccstorex/custom/isv-payment/v2/payerAuthReturnUrl",
     "/ccstorex/custom/isv-payment/v2/capture",
-    "/ccstorex/custom/isv-payment/v2/refund"
+    "/ccstorex/custom/isv-payment/v2/refund",
+    "/ccstorex/custom/isv-payment/v2/webhook/tokenUpdate"
   ],
   "whitelistUrls": [
     "https://apitest.cybersource.com",

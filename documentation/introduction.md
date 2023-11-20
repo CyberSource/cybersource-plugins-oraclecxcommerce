@@ -16,6 +16,7 @@ The custom payment plugin solution provides an integration layer between OCC and
         - Refund
     - Tokenized card payment based on FlexMicroform v0.11
     - Payer authentication support (3D Secure)
+    - Network tokenization
     - Store tokenized credit card against user profile
         - Payments using stored credit cards
 2. Online Authorizations

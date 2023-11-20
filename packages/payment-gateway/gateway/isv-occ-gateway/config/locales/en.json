@@ -38,6 +38,10 @@
     "saleEnabledHelpText": "Indicates if authorizing and taking payment will be done at the same time for a particular payment mode",
     "payerAuthEnabledLabel": "Credit Card Payer Authentication Enabled",
     "payerAuthEnabledHelpText": "Indicates whether Payer Authentication (3D Secure) will be enabled",
+    "scaEnabledLabel": "Enforce SCA for Saving Card",
+    "scaEnabledHelpText": "If enabled, card holder will be 3DS challenged when saving a card (enforcing Strong Customer Authentication)",
+    "networkTokenUpdatesLabel": "Network Token Updates",
+    "networkTokenUpdatesHelpText": "Subscribe to Network Token life cycle updates",
     "googlePaySdkUrlLabel": "Google Pay SDK URL",
     "isCVVRequiredForSavedCardsLabel": "CVV Required. [DO NOT EDIT]",
     "isCVVRequiredForSavedCardsHelpText": "Is the CVV required when using a saved card.",
@@ -82,8 +86,6 @@
     "deviceFingerprintOrgIdLabel": "Device Fingerprint Organization Id",
     "deviceFingerprintOrgIdHelpText": "",
     "deviceFingerprintEnabledLabel": "Device Fingerprint Enabled",
-    "deviceFingerprintEnabledHelpText": "",
-    "scaEnabledLabel": "Enforce SCA for Saving Card",
-    "scaEnabledHelpText": "If enabled, card holder will be 3DS challenged when saving a card (enforcing Strong Customer Authentication)"
+    "deviceFingerprintEnabledHelpText": ""
   }
 }
