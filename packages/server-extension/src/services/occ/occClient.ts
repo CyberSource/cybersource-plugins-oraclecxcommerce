@@ -24,7 +24,13 @@ export class OccClient {
       url: `/ccadmin/v1/orders/${orderId}`
     });
   }
- 
+  
+  getCardTypes(): Promise<Record<string, any>> {
+    return this.requestGET({
+      url: `/ccstore/v1/payment/types`
+    });
+  }
+
 
   requestGET(options: any): Promise<any> {
     return new Promise((resolve, reject) => {

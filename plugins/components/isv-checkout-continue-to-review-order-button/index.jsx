@@ -252,9 +252,10 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           await callDeviceDataCollection();
           store.getState().payerAuthRepository = { transientToken: transientToken.encoded, jti: transientToken.decoded.jti };
         }
+        let cardNumber = transientToken.decoded.content.paymentInformation.card.number.bin + transientToken.decoded.content.paymentInformation.card.number.maskedValue.toLowerCase().substring(6);
         updatedPayments = {
           ...(payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)),
-          cardNumber: transientToken.decoded.data.number.toLowerCase(),
+          cardNumber: cardNumber,
           cardCVV: '',
           cardType: card && card[0].name,
           customProperties: {

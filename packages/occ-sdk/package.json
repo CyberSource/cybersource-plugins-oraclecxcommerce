@@ -13,7 +13,7 @@
   "scripts": {
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "build:prod": "ttsc -p tsconfig.json",
+    "build:prod": "tsc -p tsconfig.json",
     "clean": "rimraf ./cjs",
     "prepack": "yarn build",
     "test": "jest --passWithNoTests"

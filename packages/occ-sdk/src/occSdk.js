@@ -663,7 +663,6 @@ CommerceSDK.prototype.init = function (endpoint) {
           resolve(true);
         })
         .catch(function (err) {
-          console.log("error from 1st match" , err)
           CommerceSDK.printError(
             'There was an error while trying to initialize ',
             err,
@@ -756,9 +755,8 @@ CommerceSDK.printError = function (message, error) {
     //passed logger and sending it to console.log
     console.error(message);
   }
-
   if (error) {
-    console.error('%j', error);
+    console.error(error);
   }
 };
 
