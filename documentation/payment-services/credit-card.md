@@ -10,7 +10,8 @@
       1. [UI integration details](#ui-integration-details-1)
       2. [Backend (SSE) integration details](#backend-sse-integration-details-1)
       3. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
-   4. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
+   4. [Network Tokenization](#network-tokenization)
+   5. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
 
 ## Description
 
@@ -26,7 +27,7 @@ The Credit Card payment service provides the following operations:
 
 The following applies to credit card payments:
 
-- Credit card payments using [FlexMicroform v0.11](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
+- Credit card payments using [FlexMicroform v2](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
 - Payer Authentication (3D Secure)
 - Shopper can choose to save credit card as part of profile
 - Subscribe to Network Token life cycle updates
@@ -102,7 +103,7 @@ Understand OSF applications [CX-Commerce](https://docs.oracle.com/en/cloud/saas/
 
 REST API for Oracle Commerce Cloud 22D [Oracle Commerce Cloud](https://docs.oracle.com/en/cloud/saas/cx-commerce/22d/cxocc/op-ccadmin-v1-merchant-paymenttypes-get.html)
 
-Microform Integration 0.11 Documentation [Microform 0.11](https://developer.cybersource.com/api/developer-guides/dita-flex/da-microform-integ/microform-integ.html)
+Microform Integration v2 Documentation [Microform v2](https://developer.cybersource.com/docs/cybs/en-us/digital-accept-flex/developer/all/rest/digital-accept-flex/microform-integ-v2.html)
 
 The structure that follows contain all the components necessary to run Credit Card Payment in OSF.
 
@@ -282,7 +283,7 @@ In case 'Strong Customer Authentication' is enabled for credit cards, '10000' re
 
 *Note:* The `scaEnabled` setting is applicable only if `Payer Authentication` is enabled.
 
-#### Network Tokenization
+### Network Tokenization
 
 A Network Token is a network scheme generated token, that represents customer card information for secure transactions that references a customer’s actual PAN.  
 

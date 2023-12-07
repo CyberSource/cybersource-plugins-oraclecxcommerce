@@ -84,3 +84,4 @@ const replaceChar = (logData: any) => {
   });
 }
 export const CHANNEL_REGEX = /channel=([^,]+)/i;
+export const CLIENT_VERSION ="v2.0";

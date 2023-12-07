@@ -13451,6 +13451,21 @@ declare module 'cybersource-rest-client' {
          */
         generatePublicKey (format: string, generatePublicKeyRequest: GeneratePublicKeyRequest, callback?: any) : any;
     }
+
+    export class MicroformIntegrationApi {
+        config: MerchantConfig;
+        apiClient: ApiClient;
+
+        constructor(config: MerchantConfig, apiClient: ApiClient)
+
+        /**
+         * Generate a one-time use public key and key ID to encrypt the card number in the follow-on Tokenize Card request. The key used to encrypt the card number on the cardholder’s device or browser is valid for 15 minutes and must be used to verify the signature in the response message. CyberSource recommends creating a new key for each order. Generating a key is an authenticated request initiated from your servers, prior to requesting to tokenize the card data from your customer’s device or browser.
+         * @summary Generate Key
+         * @param generateCaptureContextRequest 
+         * @param {*} [options] Override http request options.
+         */
+        generateCaptureContext(generateCaptureContextRequest: any, callback?: any): any;
+    }
     
     export class NetFundingsApi {
         config: MerchantConfig;

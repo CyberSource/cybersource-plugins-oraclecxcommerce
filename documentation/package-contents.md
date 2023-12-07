@@ -321,7 +321,8 @@ server-extension
  ┃ ┃ ┣ cacheService.ts
  ┃ ┃ ┣ cryptoService.ts
  ┃ ┃ ┣ jwtService.ts
- ┃ ┃ ┗ loggingService.ts
+ ┃ ┃ ┣ loggingService.ts
+ ┃ ┃ ┗ publicKeyApi.js
  ┃ ┣ types
  ┃ ┃ ┗ occ-sdk.d.ts
  ┃ ┣ app.ts

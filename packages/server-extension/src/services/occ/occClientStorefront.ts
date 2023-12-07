@@ -38,9 +38,6 @@ export class OccClientStorefront {
     });
   }
 
-
-
-
   requestGET(options: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.sdk.get({
@@ -55,7 +52,6 @@ export class OccClientStorefront {
   requestPUT(options: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.sdk.put({
-
         callback: (err: any, res: any) => {
           Boolean(err) ? reject(err) : resolve(res);
         },
