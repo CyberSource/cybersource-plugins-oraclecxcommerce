@@ -8,6 +8,11 @@ const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
 const router = Router();
 
+
+router.get('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+    return res.status(200).send();
+}))
+
 router.post('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const webhookRequestData: OCC.Notification = req.body;
@@ -50,7 +55,7 @@ router.post('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, 
     catch (error) {
         logger.debug("WebhookRouter tokenUpdate: " + error.message);
     }
-    finally{
+    finally {
         res.status(204).send();
     }
 }

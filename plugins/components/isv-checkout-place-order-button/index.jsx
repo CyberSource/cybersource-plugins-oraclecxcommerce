@@ -32,7 +32,6 @@ import { getIpAddress, getOptionalPayerAuthFields } from '../isv-common';
 var authTransactionId;
 const ERROR = 'error';
 var cardinalUrl;
-let scaRequiredCount = 1;
 let payerAuthSetupData = false;
 /**
  * Widget to display place order button and handle order submission
@@ -286,14 +285,6 @@ const IsvCheckoutPlaceOrderButton = props => {
   };
   async function handleSca(payerAuthPaymentGroup) {
     var setupResponse;
-    if (scaRequiredCount <= 1) {
-      scaRequiredCount++;
-    }
-    else {
-      scaRequiredCount--;
-      action('notify', { level: 'error', message: headingPayment + ' ' + messageFailed });
-      return goToPaymentPage();
-    }
     const { deviceFingerprint } = getState().paymentMethodConfigRepository;
     const updatedCustomProperties = {
       ...cardPayment.customProperties,

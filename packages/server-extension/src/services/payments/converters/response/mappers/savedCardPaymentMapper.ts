@@ -50,8 +50,8 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
     let webhookConfigurations = nconf.get("networkSubcriptionConfigurations") || [];
     logger.debug("Webhook Subscription : Saved Configurations " + JSON.stringify(webhookConfigurations));
     let isConfigurationExists = webhookConfigurations.find((configuration: any) => configuration.MerchantID === context.requestContext.merchantConfig.merchantID) || false;
-    const hostname = nconf.get('atg.server.admin.url');
-    const webhookurl = hostname + WEBHOOK_SUBSCRIPTION.ENDPOINT;
+    const hostname = nconf.get("atg.server.admin.url");
+    const webhookurl = hostname + ":" + WEBHOOK_SUBSCRIPTION.PORT + WEBHOOK_SUBSCRIPTION.ENDPOINT;
     let subscriptionDetails: OCC.SubscriptionDetailsResponse | false = await getSubscriptionsDetails(context);
     if (!isConfigurationExists && (subscriptionDetails && subscriptionDetails?.webhookId)) {
       logger.debug("Webhook Subscription : Configuration recovered from isv-occ-payment");
@@ -63,7 +63,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
       nconf.set("networkSubcriptionConfigurations", webhookConfigurations);
       nconf.save((err: any) => {
         if (err) {
-          logger.debug("Webhook Subscription : Configuration not saved in SSE " + err.message);
+          logger.debug("Webhook Subscription : Unable to save the configuration in SSE " + err.message);
         }
         else {
           logger.debug("Webhook Subscription : Configuration saved in SSE");
@@ -72,7 +72,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
     }
     if (isConfigurationExists && !subscriptionDetails) {
       webhookConfigurations = webhookConfigurations.filter((credentials: any) => credentials.MerchantID !== context.requestContext.merchantConfig.merchantID);
-      logger.debug("Webhook Subscription : Configuration removed from SSE");
+      logger.debug("Webhook Subscription : Removing configuration from SSE");
       isConfigurationExists = false;
     }
     if (!isConfigurationExists && !subscriptionDetails) {
@@ -124,7 +124,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
         nconf.set("networkSubcriptionConfigurations", webhookConfigurations);
         nconf.save((err: any) => {
           if (err) {
-            logger.debug("Webhook Subscription : Configuration not saved in SSE " + err.message);
+            logger.debug("Webhook Subscription : Unable to save configuration in SSE " + err.message);
           }
           else {
             logger.debug("Webhook Subscription : Configuration saved in SSE");
@@ -150,6 +150,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
       }
       catch (error) {
         logger.debug("Webhook Subscription : " + error.message);
+        logger.debug("Webhook Subscription : Not Subscribed");
         resolve(false)
       };
     });
