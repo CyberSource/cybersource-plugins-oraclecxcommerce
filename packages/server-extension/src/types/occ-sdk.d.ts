@@ -95,7 +95,7 @@ declare namespace OCC {
     applePayMerchantId: string;
     applePayInitiative: string;
     applePayInitiativeContext: string;
-    applePayDisplayName:string;
+    applePayDisplayName: string;
     applePaySupportedNetworks: string;
     dmDecisionSkip: string;
 
@@ -115,7 +115,7 @@ declare namespace OCC {
   }
 
   export interface PayerAuthSetupRequest {
-    orderId:string;
+    orderId: string;
     transientToken: string;
     savedCardId?: string;
     profileId?: string;
@@ -235,7 +235,7 @@ declare namespace OCC {
     httpBrowserJavaScriptEnabled?: boolean;
     httpAcceptContent?: string;
 
-    pauseRequestId?:string;
+    pauseRequestId?: string;
     stepUpUrl?: string;
     accessToken?: string;
     pareq?: string;
@@ -553,37 +553,37 @@ declare namespace OCC {
     originalDecision: string;
   }
 
- export interface Notification {
+  export interface Notification {
     notificationId: string;
     retryNumber: number;
     eventType: string;
     eventDate: string;
     webhookId: string;
-    payloads: Payload[];
-}
+    payload: Payload[];
+  }
 
-export interface Payload {
+  export interface Payload {
     data: {
-        _links: Links;
-        id: string;
-        type: string;
-        version: string;
+      _links: Links;
+      id: string;
+      type: string;
+      version: string;
     };
     organizationId: string;
-}
+  }
 
-export interface Links  {
+  export interface Links {
     paymentInstruments?: Link[];
     instrumentIdentifiers?: Link[];
     customers?: Link[];
-}
+  }
 
 
-export interface Link  {
+  export interface Link {
     href: string;
-}
+  }
 
-export interface card  {
+  export interface card {
     expirationYear: string;
     tokenExpiryDate: string;
     gatewayConfigId: string;
@@ -602,55 +602,55 @@ export interface card  {
     cardSavedDate: string;
     id: string;
     expirationDayOfMonth: string;
-}
-export interface SubscriptionDetailsResponse {
-  organizationId:string;
-  productId:string;
-  eventTypes:string[];
-  webhookId:string;
-  webhookUrl:string;
-  healthCheckUrl:string;
-  createdOn:string;
-  status:string;
-  retryPolicy:Object;
-  securityPolicy:Object;
-  version:string;
-  deliveryType:string;
-  notificationScope:string;
-}
- export interface keyGenerationResponse{
-  submitTimeUtc:string;
-  status:string;
-  keyInformation:keyInformation;
- }
+  }
+  export interface SubscriptionDetailsResponse {
+    organizationId: string;
+    productId: string;
+    eventTypes: string[];
+    webhookId: string;
+    webhookUrl: string;
+    healthCheckUrl: string;
+    createdOn: string;
+    status: string;
+    retryPolicy: Object;
+    securityPolicy: Object;
+    version: string;
+    deliveryType: string;
+    notificationScope: string;
+  }
+  export interface keyGenerationResponse {
+    submitTimeUtc: string;
+    status: string;
+    keyInformation: keyInformation;
+  }
 
- export interface keyInformation{
-  provider:string;
-  tenant:string;
-  organizationId:string;
-  keyId:string;
-  key:string;
-  keyType:string;
-  status:string;
-  expirationDate:string;  
- }
- export interface webhookSubscriptionResponse{
-  organizationId:string,
-  productId: string,
-  eventTypes: string[],
-  webhookId: string,
-  name: string,
-  webhookUrl: string,
-  healthCheckUrl: string,
-  createdOn: string,
-  status: string,
-  description: string,
-  retryPolicy: Object,
-  securityPolicy: Object,
-  version: string,
-  deliveryType: string,
-  notificationScope: string
- }
+  export interface keyInformation {
+    provider: string;
+    tenant: string;
+    organizationId: string;
+    keyId: string;
+    key: string;
+    keyType: string;
+    status: string;
+    expirationDate: string;
+  }
+  export interface webhookSubscriptionResponse {
+    organizationId: string,
+    productId: string,
+    eventTypes: string[],
+    webhookId: string,
+    name: string,
+    webhookUrl: string,
+    healthCheckUrl: string,
+    createdOn: string,
+    status: string,
+    description: string,
+    retryPolicy: Object,
+    securityPolicy: Object,
+    version: string,
+    deliveryType: string,
+    notificationScope: string
+  }
 
 
 

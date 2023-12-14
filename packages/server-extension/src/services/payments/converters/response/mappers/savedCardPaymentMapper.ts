@@ -1,5 +1,5 @@
 import { PaymentContext } from '@server-extension/common';
-import { PtsV2PaymentsPost201Response } from 'cybersource-rest-client';
+import { MerchantConfig, PtsV2PaymentsPost201Response } from 'cybersource-rest-client';
 import { PaymentResponseMapper } from '../../common';
 import nconf from 'nconf';
 import makeRequest from '@server-extension/services/payments/api/paymentCommand';
@@ -40,6 +40,7 @@ export const savedCardPaymentMapper: PaymentResponseMapper = {
 async function webhookSubscriptionRequests(context: PaymentContext) {
   try {
     const res = context.data.response;
+    const merchantConfig = <MerchantConfig>context.requestContext.merchantConfig;
     if (!res?.processorInformation?.paymentAccountReferenceNumber) {
       return;
     }
@@ -49,30 +50,29 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
     }
     let webhookConfigurations = nconf.get("networkSubcriptionConfigurations") || [];
     logger.debug("Webhook Subscription : Saved Configurations " + JSON.stringify(webhookConfigurations));
-    let isConfigurationExists = webhookConfigurations.find((configuration: any) => configuration.MerchantID === context.requestContext.merchantConfig.merchantID) || false;
+    let isConfigurationExists = webhookConfigurations.find((configuration: any) => configuration.merchantId === context.requestContext.merchantConfig.merchantID) || false;
     const hostname = nconf.get("atg.server.admin.url");
     const webhookurl = hostname + ":" + WEBHOOK_SUBSCRIPTION.PORT + WEBHOOK_SUBSCRIPTION.ENDPOINT;
-    let subscriptionDetails: OCC.SubscriptionDetailsResponse | false = await getSubscriptionsDetails(context);
+    let subscriptionDetails: OCC.SubscriptionDetailsResponse | false = await getSubscriptionsDetails(merchantConfig);
     if (!isConfigurationExists && (subscriptionDetails && subscriptionDetails?.webhookId)) {
-      logger.debug("Webhook Subscription : Configuration recovered from isv-occ-payment");
-      const configurationDetails = {
-        "MerchantID": subscriptionDetails.organizationId,
-        "SubscriptionID": subscriptionDetails.webhookId
-      };
-      webhookConfigurations.push(configurationDetails);
-      nconf.set("networkSubcriptionConfigurations", webhookConfigurations);
-      nconf.save((err: any) => {
-        if (err) {
-          logger.debug("Webhook Subscription : Unable to save the configuration in SSE " + err.message);
-        }
-        else {
-          logger.debug("Webhook Subscription : Configuration saved in SSE");
-        }
-      })
+      logger.debug("Webhook Subscription : Webhook already subscribed:Unable to find webhook configuration in SSE");
+      await makeRequest(
+        merchantConfig,
+        subscribeApi,
+        "deleteWebhookSubscription",
+        subscriptionDetails.webhookId)
+        .then(res => {
+          logger.debug("Webhook Subscription : Webhook subscription deleted");
+        })
+        .catch(err => {
+          logger.debug("Webhook Subscription: Unable to delete subscription");
+          logger.debug("Webhook Subscription: " + err.message);
+        });
+      subscriptionDetails = false;
     }
     if (isConfigurationExists && !subscriptionDetails) {
-      webhookConfigurations = webhookConfigurations.filter((credentials: any) => credentials.MerchantID !== context.requestContext.merchantConfig.merchantID);
-      logger.debug("Webhook Subscription : Removing configuration from SSE");
+      webhookConfigurations = webhookConfigurations.filter((credentials: any) => credentials.merchantId !== merchantConfig.merchantID);
+      logger.debug("Webhook Subscription : Removing Configuration from SSE, Not subscribed to ISV webhook");
       isConfigurationExists = false;
     }
     if (!isConfigurationExists && !subscriptionDetails) {
@@ -80,13 +80,14 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
         clientRequestAction: "CREATE",
         keyInformation: {
           provider: WEBHOOK_SUBSCRIPTION.PROVIDER,
-          tenant: context.requestContext.merchantConfig.merchantID,
+          tenant: merchantConfig.merchantID,
           keyType: WEBHOOK_SUBSCRIPTION.KEY_TYPE,
-          organizationId: context.requestContext.merchantConfig.merchantID
+          organizationId: merchantConfig.merchantID
         }
       };
+      logger.debug("Webhook Subscription : Calling Key Generation API");
       const keyGenerationResponse: OCC.keyGenerationResponse = await makeRequest(
-        context.requestContext.merchantConfig,
+        merchantConfig,
         subscribeApi,
         "keyGeneration",
         keyGenerationPayload
@@ -108,17 +109,18 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
       }
       logger.debug("Webhook Subscription Payload : " + JSON.stringify(subscriptionPayload));
       const webhookSubscriptionResponse: OCC.webhookSubscriptionResponse = await makeRequest(
-        context.requestContext.merchantConfig,
+        merchantConfig,
         subscribeApi,
         "webhookSubscription",
         subscriptionPayload
       )
       if (keyGenerationResponse?.keyInformation && webhookSubscriptionResponse?.webhookId) {
         const configurationDetails = {
-          "MerchantID": context.requestContext.merchantConfig.merchantID,
-          "Key": keyGenerationResponse?.keyInformation.key,
-          "KeyID": keyGenerationResponse?.keyInformation.keyId,
-          "SubscriptionID": webhookSubscriptionResponse.webhookId
+          "merchantId": context.requestContext.merchantConfig.merchantID,
+          "key": keyGenerationResponse?.keyInformation.key,
+          "keyId": keyGenerationResponse?.keyInformation.keyId,
+          "keyExpiration": keyGenerationResponse?.keyInformation.expirationDate,
+          "subscriptionId": webhookSubscriptionResponse.webhookId
         };
         webhookConfigurations.push(configurationDetails);
         nconf.set("networkSubcriptionConfigurations", webhookConfigurations);
@@ -136,21 +138,20 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
     logger.debug("Webhook Subscription : " + error.message);
   };
 
-  async function getSubscriptionsDetails(context: PaymentContext): Promise<false | OCC.SubscriptionDetailsResponse> {
+  async function getSubscriptionsDetails(merchantConfig: MerchantConfig): Promise<false | OCC.SubscriptionDetailsResponse> {
     return new Promise(async (resolve) => {
       try {
         const getAllSubscriptions: OCC.SubscriptionDetailsResponse = await makeRequest(
-          context.requestContext.merchantConfig,
+          merchantConfig,
           subscribeApi,
           "retreiveAllSubscriptions",
-          context.requestContext.merchantConfig.merchantID
+          merchantConfig.merchantID
         )
-        logger.debug("Webhook Subscription : " + JSON.stringify(getAllSubscriptions));
         resolve(getAllSubscriptions);
       }
       catch (error) {
         logger.debug("Webhook Subscription : " + error.message);
-        logger.debug("Webhook Subscription : Not Subscribed");
+        logger.debug("Webhook Subscription : Not subscribed to ISV webhook");
         resolve(false)
       };
     });
