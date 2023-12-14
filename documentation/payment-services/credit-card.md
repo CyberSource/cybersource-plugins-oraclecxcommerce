@@ -292,14 +292,15 @@ Before a MID can be enabled for Network Tokenization, it must be provisioned wit
 Plug-in would need to subscribe to the necessary webhook notifications and ingest them for changes to the card. Subscription is created automatically when Authorization is processed, while the Webhook Subscription feature is enabled.  
 
 The following describes the Network Token update process:
-1. When the plugin receives a webhook notification for an update, it will fetch the payment instrument and instrument identifier from the notification payload.
-2. The "Retrieve Instrument Identifier" service will be called to fetch card details using the payment instrument and instrument identifier obtained above.
-3. The expiry month, expiry year, and card suffix will be updated with the latest details.
-4. The updated card details will be saved in OCC.
 
-<p align="center">
-  <img src="images/update-token.png" />
-</p>
+1. Once the authorization is successful, check for the field PAR number in the response, if exists make a key generation request.
+2. Create a Webhook subscription call and save the details from the response.
+3. When the plugin receives a webhook notification for an update,validate the request and then fetch the payment instrument and instrument identifier from the notification payload.
+4. The "Retrieve Instrument Identifier" service will be called to fetch card details using the payment instrument and instrument identifier obtained above.
+5. The expiry month, expiry year, and card suffix will be updated with the latest details.
+6. The updated card details will be saved in OCC.
+
+![Network Tokenization](images/network-token.png)
 
 ### Capturing funds during authorization (SALE)
 

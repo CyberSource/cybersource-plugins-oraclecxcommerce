@@ -14,10 +14,11 @@ export async function createCaptureContext(
   const logger = LogFactory.logger();
   const enabledCardTypesDetails = (await occClient.getCardTypes())?.items || [];
   const possibleCardTypes = ["VISA", "MAESTRO", "MASTERCARD", "AMEX", "DISCOVER", "DINERSCLUB", "JCB", "CUP", "CARTESBANCAIRES", "CARNET"];
+  const defaultCardTypes = ["VISA", "MASTERCARD"];
   let enabledCardTypes = possibleCardTypes.filter(cybsType => enabledCardTypesDetails.some((enabledCardTypeDetails: { repositoryId: string; }) =>
     cybsType.includes(enabledCardTypeDetails.repositoryId.toUpperCase())));
-  if ( !enabledCardTypes || enabledCardTypes?.length < 1) {
-    enabledCardTypes = possibleCardTypes;
+  if (!enabledCardTypes || enabledCardTypes?.length < 1) {
+    enabledCardTypes = defaultCardTypes;
   }
   const keyObj = await generateKey(requestContext, captureContextPayload.targetOrigin, enabledCardTypes);
   const contextResponse = typeof keyObj === "object" ? keyObj.toString() : keyObj;

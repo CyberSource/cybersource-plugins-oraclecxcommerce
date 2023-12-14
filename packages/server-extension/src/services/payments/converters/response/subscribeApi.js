@@ -81,6 +81,46 @@ const { WEBHOOK_SUBSCRIPTION } = require("./common");
           callback
         );
       };
+      this.deleteWebhookSubscription = function (webhookId, callback) {
+        var postBody = null;
+        if ("GET" == "POST") {
+          postBody = "{}";
+        }
+
+        // verify the required parameter 'keyId' is set
+        if (webhookId === undefined || webhookId === null) {
+          throw new Error(
+            "Missing the required parameter 'webhookId' when calling deleteWebhookSubscription"
+          );
+        }
+
+        var pathParams = {
+          webhookId
+        };
+        var queryParams = {};
+        var headerParams = {};
+        var formParams = {};
+
+        var authNames = [];
+        var contentTypes = ["application/json;charset=utf-8"];
+        var accepts = ["application/json"];
+        var returnType = {};
+
+        return this.apiClient.callApi(
+          "/notification-subscriptions/v1/webhooks/{webhookId}",
+          "DELETE",
+          pathParams,
+          queryParams,
+          headerParams,
+          formParams,
+          postBody,
+          authNames,
+          contentTypes,
+          accepts,
+          returnType,
+          callback
+        );
+      };
 
       this.retreiveAllSubscriptions = function (organizationId, callback) {
         var postBody = null;

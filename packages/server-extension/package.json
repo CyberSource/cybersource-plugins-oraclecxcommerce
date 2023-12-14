@@ -48,8 +48,7 @@
     "test:coverage:int": "yarn test:int --coverage",
     "test:coverage:unit": "yarn test:unit --coverage",
     "test:int": "yarn test -c jest.int.config.js",
-    "test:unit": "yarn test -c jest.unit.config.js",
-    "test:sud": "node ./src/controllers/SubscribeApi.js"
+    "test:unit": "yarn test -c jest.unit.config.js"
   },
   "config": {
     "port": "3000",

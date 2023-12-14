@@ -8,10 +8,8 @@ import paymentCapture from './paymentCapture';
 import paymentRefund from './paymentRefund';
 import report from './report';
 import { paymentRouter } from '@server-extension/controllers/paymentRouter';
-import {  asyncMiddleware } from '@server-extension/common';
+import { asyncMiddleware } from '@server-extension/common';
 import webhookRouter from './webhookRouter';
-
-
 
 const router = Router();
 
@@ -22,9 +20,7 @@ router.use('/v2/payerAuth', payerAuth);
 router.use('/v2/capture', paymentCapture);
 router.use('/v2/refund', paymentRefund);
 router.use('/v2/report', report);
-router.use('/v2/webhook',webhookRouter);
-
-
+router.use('/v2/webhook', webhookRouter);
 
 router.post('/v2/payerAuthReturnUrl', (req: Request, res: Response) => {
   const transactionId = JSON.stringify(req.body?.TransactionId);
@@ -36,8 +32,6 @@ router.post('/v2/payerAuthReturnUrl', (req: Request, res: Response) => {
   </script>`);
 
 });
-
-
 
 router.post('/v2/payments', asyncMiddleware(async function (
   req: Request,

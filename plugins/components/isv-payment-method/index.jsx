@@ -12,10 +12,11 @@ import { amdJsLoad } from './isv-payment-utility/script-loader';
 
 import Styled from '@oracle-cx-commerce/react-components/styled';
 import css from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/styles.css';
+import { getCheckoutCreditCardData } from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/selectors';
 
 
 const IsvPaymentMethod = props => {
-  const { paymentMethods = [], deviceFingerprint = {}, alertTechnicalProblemTryAgain } = props || {};
+  const { paymentMethods = [], deviceFingerprint = {}, alertTechnicalProblemTryAgain, isGenericPaymentEnabled = false, isDisplayCreditCard = false } = props || {};
   const store = useContext(StoreContext);
   const { action } = store;
   const { isPreview } = getGlobalContext(store.getState());
@@ -55,7 +56,7 @@ const IsvPaymentMethod = props => {
   }
 
   useEffect(() => {
-    if (creditCardEnabled) {
+    if (creditCardEnabled && isDisplayCreditCard) {
       action('flexMicroformAction', { isPreview }).then(response => {
         if (!response.ok) {
           setError(true);
@@ -65,12 +66,14 @@ const IsvPaymentMethod = props => {
   }, [creditCardEnabled]);
 
   useEffect(() => {
-    usePaymentMethodConfigFetcher(store).then(response => {
-      if (!response.ok) {
-        setError(true);
-      }
-    });
-  }, []);
+    if (isDisplayCreditCard || isGenericPaymentEnabled) {
+      usePaymentMethodConfigFetcher(store).then(response => {
+        if (!response.ok) {
+          setError(true);
+        }
+      });
+    }
+  }, [isDisplayCreditCard, isGenericPaymentEnabled]);
 
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const IsvPaymentMethod = props => {
     }
   }, [deviceFingerprint]);
 
-  
+
   useEffect(() => {
     if (self != top) {
       top.location = encodeURI(self.location);
@@ -104,4 +107,11 @@ const IsvPaymentMethod = props => {
   }
 };
 
-export default connect(getPaymentMethodConfigRepository)(IsvPaymentMethod);
+const mapStateToProps = (state) => {
+  return {
+    ...getPaymentMethodConfigRepository(state),
+    ...getCheckoutCreditCardData(state)
+  }
+}
+
+export default connect(mapStateToProps)(IsvPaymentMethod);

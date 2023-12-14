@@ -54,4 +54,5 @@ export const WEBHOOK_SUBSCRIPTION = {
   EVENT_TYPE: "tms.networktoken.updated",
   SECURITY_TYPE: "KEY",
   PROXY_TYPE: "external",
+  PORT: "443"
 }

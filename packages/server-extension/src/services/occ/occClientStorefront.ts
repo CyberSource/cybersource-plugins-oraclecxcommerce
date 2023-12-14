@@ -21,7 +21,7 @@ export class OccClientStorefront {
   }
 
 
-  getProfileWithToken(token: string): Promise<Record<string, any>> {
+  getCreditCardDetailsFromProfileByToken(token: string): Promise<Record<string, any>> {
     return this.requestGET({
       url: `/ccapp/v1/profiles`,
       data: {
@@ -33,7 +33,7 @@ export class OccClientStorefront {
 
   updateProfile(cardDetails: OCC.card[], profileID: string): Promise<Record<string, any>> {
     return this.requestPUT({
-      data: {"creditCards":cardDetails},
+      data: { "creditCards": cardDetails },
       url: `/ccapp/v1/profiles/${profileID}`
     });
   }
