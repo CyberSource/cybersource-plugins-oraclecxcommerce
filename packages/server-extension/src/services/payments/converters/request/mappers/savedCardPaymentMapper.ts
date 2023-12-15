@@ -10,11 +10,10 @@ export const savedCardPaymentMapper: PaymentRequestMapper = {
 
   map: (context: PaymentContext) => {
     const { cardDetails } = context.webhookRequest;
-
     return <CreatePaymentRequest>{
       paymentInformation: {
         instrumentIdentifier: {
-          id: cardDetails.token
+          id: cardDetails.additionalSavedCardProperties?.instrumentId || cardDetails.token
         },
         card: {
           expirationYear: cardDetails.expirationYear,

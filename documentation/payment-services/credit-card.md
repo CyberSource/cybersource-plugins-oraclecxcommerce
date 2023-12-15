@@ -10,7 +10,8 @@
       1. [UI integration details](#ui-integration-details-1)
       2. [Backend (SSE) integration details](#backend-sse-integration-details-1)
       3. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
-   4. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
+   4. [Network Tokenization](#network-tokenization)
+   5. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
 
 ## Description
 
@@ -26,9 +27,10 @@ The Credit Card payment service provides the following operations:
 
 The following applies to credit card payments:
 
-- Credit card payments using [FlexMicroform v0.11](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
+- Credit card payments using [FlexMicroform v2](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
 - Payer Authentication (3D Secure)
 - Shopper can choose to save credit card as part of profile
+- Subscribe to Network Token life cycle updates
 - Shopper can pay with a saved card
 
 ![Note](../images/note.jpg)  With Flex Microform, the capture of card number and security code (CVV) are fully outsourced to the payment provider, which can qualify merchants for SAQ A-based assessments. Flex Microform provides the most secure method for tokenizing card data. Sensitive data is encrypted on the customer's device before HTTPS transmission to the payment provider. This method mitigates any compromise of the HTTPS connection through a man in the middle attack.
@@ -45,6 +47,7 @@ The following gateway settings apply to credit card payments
 | **paymentOptions**                  | Payment options enabled for payment using Payment Widget. 'Credit & Debit Card' should be enabled |
 | **payerAuthEnabled**                | Enables payer authentication (3D Secure) for credit cards                                         |
 | **scaEnabled**                      | If enabled card holder will be 3DS Challenged when saving a card                                  |
+| **networkTokenUpdates**             | Subscribe to Network Token Life cycle updates                               |
 | **saleEnabled**                     | Indicates if authorizing and taking payment will be done at the same time                         |
 | **isCVVRequiredForSavedCards**      | Should be disabled as CVV is not required in backend                                              |
 | **isCVVRequiredForScheduledOrders** | Should be disabled as CVV is not required in backend                                              |
@@ -53,6 +56,7 @@ Default values:
 
 - `payerAuthEnabled`: true. Payer authentication is enabled by default
 - `scaEnabled` : false
+- `networkTokenUpdates` : false
 - `isCVVRequiredForSavedCards`: false
 - `isCVVRequiredForScheduledOrders`: false
 - `saleEnabled` - by default SALE is disabled for Card payments. Can be enabled in OCC Admin
@@ -99,7 +103,7 @@ Understand OSF applications [CX-Commerce](https://docs.oracle.com/en/cloud/saas/
 
 REST API for Oracle Commerce Cloud 22D [Oracle Commerce Cloud](https://docs.oracle.com/en/cloud/saas/cx-commerce/22d/cxocc/op-ccadmin-v1-merchant-paymenttypes-get.html)
 
-Microform Integration 0.11 Documentation [Microform 0.11](https://developer.cybersource.com/api/developer-guides/dita-flex/da-microform-integ/microform-integ.html)
+Microform Integration v2 Documentation [Microform v2](https://developer.cybersource.com/docs/cybs/en-us/digital-accept-flex/developer/all/rest/digital-accept-flex/microform-integ-v2.html)
 
 The structure that follows contain all the components necessary to run Credit Card Payment in OSF.
 
@@ -278,6 +282,25 @@ In case merchants would like the cardholder to be 3DS Challenged when saving a c
 In case 'Strong Customer Authentication' is enabled for credit cards, '10000' response code is sent back in Webhook response so that OCC becomes aware of that.
 
 *Note:* The `scaEnabled` setting is applicable only if `Payer Authentication` is enabled.
+
+### Network Tokenization
+
+A Network Token is a network scheme generated token, that represents customer card information for secure transactions that references a customer’s actual PAN.  
+
+Before a MID can be enabled for Network Tokenization, it must be provisioned with a Token Requestor ID (TRID) for each card scheme. 
+
+Plug-in would need to subscribe to the necessary webhook notifications and ingest them for changes to the card. Subscription is created automatically when Authorization is processed, while the Webhook Subscription feature is enabled.  
+
+The following describes the Network Token update process:
+
+1. Once the authorization is successful, check for the field PAR number in the response, if exists make a key generation request.
+2. Create a Webhook subscription call and save the details from the response.
+3. When the plugin receives a webhook notification for an update,validate the request and then fetch the payment instrument and instrument identifier from the notification payload.
+4. The "Retrieve Instrument Identifier" service will be called to fetch card details using the payment instrument and instrument identifier obtained above.
+5. The expiry month, expiry year, and card suffix will be updated with the latest details.
+6. The updated card details will be saved in OCC.
+
+![Network Tokenization](images/network-token.png)
 
 ### Capturing funds during authorization (SALE)
 

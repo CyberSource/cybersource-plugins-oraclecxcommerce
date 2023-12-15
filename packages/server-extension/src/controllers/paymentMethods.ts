@@ -12,6 +12,7 @@ router.get(
     const settings = paymentMethods(gatewaySettings);
     logger.debug(`Payment method webhook response: ${JSON.stringify(settings)}`);
     res.json(settings);
+    
   })
 );
 export default router;

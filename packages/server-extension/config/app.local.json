@@ -1,19 +1,19 @@
 {
-    "atg.server.admin.url": "http://localhost:5000",
-    "atg.server.url":"storefront-url(cloud)",
-    "atg.application.credentials": {
-        "atg.application.token": "app-key"
-    },
-    "cache.service.ttl.secs": 0,
-    "cache.gatewaysettings.ttl.secs": 0,
-    "cache.flex.jwt.ttl.secs": 1200,
-    "cache.device.fingerprint.ttl.secs": 3600,
-    "feature.gatewaysettings.payload": "disabled",
-    "report.daily.download.path": "",
-    "crypto.service.key": "l8myMlkZiBX/kLbpDcn3Nw==",
-    "partner.developerId": "999",
-    "partner.solutionId": "VWLU11FQ",
-    "logging.webhook.http": true,
-    "logging.api.error": true,
-    "logging.api.access": true
+  "atg.server.admin.url": "http://localhost:5000",
+  "atg.server.url": "storefront-url(cloud)",
+  "atg.application.credentials": {
+    "atg.application.token": "app-key"
+  },
+  "cache.service.ttl.secs": 0,
+  "cache.gatewaysettings.ttl.secs": 1,
+  "cache.flex.jwt.ttl.secs": 1200,
+  "cache.device.fingerprint.ttl.secs": 3600,
+  "feature.gatewaysettings.payload": "disabled",
+  "report.daily.download.path": "",
+  "crypto.service.key": "l8myMlkZiBX/kLbpDcn3Nw==",
+  "partner.developerId": "999",
+  "partner.solutionId": "1AP1ZRHP",
+  "logging.webhook.http": true,
+  "logging.api.error": true,
+  "logging.api.access": true
 }

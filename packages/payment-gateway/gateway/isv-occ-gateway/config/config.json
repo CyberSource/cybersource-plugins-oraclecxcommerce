@@ -172,6 +172,14 @@
       "public": false
     },
     {
+      "id": "networkTokenUpdates",
+      "type": "booleanType",
+      "labelResourceId": "networkTokenUpdatesLabel",
+      "helpTextResourceId": "networkTokenUpdatesHelpText",
+      "defaultValue": false,
+      "public": false
+    },
+    {
       "id": "saleEnabled",
       "type": "multiSelectOptionType",
       "name": "saleEnabled",

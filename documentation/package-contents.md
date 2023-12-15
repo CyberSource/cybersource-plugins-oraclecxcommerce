@@ -21,7 +21,7 @@ The CLI tool is a combined version of utilities shared in the following communit
 By running `yarn occ` you will get the list of supported commands
 
 ```bash
-yarn run v1.22.18
+yarn run v1.22.4
 $ node ./bin/index.js
 Usage: index [options] [command]
 
@@ -107,6 +107,7 @@ The following settings can be configured in gateway:
 | **Credit Card**                     |                                                                                                                                                                                                                                                                                                                   |
 | **payerAuthEnabled**                | Enables payer authentication for credit cards                                                                                                                                                                                                                                                                     |
 | **scaEnabled**                | If enabled card holder will be 3DS Challenged when saving a card                                                                                                                                                                                                                                                                      |
+| **networkTokenUpdates**                | Subscribe to Network Token Life cycle updates                                                                                                                                                                                                                                                                      |
 | **flexSdkUrl**                      | Credit Card Flex SDK URL                                                                                                                                                                                                                                                                                          |
 | **isCVVRequiredForSavedCards**      | Is the CVV required when using a saved card.                                                                                                                                                                                                                                                                      |
 | **isCVVRequiredForScheduledOrders** | Is the CVV required for a Scheduled Order                                                                                                                                                                                                                                                                         |
@@ -199,7 +200,8 @@ server-extension
  ┃ ┃ ┣ paymentMethods.ts
  ┃ ┃ ┣ paymentRefund.ts
  ┃ ┃ ┣ paymentRouter.js
- ┃ ┃ ┗ report.ts
+ ┃ ┃ ┣ report.ts
+ ┃ ┃ ┗ webhookRouter.ts
  ┃ ┣ errors
  ┃ ┃ ┣ handlers
  ┃ ┃ ┃ ┣ api400ResponseHandler.ts
@@ -294,7 +296,8 @@ server-extension
  ┃ ┃ ┃ ┃ ┃ ┣ captureEndpoint.ts
  ┃ ┃ ┃ ┃ ┃ ┣ common.ts
  ┃ ┃ ┃ ┃ ┃ ┣ index.ts
- ┃ ┃ ┃ ┃ ┃ ┗ refundEndpoint.ts
+ ┃ ┃ ┃ ┃ ┃ ┣ refundEndpoint.ts
+ ┃ ┃ ┃ ┃ ┃ ┗ subscribeApi.js
  ┃ ┃ ┃ ┃ ┗ common.ts
  ┃ ┃ ┃ ┣ paymentMethod
  ┃ ┃ ┃ ┃ ┣ configBuilder.ts
@@ -318,7 +321,8 @@ server-extension
  ┃ ┃ ┣ cacheService.ts
  ┃ ┃ ┣ cryptoService.ts
  ┃ ┃ ┣ jwtService.ts
- ┃ ┃ ┗ loggingService.ts
+ ┃ ┃ ┣ loggingService.ts
+ ┃ ┃ ┗ publicKeyApi.js
  ┃ ┣ types
  ┃ ┃ ┗ occ-sdk.d.ts
  ┃ ┣ app.ts
@@ -405,7 +409,7 @@ The table below lists available middleware components
 
 Additional configuration properties managed by 'nconf' library available in OCC environment are located at `packages/server-extension/config`. Please notice there are version for local and production (deployed) environments
 
-SSE communicates with PSP using client [NodeJS SDK v0.0.20](https://github.com/CyberSource/cybersource-rest-client-node). Typescript friendly SDK wrapper is located in the `packages/payment-sdk`. It declares TS type definition's for the PSP API. You can manage generated type definitions by tweaking `packages/payment-sdk/generator/cybersource-ts-template/api.mustache` template. In order to generate new types from the updated template run the following:
+SSE communicates with PSP using client [NodeJS SDK v0.0.43](https://github.com/CyberSource/cybersource-rest-client-node). Typescript friendly SDK wrapper is located in the `packages/payment-sdk`. It declares TS type definition's for the PSP API. You can manage generated type definitions by tweaking `packages/payment-sdk/generator/cybersource-ts-template/api.mustache` template. In order to generate new types from the updated template run the following:
 
 ```bash
 cd packages/payment-sdk

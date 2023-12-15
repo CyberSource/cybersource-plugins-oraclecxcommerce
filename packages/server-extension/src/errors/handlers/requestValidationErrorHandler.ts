@@ -9,10 +9,12 @@ export class RequestValidationErrorHandler implements ErrorHandler<RequestValida
 
   renderError(err: RequestValidationError, res: Response<any>): void {
     const validationErrors = err.errors.array().map((error) => {
+      
       return <OCC.ErrorDetails>{
         message: error.msg,
-        'o:errorPath': `${error.location}:${error.param}`
+        ...(error.type === 'field') && { 'o:errorPath': `${error.location}:${error.path}` }
       };
+
     });
 
     res.status(400);

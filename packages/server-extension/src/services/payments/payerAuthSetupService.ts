@@ -12,7 +12,6 @@ const SOLUTION_ID_KEY = 'partner.solutionId';
 
 async function buildSetupPayload(setupRequestPayload: OCC.PayerAuthSetupRequest) {
     const { orderId, savedCardId, profileId, transientToken } = setupRequestPayload || {};
-
     let customerId = null;
     if (savedCardId && profileId) {
 

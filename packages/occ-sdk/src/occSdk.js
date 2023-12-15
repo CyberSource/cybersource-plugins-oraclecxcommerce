@@ -343,6 +343,12 @@ CommerceSDK.prototype.request = function (args) {
   CommerceSDK.printDebugMessage('The request method is :: ' + requestMethod, self.logger);
   var requestData = args.data ? args.data : {};
   CommerceSDK.printDebugMessage('The request data value is :: ' + requestData, self.logger);
+  
+  // if(self.applicationContext === '/ccapp'){
+  //   self.protocol = 'https:'
+  // }
+
+
   var requestModule = getHttp(self.protocol);
   
   var requestOptions = {
@@ -474,7 +480,7 @@ CommerceSDK.prototype.get = function (urlOptions) {
   
  
   var self = this;
-  urlOptions.method = 'GET';
+  urlOptions.method = 'GET'; 
   var initPromise = self.init(urlOptions.url);
   initPromise
     .then(function (success) {
@@ -749,9 +755,8 @@ CommerceSDK.printError = function (message, error) {
     //passed logger and sending it to console.log
     console.error(message);
   }
-
   if (error) {
-    console.error('%j', error);
+    console.error(error);
   }
 };
 

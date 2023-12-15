@@ -27,8 +27,8 @@ Please pay attention to installation steps documented for both SSE and widgets (
 
 The following is required before going through installation steps:
 
-1. Yarn version: [1.22.18](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-2. NodeJS version: 16.15.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
+1. Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+2. NodeJS version: 18.16.1, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
 3. OCC environment
     - OCC Admin interface: https://asbx80c1dev-admin-{env}.oraclecloud.com/occs-admin/
     - OCC Storefront: https://asbx80c1dev-store-{env}.oraclecloud.com
@@ -91,8 +91,8 @@ After successful deployment you will need to enable payment gateway:
 - Configure gateway settings by providing values (e.g. merchant credentials) for particular channel (Preview, Storefront, Agent)
 - Save Changes
 - Go back to the 'Payment Types' type
-- Select supported credit card types from the list
-- You might want  to also provide list of supported billing countries as well as default one
+- Select supported credit card types from the list [Possible card types: VISA, MASTERCARD, AMEX, DISCOVER, DINERSCLUB, JCB, CARTESBANCAIRES, MAESTRO, CARNET, CUP]
+- You might want to also provide list of supported billing countries as well as default one
 - Save Changes
 
 ## Configure Generic Webhooks
@@ -198,16 +198,16 @@ yarn occ deploy
 ### Add widget to the Checkout layout
 
 1. Go to the OCC admin design tab and replace the default checkout-continue-to-review-order-button component with the IsvCheckoutContinueToReviewOrderButton on the checkout-payment page
-![isf review order path](images/isv-review-order-path.png)
-Drag ![isf review order button](images/isv-review-order-button.png) from the Components tray into the layout container.
+![isv review order path](images/isv-review-order-path.png)
+Drag ![isv review order button](images/isv-review-order-button.png) from the Components tray into the layout container.
 
 2. Go to the OCC admin design tab and replace the default checkout-place-order-button component with the IsvCheckoutPlaceOrderButton on the checkout-review-order page
-![isf place order path](images/isv-place-order-path.png)
-Drag ![isf place order button](images/isv-place-order-button.png) from the Components tray into the layout container.
+![isv place order path](images/isv-place-order-path.png)
+Drag ![isv place order button](images/isv-place-order-button.png) from the Components tray into the layout container.
 
 3. Layout the IsvPaymentMethod component on the checkout payments container
-![isf payment method path](images/isv-payment-method-path.png)
-Remove the checkout-credit-card component from the layout and replace it with ![isf payment method](images/isv-payment-method.png).
+![isv payment method path](images/isv-payment-method-path.png)
+Remove the checkout-credit-card component from the layout and replace it with ![isv payment method](images/isv-payment-method.png).
 
 4. Publish all changes
 

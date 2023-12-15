@@ -43,3 +43,16 @@ export const twelveDigits = (amount: string): string => {
 export function convertResponse<T>(context: PaymentContext, ...mappers: MapperLike<T>[]): T {
   return <T>convert(context, ...mappers);
 }
+
+export const WEBHOOK_SUBSCRIPTION = {
+  ENDPOINT: '/ccstorex/custom/isv-payment/v2/webhook/tokenUpdate',
+  KEY_TYPE: 'sharedSecret',
+  PROVIDER: 'nrtd',
+  WEBHOOK_NAME: "Webhook URL for token updates",
+  WEBHOOK_DESCRIPTION: "Webhook to receive Network Token life cycle updates",
+  PRODUCT_ID: "tokenManagement",
+  EVENT_TYPE: "tms.networktoken.updated",
+  SECURITY_TYPE: "KEY",
+  PROXY_TYPE: "external",
+  PORT: "443"
+}

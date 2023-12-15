@@ -9,18 +9,21 @@ export interface ApiExecutionErrorData {
 
 export class ApiExecutionError extends BaseError {
   errorData: ApiExecutionErrorData;
-  
+
   constructor(errorData: ApiExecutionErrorData) {
     var message = '';
     var details;
-    var errorMessage =`An error occurred during execution of ${errorData.api} : ${errorData.operation}`;
+    var errorMessage = `An error occurred during execution of ${errorData.api} : ${errorData.operation}`;
     if (errorData.source?.message) {
       message = errorData.source.message;
       details = errorData.source.details ? errorData.source.details : '';
-      errorData.source.details ?  errorMessage += `, StatusCode: ${errorData.status}, Error: ${message}, Details: ${JSON.stringify(details)}`: errorMessage += `, StatusCode: ${errorData.status}, Error: ${message}`;
-    } else if(errorData.source?.response?.rmsg){
+      errorData.source.details ? errorMessage += `, StatusCode: ${errorData.status}, Error: ${message}, Details: ${JSON.stringify(details)}` : errorMessage += `, StatusCode: ${errorData.status}, Error: ${message}`;
+    } else if (errorData.source?.response?.rmsg) {
       message = errorData.source.response.rmsg;
       errorMessage += `, StatusCode: ${errorData.status}, Error: ${message}`;
+    }
+    else {
+      errorMessage += `, StatusCode: ${errorData.status}`
     }
     super(errorMessage);
     this.errorData = errorData;
