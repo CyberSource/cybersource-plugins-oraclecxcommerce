@@ -44,9 +44,9 @@ You need to build all packages at once using `yarn build:prod` command from proj
 
 ### Configure gateway
 
-Before installing payment gateway you should decide whether you will support all payment methods or only some of it. There are two ways you can manage it:
+Before installing a payment gateway you should decide whether you will support all payment methods or only some. There are two ways it can be managed: 
 
-1. Disabling payment type from OCC Admin interface which will result in payment option not being rendered in UI (Payment Widget)
+1. Disabling payment type from OCC Admin interface which will result in the payment option not being rendered in UI (Payment Widget)
 2. Removing unrelated configuration properties from `packages/payment-gateway/gateway/isv-occ-gateway/config/config.json`
 
 ![Important](images/important.jpg) In most cases just disabling unsupported payment type from OCC Admin is preferable. Removing unsupported configuration properties can be done in case particular payment types (e.g. GooglePay) should be initially excluded from OCC Admin interface.
@@ -91,7 +91,7 @@ After successful deployment you will need to enable payment gateway:
 - Configure gateway settings by providing values (e.g. merchant credentials) for particular channel (Preview, Storefront, Agent)
 - Save Changes
 - Go back to the 'Payment Types' type
-- Select supported credit card types from the list [Possible card types: VISA, MASTERCARD, AMEX, DISCOVER, DINERSCLUB, JCB, CARTESBANCAIRES, MAESTRO, CARNET, CUP]
+- Select supported credit/debit card types from the list [Possible card types: VISA, MASTERCARD, AMEX, DISCOVER, DINERSCLUB, JCB, CARTESBANCAIRES, MAESTRO, CARNET, CUP] 
 - You might want to also provide list of supported billing countries as well as default one
 - Save Changes
 
