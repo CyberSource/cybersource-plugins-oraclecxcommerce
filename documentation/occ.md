@@ -11,7 +11,7 @@
 | [Package Contents](package-contents.md)                        | Detailed explanation of each package included into solution. Documents available payment gateway settings                    |
 | [Installation](installation.md)                                | Go through installation steps to deploy and configure payment extensions to OCC                                              |
 | _Payment Services_                                             |                                                                                                                              |
-| [Credit Card](payment-services/credit-card.md)                 | Detailed information about credit card payment services, e.g. FlexMicroform integration, Payer Authentication (3DSecure) etc |
+| [Credit Card](payment-services/credit-card.md)                 | Detailed information about credit card payment services, e.g.Microform integration, Payer Authentication (3DSecure) etc |
 | [GooglePay](payment-services/googlepay.md)                     | Documents GooglePay integration and related technical details                                                                |
 | [ApplePay](payment-services/applepay.md)                       | Documents ApplePay integration and related technical details. Includes ApplePay setup steps                                  |
 | [Settlement and Refund](payment-services/settlement-refund.md) | Additional payment services to allow fulfillment processes to settle or refund particular transactions when needed           |
