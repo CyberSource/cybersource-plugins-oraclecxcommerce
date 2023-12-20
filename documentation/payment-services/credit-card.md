@@ -3,7 +3,7 @@
 1. [Description](#description)
 2. [Implementation Details](#implementation-details)
    1. [Configuration](#configuration)
-   2. [FlexMicroform Card Payments](#flexmicroform-card-payments)
+   2. [Microform Card Payments](#microform-card-payments)
       1. [UI integration details](#ui-integration-details)
       2. [Backend (SSE) integration details](#backend-sse-integration-details)
    3. [Payer Authentication](#payer-authentication)
@@ -27,13 +27,13 @@ The Credit Card payment service provides the following operations:
 
 The following applies to credit card payments:
 
-- Credit card payments using [FlexMicroform v2](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
+- Credit card payments using [Microform v2](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
 - Payer Authentication (3D Secure)
 - Shopper can choose to save credit card as part of profile
 - Subscribe to Network Token life cycle updates
 - Shopper can pay with a saved card
 
-![Note](../images/note.jpg)  With Flex Microform, the capture of card number and security code (CVV) are fully outsourced to the payment provider, which can qualify merchants for SAQ A-based assessments. Flex Microform provides the most secure method for tokenizing card data. Sensitive data is encrypted on the customer's device before HTTPS transmission to the payment provider. This method mitigates any compromise of the HTTPS connection through a man in the middle attack.
+![Note](../images/note.jpg)  With Microform, the capture of card number and security code (CVV) are fully outsourced to the payment provider, which can qualify merchants for SAQ A-based assessments. Microform provides the most secure method for tokenizing card data. Sensitive data is encrypted on the customer's device before HTTPS transmission to the payment provider. This method mitigates any compromise of the HTTPS connection through a man in the middle attack.
 
 ## Implementation Details
 
@@ -61,7 +61,7 @@ Default values:
 - `isCVVRequiredForScheduledOrders`: false
 - `saleEnabled` - by default SALE is disabled for Card payments. Can be enabled in OCC Admin
 
-### FlexMicroform Card Payments
+### Microform Card Payments
 
 The following describes the end to end use case with an option to save credit card:
 
@@ -83,7 +83,7 @@ The following describes the end to end use case with an option to save credit ca
 
 **Note:** Saved Card feature is supported only during checkout
 
-![Flex Microform](images/credit-card-payment-flow.png)
+![Microform](images/credit-card-payment-flow.png)
 
 #### UI integration details
 
@@ -192,7 +192,7 @@ plugins
 - Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint. Saved credit cards are also retrieved from OCC in case user is logged-in.
 - `Card` component renders by default list of saved cards if it is not empty and user is logged-in. Otherwise credit card form is rendered
 - Credit card form is managed by `IsvCheckoutCardDetails` component. Saved cards are managed by `IsvCheckoutSavedCards` component. Shopper can switch between both components to choose preferable way to pay.
-- FlexMicroform is initialized by fetching keys from SSE using `/ccstorex/custom/isv-payment/v2/keys` endpoint
+- Microform is initialized by fetching keys from SSE using `/ccstorex/custom/isv-payment/v2/keys` endpoint
 - Transient token is generated client side and is then included into payment details during order submission
 - In case shopper pays with saved card only savedCardId is sent and transient token is not generated. Shopper can also choose to set card as default
 
@@ -201,7 +201,7 @@ plugins
 List of related controllers:
 
 - `server-extension/src/controllers/paymentMethods.ts` - return supported payment method configurations
-- `server-extension/src/controllers/flex.ts` - generate Flex keys
+- `server-extension/src/controllers/flex.ts` - generate Microform keys
 
 The list of handlers processing credit card Webhook requests in SSE can be found in `server-extension/src/services/payments/index.ts`
 
@@ -227,7 +227,7 @@ The list of handlers processing credit card Webhook requests in SSE can be found
 Consume authentication is supported through the means of [Cardinal Cruise](https://cardinaldocs.atlassian.net/wiki/spaces/CC/overview?mode=global) integration. According to documentation:
 > If you are using tokenization, you must use the Direct integration method.
 
-Considering FlexMicroform is based on credit card tokenization and same is applicable to saved credit cards the Direct integration method has being considered for implementation. Please refer to the following documentation on how Direct integration method works:
+Considering Microform is based on credit card tokenization and same is applicable to saved credit cards the Direct integration method has being considered for implementation. Please refer to the following documentation on how Direct integration method works:
 
 - [Cybersource Payer Authentication using Simple Order API](https://developer.cybersource.com/library/documentation/dev_guides/Payer_Authentication_SO_API/Payer_Authentication_SO_API.pdf)
 - [Direct Payer Authentication](https://developer.cybersource.com/content/dam/docs/cybs/en-us/payer-authentication/developer/all/rest/payer-auth.pdf)
@@ -243,7 +243,7 @@ Payer authentication is enabled by default using `payerAuthEnabled` gateway sett
 Generally payer authentication services are executed together with credit card authorization:
 
 1. PayerAuth setup is created using card information using `/ccstorex/custom/isv-payment/v2/payerAuth/setup` SSE endpoint
-2. Credit card is tokenized as per process described in the [FlexMicroform Card Payments](#flexmicroform-card-payments) section
+2. Credit card is tokenized as per process described in the [Microform Card Payments](#microform-card-payments) section
 3. Order is created and "Authorize" Webhook request is triggered
 4. Credit card Authorization service is called along with Payer Auth Enrollment
 5. In case credit card is enrolled in payer authentication, authorization is rejected with specific reason code (10000). The response from payment provider will contain all data needed to start consumer authentication flow in storefront

@@ -202,7 +202,7 @@
       "type": "stringType",
       "labelResourceId": "flexSdkUrlLabel",
       "helpTextResourceId": "flexSdkUrlHelpText",
-      "defaultValue": "flexSdkUrl",
+      "defaultValue": "microformSdkUrl",
       "required": true,
       "public": false
     },

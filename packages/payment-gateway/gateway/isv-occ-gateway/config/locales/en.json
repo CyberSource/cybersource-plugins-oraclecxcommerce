@@ -62,7 +62,7 @@
     "googlePayMerchantNameHelpText": "Merchant name encoded as UTF-8. Merchant name is rendered in the payment sheet. In TEST environment, or if a merchant isn't recognized, a “Pay Unverified Merchant” message is displayed in the payment sheet",
     "googlePaySupportedNetworksLabel": "Google Pay Supported Networks",
     "googlePaySupportedNetworksHelpText": "Comma separated list of networks. eg: 'AMEX,DISCOVER,INTERAC,JCB,MASTERCARD,VISA'",
-    "flexSdkUrlLabel": "Credit Card Flex SDK URL",
+    "flexSdkUrlLabel": "Credit Card Microform SDK URL",
     "flexSdkUrlHelpText": "",
     "applePayDisplayNameLabel": "Apple Pay Display Name",
     "applePayDisplayNameHelpText": "Name to be displayed on Apple Pay payment sheet",
