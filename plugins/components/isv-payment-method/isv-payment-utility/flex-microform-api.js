@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 
-import jwt_decode from 'jwt-decode';
+import {jwtDecode as jwt_decode} from 'jwt-decode';
 export var createTokenAsync = function (microform, options) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

@@ -25,7 +25,7 @@ export default async function makeRequest<T>(
           })
         );
       } else {
-        logger.debug(`API Response: ${JSON.stringify(response?.body)}`);
+        logger.debug(`API Response [${methodName}] : ${JSON.stringify(response?.body)}`);
         resolve(response?.body);
       }
     });

@@ -38,6 +38,10 @@
     "saleEnabledHelpText": "Indicates if authorizing and taking payment will be done at the same time for a particular payment mode",
     "payerAuthEnabledLabel": "Credit Card Payer Authentication Enabled",
     "payerAuthEnabledHelpText": "Indicates whether Payer Authentication (3D Secure) will be enabled",
+    "scaEnabledLabel": "Enforce SCA for Saving Card",
+    "scaEnabledHelpText": "If enabled, card holder will be 3DS challenged when saving a card (enforcing Strong Customer Authentication)",
+    "networkTokenUpdatesLabel": "Network Token Updates",
+    "networkTokenUpdatesHelpText": "Subscribe to Network Token life cycle updates",
     "googlePaySdkUrlLabel": "Google Pay SDK URL",
     "isCVVRequiredForSavedCardsLabel": "CVV Required. [DO NOT EDIT]",
     "isCVVRequiredForSavedCardsHelpText": "Is the CVV required when using a saved card.",
@@ -58,7 +62,7 @@
     "googlePayMerchantNameHelpText": "Merchant name encoded as UTF-8. Merchant name is rendered in the payment sheet. In TEST environment, or if a merchant isn't recognized, a “Pay Unverified Merchant” message is displayed in the payment sheet",
     "googlePaySupportedNetworksLabel": "Google Pay Supported Networks",
     "googlePaySupportedNetworksHelpText": "Comma separated list of networks. eg: 'AMEX,DISCOVER,INTERAC,JCB,MASTERCARD,VISA'",
-    "flexSdkUrlLabel": "Credit Card Flex SDK URL",
+    "flexSdkUrlLabel": "Credit Card Microform SDK URL",
     "flexSdkUrlHelpText": "",
     "applePayDisplayNameLabel": "Apple Pay Display Name",
     "applePayDisplayNameHelpText": "Name to be displayed on Apple Pay payment sheet",
@@ -82,8 +86,6 @@
     "deviceFingerprintOrgIdLabel": "Device Fingerprint Organization Id",
     "deviceFingerprintOrgIdHelpText": "",
     "deviceFingerprintEnabledLabel": "Device Fingerprint Enabled",
-    "deviceFingerprintEnabledHelpText": "",
-    "scaEnabledLabel": "Enforce SCA for Saving Card",
-    "scaEnabledHelpText": "If enabled, card holder will be 3DS challenged when saving a card (enforcing Strong Customer Authentication)"
+    "deviceFingerprintEnabledHelpText": ""
   }
 }

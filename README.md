@@ -9,7 +9,7 @@ Please refer to the [official documentation](documentation/occ.md) to get all de
 ## Prerequisites
 
 - Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-- NodeJS version: 16.15.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
+- NodeJS version: 18.16.1, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
 
 
 ## Install dependencies
