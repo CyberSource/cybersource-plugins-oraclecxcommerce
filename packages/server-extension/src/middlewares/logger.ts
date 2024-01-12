@@ -7,7 +7,7 @@ function loggerMiddleware(req: Request, res: Response, next: NextFunction) {
     'logging.api.access',
     `${req.protocol.toUpperCase()} ${req.method.toUpperCase()} ${req.url}`
   );
-  req.method.toUpperCase() != 'GET' && loggingService.info('logging.webhook.http', `Request-payload: ${JSON.stringify(maskRequestData(req.body))}`)
+  req.method.toUpperCase() != 'GET' && loggingService.info('logging.webhook.http', `Request-payload : ${JSON.stringify(maskRequestData(req.body))}`)
 
   next();
 }

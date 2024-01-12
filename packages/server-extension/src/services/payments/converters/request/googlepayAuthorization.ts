@@ -1,12 +1,14 @@
 import { CreatePaymentRequest } from 'cybersource-rest-client';
 import { convertRequest, twoDecimal } from './common';
 import {
+  additionalFieldsMapper,
   billingAddressMapper,
+  buyerRiskInformationMapper,
   decisionManagerMapper,
   deviceFingerprintMapper,
   saleMapper,
-  // genericLineItemsMapper,
-  shippingAddressMapper
+  shippingAddressMapper,
+  lineItemAndSubTotalMapper
 } from './mappers';
 import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
 import { Request, Response } from 'express';
@@ -46,8 +48,10 @@ export default function createGooglepayAuthorizationRequest(req: Request, res: R
       decisionManagerMapper,
       billingAddressMapper,
       shippingAddressMapper,
-      // genericLineItemsMapper,
-      saleMapper
+      saleMapper,
+      additionalFieldsMapper,
+      buyerRiskInformationMapper,
+      lineItemAndSubTotalMapper
     )
   );
 
