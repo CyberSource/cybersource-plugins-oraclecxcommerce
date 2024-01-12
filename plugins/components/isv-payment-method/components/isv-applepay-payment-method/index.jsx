@@ -20,9 +20,10 @@ import {
   deleteAppliedPaymentsByIds,
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
-import { getCurrentOrder, getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
+import { getCurrentOrder, getGlobalContext, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { replaceSpecialCharacter } from '../../../isv-common';
 import ApplePay from './applePay';
+import { getIpAddress, getAccountPurchaseHistory, getLineItemDetails } from '../../../isv-common';
 
 /**
  * Apple Pay allows to make payment using Apple Pay button
@@ -187,12 +188,23 @@ const IsvApplePayPaymentMethod = props => {
   }, []);
 
   async function createToken(tokenData) {
+    const order = getCurrentOrder(getState());
+    const subTotal = order?.priceInfo?.subTotal;
+    const profileId = getCurrentProfileId(getState());
+    const lineItems = await getLineItemDetails(order);
+    const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
+    const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
     const updatedPayments = {
       billingAddress: billingAddress,
       type: PAYMENT_TYPE_GENERIC,
       customProperties: {
         paymentToken: tokenData,
         paymentType: 'applepay',
+        lineItems: JSON.stringify(lineItems),
+        subTotal:subTotal.toFixed(2).toString(),
+        ipAddress: await getIpAddress(true),
+        ...(couponCode && { couponCode: couponCode[0] }),
+        ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
         ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint.deviceFingerprintData)
       }
     };
@@ -306,8 +318,7 @@ const IsvApplePayPaymentMethod = props => {
             />
           </div>
           <div
-            className={`CheckoutCreditCard__AddCardDetailsContainer ${
-            isApplePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
+            className={`CheckoutCreditCard__AddCardDetailsContainer ${isApplePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
               }`}
           >
             <div

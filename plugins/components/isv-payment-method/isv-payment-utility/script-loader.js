@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -34,15 +34,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-export default function loadScript(url,scriptId) {
+export default function loadScript(url, scriptId) {
     return new Promise(function (resolve, reject) {
         var scriptExists = document.getElementById(scriptId);
         if (scriptExists) {
+            scriptExists.setAttribute('src', url);
             return resolve();
         }
         var scriptToLoad = document.createElement('script');
         scriptToLoad.setAttribute('src', url);
-        scriptToLoad.id=scriptId;
+        scriptToLoad.id = scriptId;
         scriptToLoad.onload = function () { return resolve(); };
         scriptToLoad.onerror = function () { return reject(); };
         document.body.appendChild(scriptToLoad);
@@ -56,17 +57,17 @@ export function amdJsLoad(url, globalEnvName) {
                 case 0:
                     if (isAmd()) {
                         return [2 /*return*/, new Promise(function (resolve, reject) {
-                                try {
-                                    window.require([url], function (module) {
-                                        resolve(module);
-                                        // Reassigning AMD exported module as global variable
-                                        window[globalEnvName] = module[globalEnvName];
-                                    });
-                                }
-                                catch (err) {
-                                    reject(err);
-                                }
-                            })];
+                            try {
+                                window.require([url], function (module) {
+                                    resolve(module);
+                                    // Reassigning AMD exported module as global variable
+                                    window[globalEnvName] = module[globalEnvName];
+                                });
+                            }
+                            catch (err) {
+                                reject(err);
+                            }
+                        })];
                     }
                     return [4 /*yield*/, loadScript(url, globalEnvName)];
                 case 1:

@@ -9,3 +9,4 @@ export const PAYMENT_METHODS_URL = '/ccstorex/custom/isv-payment/v2/paymentMetho
 export const DEVICE_CHANNEL = {BROWSER : 'browser'};
 export const DDC_URL_PATTERN = /^(https?:\/\/[^/]+)/;
 export const CHANNEL = {STOREFRONT:'storefront',PREVIEW:'preview'};
+export const LINEITEMS = {DEFAULT:'default',SHIPPING_AND_HANDLING:'shipping_and_handling',COUPON:'coupon'};

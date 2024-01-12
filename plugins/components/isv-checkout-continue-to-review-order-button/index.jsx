@@ -31,7 +31,7 @@ import { createTokenAsync } from '../isv-payment-method/isv-payment-utility/flex
 import { replaceSpecialCharacter } from '../isv-common';
 import { getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
 import { DDC_URL_PATTERN } from '../constants';
-import { getIpAddress, getOptionalPayerAuthFields } from '../isv-common';
+import { getIpAddress, getOptionalPayerAuthFields, getAccountPurchaseHistory, getLineItemDetails } from '../isv-common';
 const ERROR = 'error';
 var cardinalUrl;
 let payerAuthSetupData = false;
@@ -199,6 +199,8 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
     var referenceId = null;
     let finalPayment = payments,
       updatedPayments;
+    const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
+    const subTotal = order?.priceInfo?.subTotal;
     const deleteField = ['creditCardNumberData', 'securityCodeData', 'flexMicroForm', 'number'];
     const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     if (cardPayment) {
@@ -216,8 +218,16 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
         type: card && card[0].cybsCardType
       };
       const { deviceFingerprint } = customProperties || {};
+      const profileId = getCurrentProfileId(getState());
+      const lineItems = await getLineItemDetails(order);
+      const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
       const updatedCustomProperties = {
-        ...payerAuthEnabled && { ...getOptionalPayerAuthFields(), ipAddress },
+        ...payerAuthEnabled && { ...getOptionalPayerAuthFields() },
+        ipAddress: ipAddress || await getIpAddress(true),
+        lineItems: JSON.stringify(lineItems),
+        ...(couponCode && { couponCode: couponCode[0] }),
+        subTotal:subTotal.toFixed(2).toString(),
+        ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
         ...customProperties,
         ...(deviceFingerprint?.deviceFingerprintEnabled &&
           deviceFingerprint?.deviceFingerprintData)
@@ -226,7 +236,6 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       //check for saved card return payment else create token for new card
       if (cardPayment.savedCardId) {
         if (payerAuthEnabled) {
-          const profileId = getCurrentProfileId(getState());
           const setupResponse = await payerAuthSetup({ savedCardId: cardPayment.savedCardId, profileId });
           if (!setupResponse) return false;
           referenceId = setupResponse.referenceId;
@@ -369,13 +378,12 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   }
 
   useEffect(() => {
-    if (!payerAuthEnabled) return;
     getIpAddress()
       .then(setIpAddress)
       .catch(error => {
         console.error("IPAddress: " + messageFailed)
       });
-  }, [payerAuthEnabled])
+  }, [])
 
 
   useEffect(() => {

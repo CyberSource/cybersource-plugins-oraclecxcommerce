@@ -16,7 +16,10 @@ const isvPaymentCustomProperties: String[] = [
     "stepUpUrl",
     "authenticationTransactionId",
     "pareq",
-    "accessToken"
+    "accessToken",
+    "numberOfPurchases",
+    "couponCode",
+    "lineItems"
 ]
 export const addCustomProperties = (webhookRequest: OCC.GenericPaymentWebhookRequest) => {
     const { customProperties } = webhookRequest || {};

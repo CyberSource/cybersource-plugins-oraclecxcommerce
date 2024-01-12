@@ -10,5 +10,7 @@ export * from './savedCardPaymentMapper';
 export * from './savePaymentTokenMapper';
 export * from './transientTokenInfoMapper';
 export * from './cardSelectionIndicatorMapper';
-export * from './genericLineItemsMapper';
-export * from './shippingAddressMapper'
+export * from './shippingAddressMapper';
+export * from './additionalFieldsMapper';
+export * from './buyerRiskInformationMapper';
+export * from './lineItemAndSubTotalMapper';

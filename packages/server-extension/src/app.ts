@@ -8,12 +8,11 @@ import gatewaySettings from './middlewares/gatewaySettings';
 import loggerMiddleware from './middlewares/logger';
 import merchantConfig from './middlewares/merchantConfig';
 import validateWebhookMiddleware from './middlewares/validateWebhook';
-import ConsoleLogger from './common/logging/consoleLogger';
 import OccLogger from './common/logging/occLogger';
 import { CHANNEL_REGEX } from './common';
 const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
-
+ 
 declare global {
   var logger: any
 }
@@ -23,7 +22,7 @@ function loadConfiguration(app: Application) {
     nconf.file({ file: path.join(__dirname, '../config/app.prod.json') });
     global.logger = new OccLogger();
   } else {
-    global.logger = new ConsoleLogger();
+    global.logger = logger;
   }
 }
 
