@@ -1,55 +1,56 @@
-import { getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
+import { createEndpoint, getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
 import { populateError } from '@oracle-cx-commerce/endpoints/utils';
-import { APPLE_PAY_URL, CHANNEL } from '../../components/constants';
+import { CHANNEL, APPLE_PAY_URL } from '../../components/constants';
 
 /**
- * Convert response data into an object to be merged into the application state.
+ * Handle request input to get product configuration.
+  * @param body Optional payload to be included in the request
+ * @return {Object} Updated request object
  */
-const processOutput = json => ({
-  applePayRepository: {
-    sessionData: json
-  }
-});
 
+export const processInput = body => {
+  const validationUrl = body.validationUrl;
+  const payloadData = {
+    ...{ validationUrl },
+  }
+
+  return {
+    params: [APPLE_PAY_URL],
+    body: payloadData,
+    headers:{Channel:payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT}
+  };
+};
 /**
- * Return an object that implements the endpoint adapter interface.
+ * Handle response output and add to application state.
+ * @param response {Object} [{}] Response object
+ * @return  Updated application state
  */
-const applePayValidationEndpoint = {
-  /**
-   * Return a Fetch API Request object to be used for invoking the endpoint.
-   *
-   * @param body Optional payload to be included in the request
-   * @return Request object for invoking the endpoint via Fetch API
-   */
 
-  async getRequest(body) {
-    const myHeaders = new Headers();
-    const channel = body?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT;
-    const validationUrl = body?.validationUrl;
-    myHeaders.append('Channel', channel);
-    myHeaders.append('Accept', 'application/json');
-    myHeaders.append('Content-Type', 'application/json');
-    return new Request(APPLE_PAY_URL, { method: 'POST', headers: myHeaders, body: JSON.stringify({ validationUrl }) });
-  },
-
-  /**
-   * Return a Fetch API Response object containing data from the endpoint.
-   *
-   * @param response The Response object returned by the fetch call
-   * @return Response object, augmented with an async getJson function to return
-   * an object to be merged into the application state
-   */
-  async getResponse(response) {
-    let json;
-    response.getJson = async () => {
-      if (json === undefined) {
-        json = await getBodyAsJson(response);
-        return response.ok ? processOutput(json) : populateError(response, json);
-      }
-      return json;
-    };
-    return response;
-  }
+export const processOutput = async response => {
+  const configuration = await getBodyAsJson(response);
+  if (!response.ok) {
+    return populateError(response, configuration);
+  };
+  return {
+    applePayRepository: {
+      sessionData: configuration
+    }
+  };
 };
 
-export default applePayValidationEndpoint;
+/**
+ * Create endpoint for server-side extension route
+ * @param endpoint {string} Endpoint identifier
+ * @param options {Object} Process input and output functions
+ * @return {Object} Endpoint
+ */
+export default createEndpoint('extpost', {
+  processInput,
+  processOutput
+});
+
+
+
+
+
+

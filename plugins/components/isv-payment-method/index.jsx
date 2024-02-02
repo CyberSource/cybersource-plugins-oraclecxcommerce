@@ -20,10 +20,10 @@ const IsvPaymentMethod = props => {
   const store = useContext(StoreContext);
   const { action } = store;
   const { isPreview } = getGlobalContext(store.getState());
-  var payerAuthEnabled, flexSdkUrl;
+  let payerAuthEnabled, flexSdkUrl;
   let creditCardConfiguration = [],
     applePayConfiguration = [];
-  var applePayEnabled, creditCardEnabled = false, applePaySupported = false;
+  let applePayEnabled, creditCardEnabled = false, applePaySupported = false;
   const [isError, setError] = useState(false);
 
 

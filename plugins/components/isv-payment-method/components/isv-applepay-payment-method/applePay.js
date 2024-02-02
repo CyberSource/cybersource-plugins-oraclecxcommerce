@@ -23,7 +23,7 @@ export default function ApplePay(configuration, container, callBackFunc) {
       merchantCapabilities: ['supports3DS', 'supportsEMV', 'supportsCredit', 'supportsDebit']
     };
     return new Promise((resolve, reject) => {
-      var session = new ApplePaySession(3, paymentRequest);
+      let session = new ApplePaySession(3, paymentRequest);
       session.onvalidatemerchant = getOnValidateMerchant(resolve, reject, session);
       session.onpaymentauthorized = getOnPaymentAuthorized(resolve, reject, session);
       session.oncancel = getOnCancel(resolve, session);
@@ -69,12 +69,12 @@ export default function ApplePay(configuration, container, callBackFunc) {
   };
 
   const createApplePaySession = async function (validationUrl) {
-    var data = await callBackFunc('VALIDATION', validationUrl);
+    let data = await callBackFunc('VALIDATION', validationUrl);
     return data;
   };
 
   const performApplePayPayment = function (paymentData, session) {
-    var paymentDataString;
+    let paymentDataString;
     if (paymentData != undefined) {
       paymentDataString = paymentData;
       session.completePayment(window.ApplePaySession.STATUS_SUCCESS);

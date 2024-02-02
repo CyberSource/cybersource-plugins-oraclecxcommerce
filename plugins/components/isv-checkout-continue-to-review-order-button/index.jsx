@@ -28,12 +28,12 @@ import {
 import PropTypes from 'prop-types';
 import css from './styles.css';
 import { createTokenAsync } from '../isv-payment-method/isv-payment-utility/flex-microform-api';
-import { replaceSpecialCharacter } from '../isv-common';
+import { additionalFieldsMapper, replaceSpecialCharacter } from '../isv-common';
 import { getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
 import { DDC_URL_PATTERN } from '../constants';
-import { getIpAddress, getOptionalPayerAuthFields, getAccountPurchaseHistory, getLineItemDetails } from '../isv-common';
+import { getOptionalPayerAuthFields} from '../isv-common';
 const ERROR = 'error';
-var cardinalUrl;
+let cardinalUrl;
 let payerAuthSetupData = false;
 
 /**
@@ -54,10 +54,9 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   const ddcFormRef = useRef(null);
   const ddcInputRef = useRef(null);
   const { isPreview } = getGlobalContext(store.getState());
-  const [ipAddress, setIpAddress] = useState('');
 
   const order = getCurrentOrder(getState());
-  var payerAuthEnabled = false,
+  let payerAuthEnabled = false,
     payerAuthConfiguration = [];
   const { paymentMethods = [] } = store.getState().paymentMethodConfigRepository || {};
   if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
@@ -195,12 +194,10 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   }, []);
 
   async function createToken() {
-    var transientToken = null;
-    var referenceId = null;
+    let transientToken = null;
+    let referenceId = null;
     let finalPayment = payments,
       updatedPayments;
-    const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
-    const subTotal = order?.priceInfo?.subTotal;
     const deleteField = ['creditCardNumberData', 'securityCodeData', 'flexMicroForm', 'number'];
     const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     if (cardPayment) {
@@ -219,15 +216,11 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       };
       const { deviceFingerprint } = customProperties || {};
       const profileId = getCurrentProfileId(getState());
-      const lineItems = await getLineItemDetails(order);
-      const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
+
+      const additionalFields = await additionalFieldsMapper(profileId, action, order);
       const updatedCustomProperties = {
         ...payerAuthEnabled && { ...getOptionalPayerAuthFields() },
-        ipAddress: ipAddress || await getIpAddress(true),
-        lineItems: JSON.stringify(lineItems),
-        ...(couponCode && { couponCode: couponCode[0] }),
-        subTotal:subTotal.toFixed(2).toString(),
-        ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
+        ...additionalFields,
         ...customProperties,
         ...(deviceFingerprint?.deviceFingerprintEnabled &&
           deviceFingerprint?.deviceFingerprintData)
@@ -376,15 +369,6 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
 
     });
   }
-
-  useEffect(() => {
-    getIpAddress()
-      .then(setIpAddress)
-      .catch(error => {
-        console.error("IPAddress: " + messageFailed)
-      });
-  }, [])
-
 
   useEffect(() => {
     if (self != top) {
