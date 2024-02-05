@@ -11,13 +11,13 @@ import { CHANNEL, APPLE_PAY_URL } from '../../components/constants';
 export const processInput = body => {
   const validationUrl = body.validationUrl;
   const payloadData = {
-    ...{ validationUrl },
+    ...{ validationUrl }
   }
 
   return {
     params: [APPLE_PAY_URL],
     body: payloadData,
-    headers:{Channel:payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT}
+    headers:{Channel:body?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT}
   };
 };
 /**
