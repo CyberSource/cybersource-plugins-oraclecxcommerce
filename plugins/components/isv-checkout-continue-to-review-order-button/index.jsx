@@ -34,7 +34,6 @@ import { DDC_URL_PATTERN } from '../constants';
 import { getOptionalPayerAuthFields} from '../isv-common';
 const ERROR = 'error';
 let cardinalUrl;
-let payerAuthSetupData = false;
 
 /**
  * Widget for Continue To Review Order button, navigates to review order page on click after applying selected payment.
@@ -232,7 +231,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           const setupResponse = await payerAuthSetup({ savedCardId: cardPayment.savedCardId, profileId });
           if (!setupResponse) return false;
           referenceId = setupResponse.referenceId;
-          await callDeviceDataCollection();
+          await callDeviceDataCollection(setupResponse);
         }
         cardPayment.customProperties = {
           ...updatedCustomProperties,
@@ -251,7 +250,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
             return false;
           }
           referenceId = setupResponse.referenceId;
-          await callDeviceDataCollection();
+          await callDeviceDataCollection(setupResponse);
           store.getState().payerAuthRepository = { transientToken: transientToken.encoded, jti: transientToken.decoded.jti };
         }
         let cardNumber = transientToken.decoded.content.paymentInformation.card.number.bin + transientToken.decoded.content.paymentInformation.card.number.maskedValue.toLowerCase().substring(6);
@@ -333,6 +332,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   async function payerAuthSetup(payload) {
     return new Promise((resolve) => {
       action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
+        let payerAuthSetupData = false;
         if (response.ok) {
           const data = response.delta.payerAuthSetupRepository || {};
           cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
@@ -345,7 +345,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       });
     });
   };
-  async function callDeviceDataCollection() {
+  async function callDeviceDataCollection(payerAuthSetupData) {
     return new Promise((resolve) => {
       if (!ddcInputRef.current || !ddcFormRef.current) {
         return;

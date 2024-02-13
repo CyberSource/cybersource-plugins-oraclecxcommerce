@@ -60,6 +60,7 @@ const IsvPaymentMethod = props => {
       action('flexMicroformAction', { isPreview }).then(response => {
         if (!response.ok) {
           setError(true);
+          action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
         }
       });
     }
@@ -70,6 +71,7 @@ const IsvPaymentMethod = props => {
       usePaymentMethodConfigFetcher(store).then(response => {
         if (!response.ok) {
           setError(true);
+          action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
         }
       });
     }
@@ -93,7 +95,6 @@ const IsvPaymentMethod = props => {
   const [isvSelectedGenericPayment, setIsvSelectedGenericPayment] = useState();
 
   if (isError) {
-    action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
     return null;
   }
   else {
