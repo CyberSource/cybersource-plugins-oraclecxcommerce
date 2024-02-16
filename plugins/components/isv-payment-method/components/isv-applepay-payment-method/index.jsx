@@ -23,7 +23,7 @@ import {
 import { getCurrentOrder, getGlobalContext, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { replaceSpecialCharacter } from '../../../isv-common';
 import ApplePay from './applePay';
-import { getIpAddress, getAccountPurchaseHistory, getLineItemDetails } from '../../../isv-common';
+import { getIpAddress, getAccountPurchaseHistory, getLineItemDetails, additionalFieldsMapper } from '../../../isv-common';
 
 /**
  * Apple Pay allows to make payment using Apple Pay button
@@ -189,22 +189,15 @@ const IsvApplePayPaymentMethod = props => {
 
   async function createToken(tokenData) {
     const order = getCurrentOrder(getState());
-    const subTotal = order?.priceInfo?.subTotal;
     const profileId = getCurrentProfileId(getState());
-    const lineItems = await getLineItemDetails(order);
-    const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
-    const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
+    const additionalFields = await additionalFieldsMapper(profileId, action, order);
     const updatedPayments = {
       billingAddress: billingAddress,
       type: PAYMENT_TYPE_GENERIC,
       customProperties: {
         paymentToken: tokenData,
         paymentType: 'applepay',
-        lineItems: JSON.stringify(lineItems),
-        subTotal:subTotal.toFixed(2).toString(),
-        ipAddress: await getIpAddress(true),
-        ...(couponCode && { couponCode: couponCode[0] }),
-        ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
+        ...additionalFields,
         ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint.deviceFingerprintData)
       }
     };
@@ -231,7 +224,7 @@ const IsvApplePayPaymentMethod = props => {
   };
 
   const applePayCallback = async (method, validationUrl) => {
-    var sessionData;
+    let sessionData;
     switch (method) {
       case 'VALIDATION':
         await action('applePayValidationAction', { validationUrl, isPreview });

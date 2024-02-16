@@ -28,13 +28,12 @@ import {
 import PropTypes from 'prop-types';
 import css from './styles.css';
 import { createTokenAsync } from '../isv-payment-method/isv-payment-utility/flex-microform-api';
-import { replaceSpecialCharacter } from '../isv-common';
+import { additionalFieldsMapper, replaceSpecialCharacter } from '../isv-common';
 import { getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
 import { DDC_URL_PATTERN } from '../constants';
-import { getIpAddress, getOptionalPayerAuthFields, getAccountPurchaseHistory, getLineItemDetails } from '../isv-common';
+import { getOptionalPayerAuthFields} from '../isv-common';
 const ERROR = 'error';
-var cardinalUrl;
-let payerAuthSetupData = false;
+let cardinalUrl;
 
 /**
  * Widget for Continue To Review Order button, navigates to review order page on click after applying selected payment.
@@ -54,10 +53,9 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   const ddcFormRef = useRef(null);
   const ddcInputRef = useRef(null);
   const { isPreview } = getGlobalContext(store.getState());
-  const [ipAddress, setIpAddress] = useState('');
 
   const order = getCurrentOrder(getState());
-  var payerAuthEnabled = false,
+  let payerAuthEnabled = false,
     payerAuthConfiguration = [];
   const { paymentMethods = [] } = store.getState().paymentMethodConfigRepository || {};
   if (typeof paymentMethods === 'object' && !Array.isArray(paymentMethods) && paymentMethods !== null) {
@@ -195,12 +193,10 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   }, []);
 
   async function createToken() {
-    var transientToken = null;
-    var referenceId = null;
+    let transientToken = null;
+    let referenceId = null;
     let finalPayment = payments,
       updatedPayments;
-    const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
-    const subTotal = order?.priceInfo?.subTotal;
     const deleteField = ['creditCardNumberData', 'securityCodeData', 'flexMicroForm', 'number'];
     const cardPayment = (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     if (cardPayment) {
@@ -219,15 +215,11 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       };
       const { deviceFingerprint } = customProperties || {};
       const profileId = getCurrentProfileId(getState());
-      const lineItems = await getLineItemDetails(order);
-      const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
+
+      const additionalFields = await additionalFieldsMapper(profileId, action, order);
       const updatedCustomProperties = {
         ...payerAuthEnabled && { ...getOptionalPayerAuthFields() },
-        ipAddress: ipAddress || await getIpAddress(true),
-        lineItems: JSON.stringify(lineItems),
-        ...(couponCode && { couponCode: couponCode[0] }),
-        subTotal:subTotal.toFixed(2).toString(),
-        ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
+        ...additionalFields,
         ...customProperties,
         ...(deviceFingerprint?.deviceFingerprintEnabled &&
           deviceFingerprint?.deviceFingerprintData)
@@ -239,7 +231,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           const setupResponse = await payerAuthSetup({ savedCardId: cardPayment.savedCardId, profileId });
           if (!setupResponse) return false;
           referenceId = setupResponse.referenceId;
-          await callDeviceDataCollection();
+          await callDeviceDataCollection(setupResponse);
         }
         cardPayment.customProperties = {
           ...updatedCustomProperties,
@@ -258,7 +250,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
             return false;
           }
           referenceId = setupResponse.referenceId;
-          await callDeviceDataCollection();
+          await callDeviceDataCollection(setupResponse);
           store.getState().payerAuthRepository = { transientToken: transientToken.encoded, jti: transientToken.decoded.jti };
         }
         let cardNumber = transientToken.decoded.content.paymentInformation.card.number.bin + transientToken.decoded.content.paymentInformation.card.number.maskedValue.toLowerCase().substring(6);
@@ -340,6 +332,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
   async function payerAuthSetup(payload) {
     return new Promise((resolve) => {
       action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
+        let payerAuthSetupData = false;
         if (response.ok) {
           const data = response.delta.payerAuthSetupRepository || {};
           cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
@@ -352,7 +345,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       });
     });
   };
-  async function callDeviceDataCollection() {
+  async function callDeviceDataCollection(payerAuthSetupData) {
     return new Promise((resolve) => {
       if (!ddcInputRef.current || !ddcFormRef.current) {
         return;
@@ -376,15 +369,6 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
 
     });
   }
-
-  useEffect(() => {
-    getIpAddress()
-      .then(setIpAddress)
-      .catch(error => {
-        console.error("IPAddress: " + messageFailed)
-      });
-  }, [])
-
 
   useEffect(() => {
     if (self != top) {

@@ -11,11 +11,6 @@
     "main": "cjs/indexPaymentFactory.js",
     "types": "cjs/indexPaymentFactory.d.ts",
     "devDependencies": {
-        "async": "^3.2.3",
-        "fecha": "^4.2.0",
-        "is-stream": "^3.0.0",
-        "logform": "^2.1.1",
-        "one-time": "^1.0.0",
         "winston": "latest"
     },
     "scripts": {

@@ -1,4 +1,4 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+let __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+let __generator = (this && this.__generator) || function (thisArg, body) {
+    let _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
@@ -36,12 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 export default function loadScript(url, scriptId) {
     return new Promise(function (resolve, reject) {
-        var scriptExists = document.getElementById(scriptId);
+        let scriptExists = document.getElementById(scriptId);
         if (scriptExists) {
             scriptExists.setAttribute('src', url);
             return resolve();
         }
-        var scriptToLoad = document.createElement('script');
+        let scriptToLoad = document.createElement('script');
         scriptToLoad.setAttribute('src', url);
         scriptToLoad.id = scriptId;
         scriptToLoad.onload = function () { return resolve(); };
@@ -49,7 +49,7 @@ export default function loadScript(url, scriptId) {
         document.body.appendChild(scriptToLoad);
     });
 }
-var isAmd = function () { return 'function' == typeof window.require; };
+let isAmd = function () { return 'function' == typeof window.require; };
 export function amdJsLoad(url, globalEnvName) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

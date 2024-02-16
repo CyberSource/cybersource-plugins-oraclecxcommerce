@@ -24,7 +24,7 @@ import { getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commer
 import { amdJsLoad } from '../../isv-payment-utility/script-loader';
 import { replaceSpecialCharacter } from '../../../isv-common';
 import GooglePay from './googlePay';
-import { getIpAddress, getAccountPurchaseHistory, getLineItemDetails } from '../../../isv-common';
+import { additionalFieldsMapper } from '../../../isv-common';
 /**
  * @param props
  */
@@ -176,22 +176,15 @@ const IsvGooglePayPaymentMethod = props => {
 
   async function createToken(data) {
     const order = getCurrentOrder(getState());
-    const subTotal = order?.priceInfo?.subTotal;
     const profileId = getCurrentProfileId(getState());
-    const lineItems = await getLineItemDetails(order);
-    const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
-    const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
+    const additionalFields = await additionalFieldsMapper(profileId, action, order);
     const updatedPayments = {
       billingAddress: billingAddress,
       type: PAYMENT_TYPE_GENERIC,
       customProperties: {
         paymentToken: data.paymentMethodData.tokenizationData.token,
         paymentType: 'googlepay',
-        lineItems: JSON.stringify(lineItems),
-        subTotal:subTotal.toFixed(2).toString(),
-        ipAddress: await getIpAddress(true),
-        ...(couponCode && { couponCode: couponCode[0] }),
-        ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
+        ...additionalFields,
         ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint.deviceFingerprintData)
       }
     };

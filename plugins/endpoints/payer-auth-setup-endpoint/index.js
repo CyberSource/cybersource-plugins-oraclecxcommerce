@@ -1,56 +1,57 @@
-import { getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
+import { createEndpoint, getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
 import { populateError } from '@oracle-cx-commerce/endpoints/utils';
 import { CHANNEL, PAYER_AUTH_SETUP_URL } from '../../components/constants';
 
-
 /**
- * Convert response data into an object to be merged into the application state.
+ * Handle request input to get product configuration.
+ * @param payload {Object} [{}] Request payload
+ * @return {Object} Updated request object
  */
-const processOutput = json => ({
-  payerAuthSetupRepository: {
-    accessToken: json.accessToken,
-    deviceDataCollectionUrl: json.deviceDataCollectionUrl,
-    referenceId: json.referenceId
-  }
-});
-/**
- * Return an object that implements the endpoint adapter interface.
- */
-const payerAuthSetupEndpoint = {
-  /**
-   * Return a Fetch API Request object to be used for invoking the endpoint.
-   *
-   * @param payload  payload to be included in the request
-   * @return Request object for invoking the endpoint via Fetch API
-   */
-  async getRequest(payload) {
-    const myBody = payload.setupPayload;
-    const myHeaders = new Headers();
-    const channel = payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT;
-    myHeaders.append('Channel', channel);
-    myHeaders.append('Accept', 'application/json');
-    myHeaders.append('Content-Type', 'application/json');
-    return new Request(PAYER_AUTH_SETUP_URL, { method: 'POST', headers: myHeaders, body: JSON.stringify(myBody) });
-  },
 
-  /**
-   * Return a Fetch API Response object containing data from the endpoint.
-   *
-   * @param response The Response object returned by the fetch call
-   * @return Response object, augmented with an async getJson function to return
-   * an object to be merged into the application state
-   */
-  getResponse(response) {
-    let json;
-    response.getJson = async () => {
-      if (json === undefined) {
-        json = await getBodyAsJson(response);
-        return response.ok ? processOutput(json) : populateError(response, json);
-      }
-      return json;
-    };
-    return response;
+export const processInput = payload => {
+  const payloadData = {
+    ...payload.setupPayload
   }
+
+  return {
+    params: [PAYER_AUTH_SETUP_URL],
+    body: payloadData,
+    headers:{Channel:payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT}
+  };
+};
+/**
+ * Handle response output and add to application state.
+ * @param response {Object} [{}] Response object
+ * @return  Updated application state
+ */
+
+export const processOutput = async response => {
+  const configuration = await getBodyAsJson(response);
+  if (!response.ok) {
+    return populateError(response, configuration);
+  };
+  return {
+    payerAuthSetupRepository: {
+      accessToken: configuration.accessToken,
+      deviceDataCollectionUrl: configuration.deviceDataCollectionUrl,
+      referenceId: configuration.referenceId
+    }
+  };
 };
 
-export default payerAuthSetupEndpoint;
+/**
+ * Create endpoint for server-side extension route
+ * @param endpoint {string} Endpoint identifier
+ * @param options {Object} Process input and output functions
+ * @return {Object} Endpoint
+ */
+export default createEndpoint('extpost', {
+  processInput,
+  processOutput
+});
+
+
+
+
+
+

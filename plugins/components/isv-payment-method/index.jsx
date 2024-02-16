@@ -20,10 +20,10 @@ const IsvPaymentMethod = props => {
   const store = useContext(StoreContext);
   const { action } = store;
   const { isPreview } = getGlobalContext(store.getState());
-  var payerAuthEnabled, flexSdkUrl;
+  let payerAuthEnabled, flexSdkUrl;
   let creditCardConfiguration = [],
     applePayConfiguration = [];
-  var applePayEnabled, creditCardEnabled = false, applePaySupported = false;
+  let applePayEnabled, creditCardEnabled = false, applePaySupported = false;
   const [isError, setError] = useState(false);
 
 
@@ -60,6 +60,7 @@ const IsvPaymentMethod = props => {
       action('flexMicroformAction', { isPreview }).then(response => {
         if (!response.ok) {
           setError(true);
+          action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
         }
       });
     }
@@ -70,6 +71,7 @@ const IsvPaymentMethod = props => {
       usePaymentMethodConfigFetcher(store).then(response => {
         if (!response.ok) {
           setError(true);
+          action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
         }
       });
     }
@@ -93,7 +95,6 @@ const IsvPaymentMethod = props => {
   const [isvSelectedGenericPayment, setIsvSelectedGenericPayment] = useState();
 
   if (isError) {
-    action('notify', { level: 'error', message: alertTechnicalProblemTryAgain });
     return null;
   }
   else {

@@ -32,14 +32,12 @@ export const getIpAddress = (suppressError = false) => {
 
 
 export const getOptionalPayerAuthFields = () => {
-
     const isJavascriptEnabled = typeof window !== 'undefined'
         && typeof window.document !== 'undefined'
         && typeof window.document.createElement === 'function';
 
     const isBrowser = typeof window !== "undefined";
-
-    var [returnUrl, deviceChannel, httpBrowserJavaEnabled, httpAcceptBrowserValue, httpBrowserLanguage,
+    let [returnUrl, deviceChannel, httpBrowserJavaEnabled, httpAcceptBrowserValue, httpBrowserLanguage,
         httpBrowserColorDepth, httpBrowserScreenHeight, httpBrowserScreenWidth, httpBrowserTimeDifference,
         userAgentBrowserValue, httpBrowserJavaScriptEnabled, httpAcceptContent] = Array(14).fill("");
     if (isBrowser) {
@@ -140,3 +138,18 @@ export const getLineItemDetails = async (order) => {
     })
 }
 
+export const additionalFieldsMapper = async (profileId, action, order) => {
+    return new Promise(async (resolve) => {
+        const numberOfPurchases = await getAccountPurchaseHistory(profileId, action);
+        const lineItems = await getLineItemDetails(order);
+        const subTotal = order?.priceInfo?.subTotal;
+        const couponCode = order?.discountInfo?.orderCouponsMap && Object.keys(order?.discountInfo?.orderCouponsMap);
+        resolve({
+            ipAddress: await getIpAddress(true),
+            lineItems: JSON.stringify(lineItems),
+            ...(couponCode && { couponCode: couponCode[0] }),
+            subTotal: subTotal.toFixed(2).toString(),
+            ...(numberOfPurchases && { numberOfPurchases: numberOfPurchases.toString() }),
+        })
+    })
+}
