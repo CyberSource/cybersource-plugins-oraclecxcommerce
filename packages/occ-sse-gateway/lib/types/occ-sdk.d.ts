@@ -240,6 +240,10 @@ declare namespace OCC {
     accessToken?: string;
     pareq?: string;
     challengeCode?: string;
+    couponCode?: string;
+    numberOfPurchases?: string;
+    lineItems?:any;
+    subTotal?:string;
   }
 
   export interface CaptureContextRequest {

@@ -1,6 +1,7 @@
 import { endpointSaga, takeEvery } from '@oracle-cx-commerce/store/utils';
 
 
+
 function* getPayerAuthSetupActionSaga(action) {
   const response = yield endpointSaga({ action, payload: action.payload, endpointId: 'payerAuthSetupEndpoint' });
   return response;

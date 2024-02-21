@@ -27,11 +27,11 @@ import payerAuthCss from './styles.css';
 import { getGlobalContext, getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { CHANNEL } from '../constants';
 import { DDC_URL_PATTERN, RETURN_URL } from '../constants';
-import { getIpAddress, getOptionalPayerAuthFields } from '../isv-common';
+import { getIpAddress, getOptionalPayerAuthFields, additionalFieldsMapper } from '../isv-common';
 
-var authTransactionId;
+let authTransactionId;
 const ERROR = 'error';
-var cardinalUrl;
+let cardinalUrl;
 let payerAuthSetupData = false;
 /**
  * Widget to display place order button and handle order submission
@@ -72,6 +72,7 @@ const IsvCheckoutPlaceOrderButton = props => {
   const { isPreview } = getGlobalContext(getState());
   const channel = isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT;
   const isWindow = typeof window !== "undefined";
+  const [ipAddress, setIpAddress] = useState('');
   const windowSizeMap = {
     '01': { width: 250, height: 400 },
     '02': { width: 390, height: 400 },
@@ -188,7 +189,7 @@ const IsvCheckoutPlaceOrderButton = props => {
   };
   const payerAuthResponse = async payerAuthPaymentGroup => {
     const appliedPaymentGroups = [];
-    var transientToken = '';
+    let transientToken = '';
     const scaDetails = payerAuthPaymentGroup?.customPaymentProperties || {};
     if (scaDetails.scaRequired) {
       return handleSca(payerAuthPaymentGroup);
@@ -204,7 +205,7 @@ const IsvCheckoutPlaceOrderButton = props => {
       'captureContextCipherIv',
       'transientTokenJwt'
     ];
-    var customProperties, paymentGroupId, paymentDetails, detailsToUpdate, payload, messages;
+    let customProperties, paymentGroupId, paymentDetails, detailsToUpdate, payload, messages;
     if (payerAuthPaymentGroup) {
       const stepUpDetails = payerAuthPaymentGroup.customPaymentProperties || {};
       if (stepUpInputRef.current && stepUpFormRef.current) {
@@ -222,9 +223,10 @@ const IsvCheckoutPlaceOrderButton = props => {
         console.log(error);
       }
 
-
       authTransactionId = await payerAuthValidation();
       if (authTransactionId) {
+        const profileId = getCurrentProfileId(getState());
+        const additionalFields = await additionalFieldsMapper(profileId, action, order);
         customProperties = {
           paymentType: PAYMENT_TYPE_CARD,
           captureContext: flexContext?.captureContext,
@@ -232,6 +234,7 @@ const IsvCheckoutPlaceOrderButton = props => {
           captureContextCipherIv: flexContext?.captureContextCipherIv,
           ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint?.deviceFingerprintData),
           transientTokenJwt: transientToken,
+          ...additionalFields,
           authenticationTransactionId: authTransactionId,
           ...payerAuthPaymentGroup.customPaymentProperties?.pauseRequestId && { pauseRequestId: payerAuthPaymentGroup.customPaymentProperties.pauseRequestId },
           ...payerAuthPaymentGroup.customPaymentProperties?.challengeCode === '04' && { challengeCode: payerAuthPaymentGroup.customPaymentProperties?.challengeCode }
@@ -284,15 +287,18 @@ const IsvCheckoutPlaceOrderButton = props => {
     }
   };
   async function handleSca(payerAuthPaymentGroup) {
-    var setupResponse;
+    const profileId = getCurrentProfileId(getState());
+    const additionalFields = await additionalFieldsMapper(profileId, action, order);
+    let setupResponse;
     const { deviceFingerprint } = getState().paymentMethodConfigRepository;
     const updatedCustomProperties = {
       ...cardPayment.customProperties,
       returnUrl: window.location.origin + RETURN_URL,
       challengeCode: '04',
+      ...additionalFields,
       ...(deviceFingerprint?.deviceFingerprintEnabled &&
         deviceFingerprint?.deviceFingerprintData),
-      ...{ ...getOptionalPayerAuthFields(), ipAddress: await getIpAddress(true) }
+      ...{ ...getOptionalPayerAuthFields(), ipAddress: ipAddress || await getIpAddress(true) }
     };
 
     if (payerAuthPaymentGroup.savedCardId) {
@@ -326,11 +332,11 @@ const IsvCheckoutPlaceOrderButton = props => {
     await callDeviceDataCollection();
     replaceSpecialCharacter(cardPayment.customProperties);
 
-    var paymentGroupId = payerAuthPaymentGroup.paymentGroupId;
-    var paymentDetails = paymentGroups[payerAuthPaymentGroup.paymentGroupId];
+    let paymentGroupId = payerAuthPaymentGroup.paymentGroupId;
+    let paymentDetails = paymentGroups[payerAuthPaymentGroup.paymentGroupId];
     const { ...paymentDetailsToUpdate } = paymentDetails;
     paymentDetailsToUpdate.customProperties = cardPayment.customProperties;
-    var detailsToUpdate = { paymentGroupId: payerAuthPaymentGroup.paymentGroupId, customProperties: cardPayment.customProperties, cardCVV: '123' };
+    let detailsToUpdate = { paymentGroupId: payerAuthPaymentGroup.paymentGroupId, customProperties: cardPayment.customProperties, cardCVV: '123' };
     await action('updateAppliedPayment', detailsToUpdate);
     const appliedPaymentGroups = [];
 
@@ -338,7 +344,7 @@ const IsvCheckoutPlaceOrderButton = props => {
       type: PAYMENT_TYPE_CARD,
       paymentGroupId
     });
-    var payload = {
+    let payload = {
       payments: appliedPaymentGroups
     };
 
@@ -408,8 +414,8 @@ const IsvCheckoutPlaceOrderButton = props => {
   async function payerAuthValidation() {
     return new Promise((resolve) => {
       stepUpFormRef.current.submit();
-      var frame = document.querySelector('.Payer_Auth_Form');
-      var overlay = document.querySelector('.Overlay');
+      let frame = document.querySelector('.Payer_Auth_Form');
+      let overlay = document.querySelector('.Overlay');
       frame.style.display = 'block';
       overlay.style.display = 'block';
       if (typeof window !== 'undefined') {
@@ -430,6 +436,15 @@ const IsvCheckoutPlaceOrderButton = props => {
       }
     })
   }
+
+
+  useEffect(() => {
+    getIpAddress()
+      .then(setIpAddress)
+      .catch(error => {
+        console.error("IPAddress: " + messageFailed)
+      });
+  }, []);
 
   //To invoke specific order method if scheduled order is enabled
   const selectedPlaceOrderMethod = () => {

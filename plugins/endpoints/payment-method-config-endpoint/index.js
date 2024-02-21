@@ -1,19 +1,37 @@
-import { getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
+import { createEndpoint, getBodyAsJson } from '@oracle-cx-commerce/endpoints/factory';
 import { populateError } from '@oracle-cx-commerce/endpoints/utils';
-import { CHANNEL, PAYMENT_METHODS_URL } from '../../components/constants';
+import { PAYMENT_METHODS_URL , CHANNEL} from '../../components/constants';
 
 /**
- * Convert response data into an object to be merged into the application state.
+ * Handle request input to get product configuration.
+ * @param payload {Object} [{}] Request payload
+ * @return {Object} Updated request object
  */
 
-const processOutput = json => {
-  const { deviceFingerprintData } = json?.deviceFingerprint || {};
+export const processInput = payload => {
+  return {
+    params: [PAYMENT_METHODS_URL],
+    headers:{Channel:payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT}
+  };
+};
+/**
+ * Handle response output and add to application state.
+ * @param response {Object} [{}] Response object
+ * @return  Updated application state
+ */
+
+export const processOutput = async response => {
+  const configuration = await getBodyAsJson(response);
+  if (!response.ok) {
+    return populateError(response, configuration);
+  };
+  const { deviceFingerprintData } = configuration?.deviceFingerprint || {};
 
   return {
     paymentMethodConfigRepository: {
-      ...json,
+      ...configuration,
       deviceFingerprint: {
-        ...json.deviceFingerprint,
+        ...configuration.deviceFingerprint,
         deviceFingerprintData: {
           deviceFingerprintSessionId: deviceFingerprintData.sessionId,
           deviceFingerprintCipherEncrypted: deviceFingerprintData.cipher.encrypted,
@@ -25,40 +43,19 @@ const processOutput = json => {
 };
 
 /**
- * Return an object that implements the endpoint adapter interface.
+ * Create endpoint for server-side extension route
+ * @param endpoint {string} Endpoint identifier
+ * @param options {Object} Process input and output functions
+ * @return {Object} Endpoint
  */
-const paymentMethodConfigEndpoint = {
-  /**
-   * Return a Fetch API Request object to be used for invoking the endpoint.
-   *
-   * @param payload Optional payload to be included in the request
-   * @return Request object for invoking the endpoint via Fetch API
-   */
-  async getRequest(payload) {
-    return new Request(PAYMENT_METHODS_URL, {
-      method: 'GET',
-      headers: { channel: payload?.isPreview ? CHANNEL.PREVIEW : CHANNEL.STOREFRONT }
-    });
-  },
+export default createEndpoint('extget', {
+  processInput,
+  processOutput
+});
 
-  /**
-   * Return a Fetch API Response object containing data from the endpoint.
-   *
-   * @param response The Response object returned by the fetch call
-   * @return Response object, augmented with an async getJson function to return
-   * an object to be merged into the application state
-   */
-  getResponse(response) {
-    let json;
-    response.getJson = async () => {
-      if (json === undefined) {
-        json = await getBodyAsJson(response);
-        return response.ok ? processOutput(json) : populateError(response, json);
-      }
-      return json;
-    };
-    return response;
-  }
-};
 
-export default paymentMethodConfigEndpoint;
+
+
+
+
+
