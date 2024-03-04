@@ -20,11 +20,11 @@ import {
   deleteAppliedPaymentsByIds,
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
-import { getCurrentOrder } from '@oracle-cx-commerce/commerce-utils/selector';
+import { getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { amdJsLoad } from '../../isv-payment-utility/script-loader';
 import { replaceSpecialCharacter } from '../../../isv-common';
 import GooglePay from './googlePay';
-
+import { additionalFieldsMapper } from '../../../isv-common';
 /**
  * @param props
  */
@@ -175,12 +175,16 @@ const IsvGooglePayPaymentMethod = props => {
   }, []);
 
   async function createToken(data) {
+    const order = getCurrentOrder(getState());
+    const profileId = getCurrentProfileId(getState());
+    const additionalFields = await additionalFieldsMapper(profileId, action, order);
     const updatedPayments = {
       billingAddress: billingAddress,
       type: PAYMENT_TYPE_GENERIC,
       customProperties: {
         paymentToken: data.paymentMethodData.tokenizationData.token,
         paymentType: 'googlepay',
+        ...additionalFields,
         ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint.deviceFingerprintData)
       }
     };

@@ -12,7 +12,10 @@ import {
   savedCardPaymentMapper,
   savePaymentTokenMapper,
   transientTokenInfoMapper,
-  shippingAddressMapper
+  shippingAddressMapper,
+  additionalFieldsMapper,
+  buyerRiskInformationMapper,
+  lineItemAndSubTotalMapper
 } from './mappers';
 import { Request, Response } from 'express';
 import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
@@ -47,6 +50,9 @@ export default function createAuthorizationRequest(req: Request, res: Response) 
     deviceFingerprintMapper,
     billingAddressMapper,
     shippingAddressMapper,
-    saleMapper
+    saleMapper,
+    additionalFieldsMapper,
+    buyerRiskInformationMapper,
+    lineItemAndSubTotalMapper
   );
 }

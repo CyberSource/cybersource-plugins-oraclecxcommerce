@@ -20,9 +20,10 @@ import {
   deleteAppliedPaymentsByIds,
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
-import { getCurrentOrder, getGlobalContext } from '@oracle-cx-commerce/commerce-utils/selector';
+import { getCurrentOrder, getGlobalContext, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { replaceSpecialCharacter } from '../../../isv-common';
 import ApplePay from './applePay';
+import { getIpAddress, getAccountPurchaseHistory, getLineItemDetails, additionalFieldsMapper } from '../../../isv-common';
 
 /**
  * Apple Pay allows to make payment using Apple Pay button
@@ -187,12 +188,16 @@ const IsvApplePayPaymentMethod = props => {
   }, []);
 
   async function createToken(tokenData) {
+    const order = getCurrentOrder(getState());
+    const profileId = getCurrentProfileId(getState());
+    const additionalFields = await additionalFieldsMapper(profileId, action, order);
     const updatedPayments = {
       billingAddress: billingAddress,
       type: PAYMENT_TYPE_GENERIC,
       customProperties: {
         paymentToken: tokenData,
         paymentType: 'applepay',
+        ...additionalFields,
         ...(deviceFingerprint?.deviceFingerprintEnabled && deviceFingerprint.deviceFingerprintData)
       }
     };
@@ -219,7 +224,7 @@ const IsvApplePayPaymentMethod = props => {
   };
 
   const applePayCallback = async (method, validationUrl) => {
-    var sessionData;
+    let sessionData;
     switch (method) {
       case 'VALIDATION':
         await action('applePayValidationAction', { validationUrl, isPreview });
@@ -306,8 +311,7 @@ const IsvApplePayPaymentMethod = props => {
             />
           </div>
           <div
-            className={`CheckoutCreditCard__AddCardDetailsContainer ${
-            isApplePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
+            className={`CheckoutCreditCard__AddCardDetailsContainer ${isApplePayButtonHidden ? ' CheckoutCreditCard__AddCardDetailsContainer--hidden' : ''
               }`}
           >
             <div

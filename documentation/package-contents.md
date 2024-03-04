@@ -179,7 +179,6 @@ server-extension
  ┣ src
  ┃ ┣ common
  ┃ ┃ ┣ logging
- ┃ ┃ ┃ ┣ consoleLogger.ts
  ┃ ┃ ┃ ┗ occLogger.ts
  ┃ ┃ ┣ genericDispatcher.ts
  ┃ ┃ ┗ index.ts
@@ -238,7 +237,9 @@ server-extension
  ┃ ┃ ┃ ┣ converters
  ┃ ┃ ┃ ┃ ┣ request
  ┃ ┃ ┃ ┃ ┃ ┣ mappers
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ additionalFieldsMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ billingAddressMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ buyerRiskInformationMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ cardSelectionIndicatorMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ decisionManagerMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ deviceFingerprintMapper.ts
@@ -252,6 +253,7 @@ server-extension
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ savedCardPaymentMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ savePaymentTokenMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ shippingAddressMapper.ts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ lineItemAndsubTotalMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ transientTokenInfoMapper.ts
  ┃ ┃ ┃ ┃ ┃ ┣ applepayAuthorization.ts
  ┃ ┃ ┃ ┃ ┃ ┣ authorizationReversal.ts

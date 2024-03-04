@@ -77,7 +77,7 @@ const replaceChar = (logData: any) => {
     if (typeof logData[key] === 'object' && logData[key] !== null) {
       replaceChar(logData[key])
     } else {
-      if (payload.includes(key) && logData[key] !== null && logData[key] === "string") {
+      if (payload.includes(key) && logData[key] !== null && typeof logData[key] === "string") {
         logData[key] = logData[key].replace(replaceCharacterRegex, "x");
       }
     }
