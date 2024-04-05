@@ -8,21 +8,13 @@ import gatewaySettings from './middlewares/gatewaySettings';
 import loggerMiddleware from './middlewares/logger';
 import merchantConfig from './middlewares/merchantConfig';
 import validateWebhookMiddleware from './middlewares/validateWebhook';
-import OccLogger from './common/logging/occLogger';
 import { CHANNEL_REGEX } from './common';
 const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
- 
-declare global {
-  var logger: any
-}
 
 function loadConfiguration(app: Application) {
   if (app.locals.env !== 'development') {
     nconf.file({ file: path.join(__dirname, '../config/app.prod.json') });
-    global.logger = new OccLogger();
-  } else {
-    global.logger = logger;
   }
 }
 
@@ -35,7 +27,7 @@ export default function configureApp(app: Application, baseRoutePath = '') {
 
   app.use((req, res, next) => {
     const { MD } = req.body;
-    if (MD && typeof MD === 'string') {
+    if (MD && 'string' === typeof MD) {
       res.removeHeader('X-frame-Options');
       logger.debug('Md data: ' + encodeURI(MD));
       const match = MD.match(CHANNEL_REGEX);

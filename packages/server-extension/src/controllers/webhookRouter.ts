@@ -9,7 +9,6 @@ const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
 const router = Router();
 
-
 router.get('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
     logger.debug("WebhookRouter tokenUpdate: Health check URL called");
     return res.status(200).send();
@@ -18,51 +17,40 @@ router.get('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, n
 router.post('/tokenUpdate', validateISVWebhook, asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const webhookRequestData: OCC.Notification = req.body;
-        let savedWebhookConfiguration = nconf.get("networkSubcriptionConfigurations") || [];
-        logger.debug("WebhookRouter tokenUpdate: Saved webhook configuration details " + JSON.stringify(savedWebhookConfiguration));
         const requestContext: RequestContext = req.app.locals;
-        if (!requestContext.gatewaySettings?.networkTokenUpdates) {
-            logger.debug("WebhookRouter tokenUpdate: Network token option not enabled");
-            return;
-        }
-        if ("tms.networktoken.updated" === webhookRequestData?.eventType && webhookRequestData?.payload[0]?.data) {
+        const savedWebhookConfiguration = nconf.get("networkSubscriptionConfigurations") || [];
+        if (requestContext.gatewaySettings?.networkTokenUpdates && "tms.networktoken.updated" === webhookRequestData?.eventType && webhookRequestData?.payload[0]?.data) {
             for (const payload of webhookRequestData.payload) {
-                try {
                     const isConfigurationMatch = savedWebhookConfiguration.find((configuration: any) => configuration.merchantId === payload.organizationId) || false;
                     if (isConfigurationMatch) {
                         let paymentInstrumentUrl = payload.data._links.paymentInstruments?.[0].href;
                         let paymentInstrument = paymentInstrumentUrl && paymentInstrumentUrl.split("/").pop();
-                        if (!paymentInstrument) {
-                            throw Error("Missing Payment Instrument URL, paymentInstrumentUrl: " + paymentInstrumentUrl);
-                        };
                         let instrumentIdentifierUrl = payload.data._links.instrumentIdentifiers?.[0].href;
                         let instrumentIdentifier = instrumentIdentifierUrl && instrumentIdentifierUrl.split("/").pop();
-                        if (!instrumentIdentifier) {
-                            throw Error("Missing Instrument Identifier URL, instrumentIdentifierUrl: " + instrumentIdentifierUrl);
+                        if(!paymentInstrument || !instrumentIdentifier){
+                            throw Error("Missing Instrument Identifier URL or Payment Instrument URL");
                         }
                         await updateCardDetails(instrumentIdentifier, paymentInstrument, req);
                     }
                     else {
-                        logger.debug("WebhookRouter tokenUpdate: Configurations doesn't exists in SSE");
-                    };
-                } catch (error) {
-                    logger.debug(("WebhookRouter tokenUpdate: " + error.message));
-                }
+                        logger.debug("WebhookRouter tokenUpdate: Configurations doesn't exists in SSE"); 
+                        res.status(404).send();
+                    }
             }
+            res.status(200).send(); 
         }
         else {
-            logger.debug("WebhookRouter tokenUpdate: Request event is not tms.networktoken.updated");
+            throw Error(`WebhookRouter tokenUpdate: Network token update not enabled or Request eventType is [${webhookRequestData?.eventType}]`);
         }
     }
     catch (error) {
         logger.debug("WebhookRouter tokenUpdate: " + error.message);
-    }
-    finally {
-        res.status(204).send();
-    }
+        res.status(404).send(); 
+    };
 }
 ));
 async function updateCardDetails(instrumentIdentifier: string, paymentInstrument: string, req: Request) {
+    try{
     const requestContext: RequestContext = req.app.locals;
     let retrieveInstrumentIdResponse: PostInstrumentIdentifierRequest | null = null;
     logger.debug("WebhookRouter tokenUpdate: Calling getInstrumentIdentifier with id: " + instrumentIdentifier);
@@ -74,9 +62,9 @@ async function updateCardDetails(instrumentIdentifier: string, paymentInstrument
         {}
     )
     logger.debug("WebhookRouter tokenUpdate: Fetching card details with Payment Instrument: " + paymentInstrument);
-    const creditCardResponse = await occClientStorefront.getCreditCardDetailsFromProfileByToken(paymentInstrument);
-    logger.debug("WebhookRouter tokenUpdate: Profile response :" + JSON.stringify(maskRequestData(creditCardResponse)));
-    const { creditCards = [], id } = <{ creditCards: OCC.card[], id: string }>creditCardResponse?.items?.[0] || {};
+    const profileSavedCards = await occClientStorefront.getProfileWithCardDetails(paymentInstrument);
+    logger.debug("WebhookRouter tokenUpdate: Profile response :" + JSON.stringify(maskRequestData(profileSavedCards)));
+    const { creditCards = [], id } = <{ creditCards: OCC.card[], id: string }>profileSavedCards?.items?.[0] || {};
     const indexOfUpdateCard = creditCards.findIndex((cardDetail: OCC.card) => cardDetail.token === paymentInstrument);
     if (indexOfUpdateCard !== -1 && retrieveInstrumentIdResponse?.tokenizedCard) {
         logger.debug("WebhookRouter tokenUpdate: Matching creditCard found at " + indexOfUpdateCard);
@@ -96,6 +84,10 @@ async function updateCardDetails(instrumentIdentifier: string, paymentInstrument
     else {
         logger.debug(`WebhookRouter tokenUpdate: No matching card found for paymentInstrumentId: ${paymentInstrument}`);
     }
+}
+catch (error) {
+    logger.debug(("WebhookRouter tokenUpdate: " + error.message));
+}
 }
 
 export default router;

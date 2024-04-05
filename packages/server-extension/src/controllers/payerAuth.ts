@@ -7,17 +7,24 @@ const logger = LogFactory.logger();
 
 router.post('/setup', asyncMiddleware(
   async (req: Request, res: Response, _next: NextFunction) => {
-
     const setupRequest: OCC.PayerAuthSetupRequest = req.body;
     const requestContext: RequestContext = req.app.locals;
     logger.debug('Payer Auth Setup Request: ' + JSON.stringify(maskRequestData(setupRequest)));
     const response = await getPayerAuthSetup(setupRequest, requestContext);
 
     logger.debug('Payer Auth Setup Response: ' + JSON.stringify(maskRequestData(response)));
-
     res.json(response);
-
   })
 );
+
+router.post('/returnUrl', (req: Request, res: Response) => {
+  const transactionId = JSON.stringify(req.body?.TransactionId);
+  res.send(`<script>
+     window.parent.postMessage({
+    'messageType':'transactionValidation',
+    'message':'${transactionId}'
+  },'*');
+  </script>`);
+});
 
 export default router;

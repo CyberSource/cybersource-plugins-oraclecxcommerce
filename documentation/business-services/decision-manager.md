@@ -24,6 +24,9 @@ In case you would like [disable DM checks](https://developer.cybersource.com/api
 
 In case DM is enabled for a particular payment method and transaction is marked for Review authorization is still considered successfully from OCC standpoint. Webhook response code will still be '1000' and additional response reason (`AUTHORIZED_PENDING_REVIEW`) will be returned back to OCC so that interested parties (e.g. OMS) can detect such transaction in OCC being marked for review.
 
+In case DM is enabled for a particular payment method and transaction is rejected after authorization with response reason(`AUTHORIZED_RISK_DECLINED`).Authorization Reversal will be triggered automatically. 
+
+
 From the referenced document we can follow the recommended approach for `Review` decisions:
 
 1. A shopper enters credit card information and submits the order

@@ -19,7 +19,6 @@ export const scaMapper: PaymentResponseMapper = {
         additionalProperties: {
           scaRequired: 'true'
         }, 
-
         customPaymentProperties: ['scaRequired']
       }
     };

@@ -21,7 +21,7 @@ export async function createCaptureContext(
     enabledCardTypes = defaultCardTypes;
   }
   const keyObj = await generateKey(requestContext, captureContextPayload.targetOrigin, enabledCardTypes);
-  const contextResponse = typeof keyObj === "object" ? keyObj.toString() : keyObj;
+  const contextResponse = "object" === typeof keyObj ? keyObj.toString() : keyObj;
   try {
     const keyId = jwtService.getKid(contextResponse);
     const getPublicKey: any = await makeRequest(

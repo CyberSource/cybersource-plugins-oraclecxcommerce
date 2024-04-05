@@ -5,8 +5,8 @@ import {
   PtsV2PaymentsRefundPost201Response,
   PtsV2PaymentsReversalsPost201Response
 } from 'cybersource-rest-client';
-import { pspResponseTypeMappings, responseCodeMappings } from '../common';
-import { addCustomProperties } from './customProperties'; 
+import { pspResponseTypeMappings, responseCodeMappings, responseMessage } from '../common';
+import { addCustomProperties } from './customProperties';
 
 type PspResponse =
   | PtsV2PaymentsPost201Response
@@ -16,8 +16,8 @@ type PspResponse =
 
 export default function convert(context: PaymentContext): OCC.GenericCardWebhookResponse {
   const { webhookRequest } = context;
-   
-  const paymentResponse =  <DeepRequired<PspResponse>>context.data.response;
+
+  const paymentResponse = <DeepRequired<PspResponse>>context.data.response;
   const timestamp = new Date().getTime().toString();
   const pspResponseType = pspResponseTypeMappings[webhookRequest.transactionType];
   const { processorInformation, errorInformation } = <DeepRequired<PtsV2PaymentsPost201Response>>paymentResponse;
@@ -40,19 +40,19 @@ export default function convert(context: PaymentContext): OCC.GenericCardWebhook
       amount: webhookRequest.amount,
       authCode: paymentResponse.status,
       responseCode: responseCodeMappings(paymentResponse.status, webhookRequest.transactionType),
-      responseReason: paymentResponse.status,
-      responseDescription: paymentResponse.status,
+      responseReason: responseMessage(paymentResponse),
       merchantTransactionId: webhookRequest.transactionId,
       hostTransactionId: paymentResponse.id,
       merchantTransactionTimestamp: timestamp,
       additionalProperties: {
+        paymentStatus: paymentResponse.status,
         authAvsCode: processorInformation?.avs?.code,
         authCvResult: processorInformation?.cardVerification?.resultCode,
         authTime: paymentResponse.submitTimeUtc,
-        dmMsg:  errorInformation?.message,
-        ...addCustomProperties(webhookRequest) 
+        dmMsg: errorInformation?.message,
+        ...addCustomProperties(webhookRequest)
       }
     }
-    
+
   };
 }

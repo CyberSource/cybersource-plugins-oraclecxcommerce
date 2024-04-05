@@ -1,5 +1,5 @@
 const { ApiClient } = require("cybersource-rest-client");
-const { WEBHOOK_SUBSCRIPTION } = require("./common");
+const { WEBHOOK_SUBSCRIPTION } = require("../request/common");
 (function (ApiClient) {
   "use strict";
   class exports {

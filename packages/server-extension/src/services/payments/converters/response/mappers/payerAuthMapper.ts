@@ -39,7 +39,6 @@ export const payerAuthMapper: PaymentResponseMapper = {
           accessToken: consumerAuthenticationInformation.accessToken,
           ...getPauseRequestId(res, context),
           ...context.webhookRequest.customProperties?.challengeCode && {challengeCode : '04'}
-
         },
         customPaymentProperties: ['pareq', 'action', 'stepUpUrl', 'accessToken', 'pauseRequestId','challengeCode']
       }

@@ -16,6 +16,7 @@ import validateDeviceFingerprintSessionId from '@isv-occ-payment/server-extensio
 import cardAuthorizationRequest from '@isv-occ-payment/server-extension/cjs/services/payments/converters/request/cardAuthorization';
 import processPayment from '@isv-occ-payment/server-extension/cjs/services/payments/api/processPayment';
 import authorizationResponse from '@isv-occ-payment/server-extension/cjs/services/payments/converters/response/card/authorization';
+import autoAuthReversal from '@isv-occ-payment/server-extension/cjs/services/payments/autoAuthReversalService';
 
 /**
  * @class
@@ -31,7 +32,8 @@ export class CardAuthProcessor extends PaymentProcessor {
         validateDeviceFingerprintSessionId,
         cardAuthorizationRequest,
         processPayment,
-        authorizationResponse
+        authorizationResponse,
+        autoAuthReversal
       ]
     });
   }

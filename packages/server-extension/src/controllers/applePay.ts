@@ -5,8 +5,8 @@ import { checkSchema } from 'express-validator';
 import { schema } from './validation/applePaySchema';
 const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const router = Router();
-
 const logger = LogFactory.logger();
+
 router.post(
   '/validate',
   checkSchema(schema),
@@ -14,7 +14,7 @@ router.post(
   asyncMiddleware(async (req: Request, res: Response, _next: NextFunction) => {
     const validationUrl = <string>req.body.validationUrl;
     const requestContext = <RequestContext>req.app.locals;
-
+    
     const response = await createSession(validationUrl, requestContext);
     logger.debug(`ApplePay session webhook response: ${JSON.stringify(response)}`);
     res.json(response);
