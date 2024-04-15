@@ -2,8 +2,8 @@
     "extensionID": "",
     "developerID": "999",
     "createdBy": "ISV Plugins",
-    "name": "payment-gateway-24.2.0",
-    "version": 2420,
+    "name": "payment-gateway-24.1.1",
+    "version": 2411,
     "timeCreated": "2024-04-04",
     "description": "ISV Payment Gateway"    
 }

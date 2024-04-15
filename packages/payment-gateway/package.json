@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/payment-gateway",
-    "version": "24.2.0",
+    "version": "24.1.1",
     "private": true,
     "description": "ISV OCC Payment Gateway",
     "repository": "",
