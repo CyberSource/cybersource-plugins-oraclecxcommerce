@@ -2,9 +2,22 @@ import { PaymentContext } from '@server-extension/common';
 import { convert, MapperLike } from '../common';
 import { partnerMapper } from './mappers';
 
+export const WEBHOOK_SUBSCRIPTION = {
+  CREATE :  'CREATE',
+  ENDPOINT: '/ccstorex/custom/isv-payment/v2/webhook/tokenUpdate',
+  KEY_TYPE: 'sharedSecret',
+  PROVIDER: 'nrtd',
+  WEBHOOK_NAME: "Webhook URL for token updates",
+  WEBHOOK_DESCRIPTION: "Webhook to receive Network Token life cycle updates",
+  PRODUCT_ID: "tokenManagement",
+  EVENT_TYPE: "tms.networktoken.updated",
+  SECURITY_TYPE: "KEY",
+  PROXY_TYPE: "external",
+  PORT: "443"
+}
+
 export const twoDecimal = (amount: string): string => {
   const amountInt = parseInt(amount);
-
   return (amountInt / 100).toFixed(2);
 };
 
@@ -27,4 +40,4 @@ export const cardTypeMappings = (type: string): string => {
 
 export function convertRequest<T>(context: PaymentContext, ...mappers: MapperLike<T>[]): T {
   return <T>convert(context, partnerMapper, ...mappers);
-}
+};

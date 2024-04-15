@@ -178,8 +178,6 @@ server-extension
  ┃ ┗ Resources_en.properties
  ┣ src
  ┃ ┣ common
- ┃ ┃ ┣ logging
- ┃ ┃ ┃ ┗ occLogger.ts
  ┃ ┃ ┣ genericDispatcher.ts
  ┃ ┃ ┗ index.ts
  ┃ ┣ controllers
@@ -199,6 +197,7 @@ server-extension
  ┃ ┃ ┣ paymentMethods.ts
  ┃ ┃ ┣ paymentRefund.ts
  ┃ ┃ ┣ paymentRouter.js
+ ┃ ┃ ┣ payments.ts
  ┃ ┃ ┣ report.ts
  ┃ ┃ ┗ webhookRouter.ts
  ┃ ┣ errors
@@ -231,9 +230,11 @@ server-extension
  ┃ ┃ ┃ ┃ ┣ generateKey.ts
  ┃ ┃ ┃ ┃ ┣ paymentCommand.ts
  ┃ ┃ ┃ ┃ ┣ processAuthorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┣ processAutoAuthorizationReversal.ts
  ┃ ┃ ┃ ┃ ┣ processCapture.ts
  ┃ ┃ ┃ ┃ ┣ processPayment.ts
- ┃ ┃ ┃ ┃ ┗ processRefund.ts
+ ┃ ┃ ┃ ┃ ┣ processRefund.ts
+ ┃ ┃ ┃ ┃ ┗ processWebhookSubscription.ts
  ┃ ┃ ┃ ┣ converters
  ┃ ┃ ┃ ┃ ┣ request
  ┃ ┃ ┃ ┃ ┃ ┣ mappers
@@ -313,6 +314,7 @@ server-extension
  ┃ ┃ ┃ ┃ ┣ deviceFingerprintSessionIdValidator.ts
  ┃ ┃ ┃ ┃ ┗ transientTokenValidator.ts
  ┃ ┃ ┃ ┣ applePayService.ts
+ ┃ ┃ ┃ ┣ autoAuthReversalService.ts
  ┃ ┃ ┃ ┣ deviceFingerprintService.ts
  ┃ ┃ ┃ ┣ flexService.ts
  ┃ ┃ ┃ ┣ payerAuthSetupService.ts

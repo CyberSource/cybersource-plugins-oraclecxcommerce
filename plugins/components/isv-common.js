@@ -32,9 +32,9 @@ export const getIpAddress = (suppressError = false) => {
 
 
 export const getOptionalPayerAuthFields = () => {
-    const isJavascriptEnabled = typeof window !== 'undefined'
-        && typeof window.document !== 'undefined'
-        && typeof window.document.createElement === 'function';
+    const isJavascriptEnabled = 'undefined' !== typeof window 
+        && 'undefined' !== typeof window.document
+        && 'function' === typeof window.document.createElement
 
     const isBrowser = typeof window !== "undefined";
     let [returnUrl, deviceChannel, httpBrowserJavaEnabled, httpAcceptBrowserValue, httpBrowserLanguage,
@@ -44,7 +44,7 @@ export const getOptionalPayerAuthFields = () => {
         returnUrl = window.location.origin + RETURN_URL;
         deviceChannel = DEVICE_CHANNEL.BROWSER;
         httpBrowserJavaEnabled = window.navigator.javaEnabled().toString();
-        httpAcceptBrowserValue = window.navigator.appVersion.toString();
+        httpAcceptBrowserValue = '*/*';
         httpBrowserLanguage = window.navigator.language.toString();
         httpBrowserColorDepth = window.screen.colorDepth.toString();
         httpBrowserScreenHeight = window.screen.height.toString();

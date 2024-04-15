@@ -40,7 +40,7 @@ export function validateISVWebhook(req: Request, res: Response, next: NextFuncti
     if (!timestamp || !keyId || !signature) {
       throw new Error(`ISV Webhook Signature: missing timeStamp, keyId or signature : timeStamp: ${timestamp} keyId: ${keyId} signature: ${signature}`);
     }
-    const webhookConfigurations: [] = nconf.get("networkSubcriptionConfigurations") || [];
+    const webhookConfigurations: [] = nconf.get("networkSubscriptionConfigurations") || [];
     logger.debug('ISV Webhook Signature: Saved Configurations ' + JSON.stringify(webhookConfigurations));
     const { key } = webhookConfigurations.find((configuration: any) => configuration.keyId === keyId) || {} as { key?: string };
     if (!key) { throw new Error("No key available in saved configuration") };

@@ -285,7 +285,7 @@ In case 'Strong Customer Authentication' is enabled for credit cards, '10000' re
 
 ### Network Tokenization
 
-A Network Token is a network scheme generated token, that represents customer card information for secure transactions that references a customer’s actual PAN.  
+A Network Token is a card scheme generated token, that represents customer card information for secure transactions that references a customer’s actual PAN.  
 
 Before a MID can be enabled for Network Tokenization, it must be provisioned with a Token Requestor ID (TRID) for each card scheme. 
 

@@ -5,7 +5,8 @@ export const lineItemAndSubTotalMapper: PaymentRequestMapper = {
   supports: () => true,
   map: (context: PaymentContext) => {
     const { customProperties } = context.webhookRequest;
-    let lineItemDetails = JSON.parse(customProperties?.lineItems);
+    const lineItems = customProperties?.lineItems || null; 
+    const lineItemDetails = JSON.parse(lineItems);
     return <CreatePaymentRequest>{
       orderInformation: {
         amountDetails: {

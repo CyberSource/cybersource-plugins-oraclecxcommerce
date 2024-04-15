@@ -24,8 +24,7 @@ export const saleCardMapper: PaymentResponseMapper = {
     const paymentResponse = <DeepRequired<PtsV2PaymentsPost201Response>>context.data.response;
     const { webhookRequest } = context;
 
-    const status =
-      paymentResponse.status == 'AUTHORIZED' ? 'SALE_COMPLETE' : paymentResponse.status;
+    const status = paymentResponse.status == 'AUTHORIZED' ? 'SALE_COMPLETE' : paymentResponse.status;
 
     return {
       authorizationResponse: {
