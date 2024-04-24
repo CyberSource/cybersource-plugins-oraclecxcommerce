@@ -29,7 +29,7 @@ In case DM is enabled for a particular payment method and transaction is rejecte
 
 From the referenced document we can follow the recommended approach for `Review` decisions:
 
-1. A shopper enters credit card information and submits the order
+1. A shopper enters card information and submits the order
 2. OCC processes the order and triggers the payment webhook with transaction type “Authorize” to request authorization for the order
 3. The Payment Integration Service receives this request and can function as the integration point for fraud detection
 4. The Payment Integration Service invokes the fraud detection service along with authorization

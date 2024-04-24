@@ -1,4 +1,4 @@
-import { DEVICE_CHANNEL, IP_ENDPOINT_URL, REPLACE_CHARACTER, RETURN_URL, LINEITEMS } from "./constants";
+import { DEVICE_CHANNEL, IP_ENDPOINT_URL, REPLACE_CHARACTER, RETURN_URL, LINEITEMS, ACCEPT_BROWSER_VALUE } from "./constants";
 import { getOrder } from "@oracle-cx-commerce/react-widgets/profile/profile-order-history/utils";
 
 export const replaceSpecialCharacter = (obj) => {
@@ -44,7 +44,7 @@ export const getOptionalPayerAuthFields = () => {
         returnUrl = window.location.origin + RETURN_URL;
         deviceChannel = DEVICE_CHANNEL.BROWSER;
         httpBrowserJavaEnabled = window.navigator.javaEnabled().toString();
-        httpAcceptBrowserValue = '*/*';
+        httpAcceptBrowserValue = ACCEPT_BROWSER_VALUE;
         httpBrowserLanguage = window.navigator.language.toString();
         httpBrowserColorDepth = window.screen.colorDepth.toString();
         httpBrowserScreenHeight = window.screen.height.toString();
@@ -52,7 +52,7 @@ export const getOptionalPayerAuthFields = () => {
         httpBrowserTimeDifference = new Date().getTimezoneOffset().toString();
         userAgentBrowserValue = window.navigator.userAgent.toString();
         httpBrowserJavaScriptEnabled = isJavascriptEnabled.toString();
-        httpAcceptContent = userAgentBrowserValue;
+        httpAcceptContent = httpAcceptBrowserValue;
     }
     return {
         returnUrl,
