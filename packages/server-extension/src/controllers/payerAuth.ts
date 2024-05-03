@@ -18,13 +18,11 @@ router.post('/setup', asyncMiddleware(
 );
 
 router.post('/returnUrl', (req: Request, res: Response) => {
-  const transactionId = JSON.stringify(req.body?.TransactionId);
+  const transactionValidationId = JSON.stringify(req.body?.TransactionId); 
   res.send(`<script>
-     window.parent.postMessage({
-    'messageType':'transactionValidation',
-    'message':'${transactionId}'
-  },'*');
-  </script>`);
+  let transactionId = '${transactionValidationId}'; 
+  let messageObj = { 'messageType':'transactionValidation', 'message': transactionId }; 
+  window.parent.postMessage(messageObj, \'*\'); </script> `);
 });
 
 export default router;

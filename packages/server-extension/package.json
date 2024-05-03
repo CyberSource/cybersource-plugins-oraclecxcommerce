@@ -5,7 +5,7 @@
   "description": "Payment Server Extension",
   "repository": {
     "type": "git",
-    "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+    "url": "git@github.com:CyberSource/cybersource-plugins-oraclecxcommerce.git"
   },
   "author": "ISV Payments",
   "main": "cjs/indexServerExtension.js",

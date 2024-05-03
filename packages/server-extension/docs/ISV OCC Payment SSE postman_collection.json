@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "439b9e2b-4d72-4655-9ff5-b8fc7c28d9ec",
-		"name": "ISV OCC Payment SSE Copy",
+		"name": "ISV OCC Payment SSE",
 		"description": "This collection is included into SSE package which can be used for testing and exploring the endpoints.\n\nThe following collection variables should be updated prior its running:\n\nOCC_ENVIRONMENT\nAPP_KEY\napplePayInitiativeContext",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
