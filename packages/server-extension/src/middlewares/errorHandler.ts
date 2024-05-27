@@ -6,8 +6,7 @@ export default function errorHandler(err: any, req: Request, res: Response, next
   if (!err) {
     if (next) {
       return next();
-    }
-    
+    }  
     return res.end();
   }
 

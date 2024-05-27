@@ -14,6 +14,7 @@ export default async function makeRequest<T>(
   const api = new apiClass(merchantConfig, apiClient);
   return new Promise((resolve, reject) => {
     api[methodName].bind(api)(...paymentArguments, (error: any, data: any, response: any) => {
+      try{
       if (error) {
         reject(
           new ApiExecutionError({
@@ -23,9 +24,18 @@ export default async function makeRequest<T>(
             source: response.text
           })
         );
-      } else {
-        logger.debug(`API Response [${methodName}] : ${JSON.stringify(data)}`);
-        resolve(data);
+      }
+      else {
+        let paymentResponse = data;
+        let parsedResponse =  JSON.parse(response?.text);
+        if(parsedResponse?.riskInformation){
+          paymentResponse.riskInformation =  parsedResponse.riskInformation;
+        }
+        logger.debug(`API Response [${methodName}] : ${JSON.stringify(paymentResponse)}`);
+        resolve(paymentResponse);
+      }
+      }catch(error){
+        reject(error);
       }
     });
   });

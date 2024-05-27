@@ -9,7 +9,8 @@
    3. [Payer Authentication](#payer-authentication)
       1. [UI integration details](#ui-integration-details-1)
       2. [Backend (SSE) integration details](#backend-sse-integration-details-1)
-      3. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
+      3. [Decision Manager with Payer Authentication](#decision-manager-with-payer-authentication)
+      4. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
    4. [Network Tokens](#network-tokenization)
    5. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
 
@@ -272,6 +273,10 @@ The following UI component contains Payer Authentication integration logic `plug
 - `server-extension/src/controllers/payerAuth.ts` Controller for payer auth setup
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthEnrollMapper.ts` Including payer auth reference id into PSP card authorization request
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthValidationMapper.ts` Including payer auth validation token into PSP card authorization request
+
+#### Decision Manager with Payer Authentication
+You can use Decision Manager with payer authentication services to allow the risk of an order to determine when you need to invoke payer authentication.
+[Decision Manager with Payer Authentication](https://ebc.cybersource.com/content/ebc/docs/cybs/en-us/html/dm-develop/developer/all/so/oxy_ex-1/topics/c_Using_DM_With_Payer_Auth.html)
 
 #### Strong Customer Authentication (SCA)
 

@@ -6,6 +6,7 @@ import { getSubscriptionsDetails, keyGeneration, webhookSubscription } from '@se
 import subscribeApi from '../subscribeApi';
 import nconf from 'nconf';
 import { WEBHOOK_SUBSCRIPTION } from '../../request/common';
+import occClient from '@server-extension/services/occ/occClient';
 const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
 
@@ -45,7 +46,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
       logger.debug("Webhook Subscription :  Network token not provisioned or Network token updates not enabled");
       return;
     }
-    let webhookConfigurations = nconf.get("networkSubscriptionConfigurations") || [];
+    let webhookConfigurations = await getSavedNetworkTokenConfigurations();
     logger.debug("Webhook Subscription : Saved Configurations " + JSON.stringify(webhookConfigurations));
     let isConfigurationExists = webhookConfigurations.find((configuration: any) => configuration.merchantId === context.requestContext.merchantConfig.merchantID) || false;
     const webhookurl = hostname + ":" + WEBHOOK_SUBSCRIPTION.PORT + WEBHOOK_SUBSCRIPTION.ENDPOINT;
@@ -88,19 +89,44 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
           "subscriptionId": webhookSubscriptionResponse.webhookId
         };
         webhookConfigurations.push(configurationDetails);
-        nconf.set("networkSubscriptionConfigurations", webhookConfigurations);
-        nconf.save((err: any) => {
-          if (err) {
-            logger.debug("Webhook Subscription : Unable to save configuration in SSE " + err.message);
-          }
-          else {
-            logger.debug("Webhook Subscription : Configuration saved successfully");
-          }
-        })
+        await updateWebhookConfiguration(webhookConfigurations);
       }
     }
   } catch (error) {
-    logger.debug("Webhook Subscription : " + error.message);
+    logger.error("Webhook Subscription : " + error.message + `STACK TRACE: ${error.stack}`);
   };
 }
+
+async function updateWebhookConfiguration(configurations: any){
+  let environmentVariables = await occClient.getAllExtensionVariable();
+  logger.debug("Webhook Subscription : All environment varibales" + JSON.stringify(environmentVariables));
+  let extensionVariableDetails =  environmentVariables?.items?.find((variableDetail:any)=>variableDetail?.name === WEBHOOK_SUBSCRIPTION.NETWORK_TOKENS_EXTENSION_VARIABLE) || false;
+  logger.debug("Webhook Subscription : Matching extension Variable " + JSON.stringify(extensionVariableDetails))
+  const extensionVariableId = extensionVariableDetails && extensionVariableDetails.id; 
+  let updatedPayload = {
+    ...(extensionVariableId ? {previewValue:configurations}:{preview:configurations}),
+    name:WEBHOOK_SUBSCRIPTION.NETWORK_TOKENS_EXTENSION_VARIABLE,
+    value:configurations
+  };
+  logger.debug("Webhook Subscription : Updated Payload " + JSON.stringify(updatedPayload));
+  if(extensionVariableId){
+    logger.debug("Webhook Subscription : Matching Repository Id " + extensionVariableId);
+    await occClient.updateExtensionVariable(updatedPayload,extensionVariableId);
+    logger.debug("Webhook Subscription : Configuration Updated Successfully");
+  }
+  else{
+    await occClient.createExtensionVariable(updatedPayload);
+    logger.debug("Webhook Subscription : Extension Variable created and Configuration saved successfully ");
+  }  
+  }
+
+  export async function getSavedNetworkTokenConfigurations(){
+    let environmentVariables = await occClient.getAllExtensionVariable();
+    logger.debug("Webhook Subscription : All Environment Variables " + JSON.stringify(environmentVariables));
+    let environmentVariableDetails =  environmentVariables?.items?.find((variableDetail:any)=>variableDetail?.name === WEBHOOK_SUBSCRIPTION.NETWORK_TOKENS_EXTENSION_VARIABLE) || false;
+    logger.debug("Webhook Subscription : Matching Environment Variable " + JSON.stringify(environmentVariableDetails));
+    let savedConfig = environmentVariableDetails?.value || '[]';
+    let webhookConfigurations = JSON.parse(savedConfig);
+    return webhookConfigurations;
+  }
 

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import nconf from 'nconf';
 import validateWebHookPayloadSignature from '../services/occ/webhookSignatureValidation';
 import { LogFactory } from '@isv-occ-payment/occ-payment-factory';
+import { getSavedNetworkTokenConfigurations } from '@server-extension/services/payments/converters/response/mappers';
 
 const SKIP_HOSTS = ['localhost', '127.0.0.1'];
 const WEBHOOK_OCC_SIGNATURE_HEADER = 'x-oracle-cc-webhook-signature-sha512';
@@ -29,7 +30,7 @@ export default function validateOCCWebhook(req: Request, res: Response, next: Ne
   next();
 }
 
-export function validateISVWebhook(req: Request, res: Response, next: NextFunction) {
+export async function validateISVWebhook(req: Request, res: Response, next: NextFunction) {
   const vCSignatureHeader = <string>req.headers[WEBHOOK_ISV_SIGNATURE_HEADER];
   logger.debug("ISV Webhook Signature: vcSignatureHeader: " + vCSignatureHeader)
   if (vCSignatureHeader) {
@@ -40,7 +41,7 @@ export function validateISVWebhook(req: Request, res: Response, next: NextFuncti
     if (!timestamp || !keyId || !signature) {
       throw new Error(`ISV Webhook Signature: missing timeStamp, keyId or signature : timeStamp: ${timestamp} keyId: ${keyId} signature: ${signature}`);
     }
-    const webhookConfigurations: [] = nconf.get("networkSubscriptionConfigurations") || [];
+    const webhookConfigurations = await getSavedNetworkTokenConfigurations();
     logger.debug('ISV Webhook Signature: Saved Configurations ' + JSON.stringify(webhookConfigurations));
     const { key } = webhookConfigurations.find((configuration: any) => configuration.keyId === keyId) || {} as { key?: string };
     if (!key) { throw new Error("No key available in saved configuration") };
