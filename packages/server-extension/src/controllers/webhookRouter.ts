@@ -2,9 +2,10 @@ import { RequestContext, asyncMiddleware, maskRequestData } from '@server-extens
 import { validateISVWebhook } from '@server-extension/middlewares/validateWebhook';
 import occClientStorefront from '@server-extension/services/occ/occClientStorefront';
 import makeRequest from '@server-extension/services/payments/api/paymentCommand';
+import { WEBHOOK_SUBSCRIPTION } from '@server-extension/services/payments/converters/request/common';
+import { getSavedNetworkTokenConfigurations } from '@server-extension/services/payments/converters/response/mappers';
 import { InstrumentIdentifierApi, PostInstrumentIdentifierRequest } from 'cybersource-rest-client';
 import { NextFunction, Request, Response, Router } from 'express';
-import nconf from 'nconf';
 const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
 const router = Router();
@@ -14,12 +15,12 @@ router.get('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, n
     return res.status(200).send();
 }))
 
-router.post('/tokenUpdate', validateISVWebhook, asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+router.post('/tokenUpdate', asyncMiddleware(validateISVWebhook), asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const webhookRequestData: OCC.Notification = req.body;
         const requestContext: RequestContext = req.app.locals;
-        const savedWebhookConfiguration = nconf.get("networkSubscriptionConfigurations") || [];
-        if (requestContext.gatewaySettings?.networkTokenUpdates && "tms.networktoken.updated" === webhookRequestData?.eventType && webhookRequestData?.payload[0]?.data) {
+        const savedWebhookConfiguration = await getSavedNetworkTokenConfigurations();
+        if (requestContext.gatewaySettings?.networkTokenUpdates && WEBHOOK_SUBSCRIPTION.EVENT_TYPE === webhookRequestData?.eventType && webhookRequestData?.payload[0]?.data) {
             for (const payload of webhookRequestData.payload) {
                     const isConfigurationMatch = savedWebhookConfiguration.find((configuration: any) => configuration.merchantId === payload.organizationId) || false;
                     if (isConfigurationMatch) {
@@ -44,7 +45,7 @@ router.post('/tokenUpdate', validateISVWebhook, asyncMiddleware(async (req: Requ
         }
     }
     catch (error) {
-        logger.debug("WebhookRouter tokenUpdate: " + error.message);
+        logger.error("WebhookRouter tokenUpdate: " + error.message + `STACK TRACE: ${error.stack}`);
         res.status(404).send(); 
     };
 }
@@ -86,7 +87,7 @@ async function updateCardDetails(instrumentIdentifier: string, paymentInstrument
     }
 }
 catch (error) {
-    logger.debug(("WebhookRouter tokenUpdate: " + error.message));
+    logger.error(("WebhookRouter tokenUpdate: " + error.message + `STACK TRACE: ${error.stack}`));
 }
 }
 

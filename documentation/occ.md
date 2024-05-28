@@ -1,5 +1,5 @@
 
-# ISV OCC Payment Plugin
+# Cybersource Official Payment Plugin
 
 ## Oracle Commerce Cloud
 
@@ -23,7 +23,7 @@
 
 ## Audience and Purpose
 
-This document is written for merchants who want to use Payment and Value added Business services. This document provides an overview for integrating ISV OCC payment services into Oracle Commerce Cloud platform.
+This document is written for merchants who want to use Payment and Value added Business services. This document provides an overview for integrating Cybersource Official payment services into Oracle Commerce Cloud platform.
 
 ## Conventions
 
