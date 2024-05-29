@@ -20,8 +20,7 @@ export class OccClientStorefront {
     });
   }
 
-
-  getCreditCardDetailsFromProfileByToken(token: string): Promise<Record<string, any>> {
+  getProfileWithCardDetails(token: string): Promise<Record<string, any>> {
     return this.requestGET({
       url: `/ccapp/v1/profiles`,
       data: {

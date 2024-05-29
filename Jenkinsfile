@@ -109,7 +109,7 @@ podTemplate(
                 reportName           : 'Code Coverage Reports'
             ])
             
-            step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: 'cybersource-dev@tacitknowledge.com'])
+            step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: ''])
             notifySlack(this, "cybersource-jenkins", false)
         }
     }

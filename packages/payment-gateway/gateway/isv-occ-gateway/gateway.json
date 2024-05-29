@@ -1,5 +1,5 @@
 {
-  "provider": "ISV OCC Gateway",
+  "provider": "Cybersource Official",
   "paymentMethodTypes": ["generic", "card"],
   "transactionTypes": {
     "generic": ["initiate", "retrieve", "authorization", "void", "refund"],

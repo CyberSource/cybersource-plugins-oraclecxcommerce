@@ -44,15 +44,26 @@ export function convertResponse<T>(context: PaymentContext, ...mappers: MapperLi
   return <T>convert(context, ...mappers);
 }
 
-export const WEBHOOK_SUBSCRIPTION = {
-  ENDPOINT: '/ccstorex/custom/isv-payment/v2/webhook/tokenUpdate',
-  KEY_TYPE: 'sharedSecret',
-  PROVIDER: 'nrtd',
-  WEBHOOK_NAME: "Webhook URL for token updates",
-  WEBHOOK_DESCRIPTION: "Webhook to receive Network Token life cycle updates",
-  PRODUCT_ID: "tokenManagement",
-  EVENT_TYPE: "tms.networktoken.updated",
-  SECURITY_TYPE: "KEY",
-  PROXY_TYPE: "external",
-  PORT: "443"
+export const AUTH_REVERSAL = {
+  NAME: 'ics_auth_reversal',
+  RCODE: '1',
+  RFLAG: 'SOK'
+}
+
+
+/**
+ * 
+ * @param delay delay in ms
+ */
+export const delay = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+export const responseMessage = (response: any) => {
+  const dmStatus = ['AUTHORIZED_RISK_DECLINED', 'DECLINED', 'INVALID_ACCOUNT'];
+  const PAYMENT_DECLINED_MESSAGE = 'Your order has not been placed as payment has been declined. Please try again';
+  const { errorInformation = {} } = response;
+  if (dmStatus.includes(response.status) || dmStatus.includes(errorInformation.reason)) {
+    return PAYMENT_DECLINED_MESSAGE;
+  }
+  else
+    return response.status;
 }

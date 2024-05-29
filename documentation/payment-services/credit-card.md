@@ -9,8 +9,9 @@
    3. [Payer Authentication](#payer-authentication)
       1. [UI integration details](#ui-integration-details-1)
       2. [Backend (SSE) integration details](#backend-sse-integration-details-1)
-      3. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
-   4. [Network Tokenization](#network-tokenization)
+      3. [Decision Manager with Payer Authentication](#decision-manager-with-payer-authentication)
+      4. [Strong Customer Authentication (SCA)](#strong-customer-authentication-sca)
+   4. [Network Tokens](#network-tokenization)
    5. [Capturing funds during authorization (SALE)](#capturing-funds-during-authorization-sale)
 
 ## Description
@@ -29,7 +30,7 @@ The following applies to credit card payments:
 
 - Credit card payments using [Microform v2](https://developer.cybersource.com/api/developer-guides/dita-flex/SAFlexibleToken/FlexMicroform.html). The transient token represents both card number (PAN) and CVV. Only token, card expiration date and masked card number going to be sent in a webhook request.
 - Payer Authentication (3D Secure)
-- Shopper can choose to save credit card as part of profile
+- Shopper can choose to save credit/debit card as part of profile
 - Subscribe to Network Token life cycle updates
 - Shopper can pay with a saved card
 
@@ -63,13 +64,13 @@ Default values:
 
 ### Microform Card Payments
 
-The following describes the end to end use case with an option to save credit card:
+The following describes the end to end use case with an option to save credit/debit card:
 
 1. Shopper chooses to checkout
-2. Shopper enters credit card information
-3. Credit card information is sent to payment provider client side and a one time (transient) use token is returned.
+2. Shopper enters card information
+3. Credit/Debit card information is sent to payment provider client side and a one time (transient) use token is returned.
 4. Save the one time client token and include the client token in the payment part of the order
-5. Shopper chooses to save the credit card for later
+5. Shopper chooses to save the card for later
 6. Shopper places the order
 7. Payment webhook is triggered with transaction type "0100" (authorize). The following properties sent in the request:
     - Transient token
@@ -92,7 +93,7 @@ Below are credit card related components from Payment Widget:
 
 The application is structured based on OSF especifications.
 
-Inside the components there is the list of widgets that are necessary to integrate the credit card payment using Cybersource.
+Inside the components there is the list of widgets that are necessary to integrate the card payment using Cybersource.
 Inside the endpoints folder there is specific call to REST apis
 Fetchers are used to call APIs before the widget is redered. This are used to load data that widgets need before they can be rendered in the page. Fetchers can be global or local that means that some fetcher will be contained inside the components/widget folder (where widget is your custom widget).
 Actions are used to call APIs but when the user performeces an action like clicking a button.
@@ -105,7 +106,7 @@ REST API for Oracle Commerce Cloud 22D [Oracle Commerce Cloud](https://docs.orac
 
 Microform Integration v2 Documentation [Microform v2](https://developer.cybersource.com/docs/cybs/en-us/digital-accept-flex/developer/all/rest/digital-accept-flex/microform-integ-v2.html)
 
-The structure that follows contain all the components necessary to run Credit Card Payment in OSF.
+The structure that follows contain all the components necessary to run Card Payment in OSF.
 
 ```text
 plugins
@@ -190,8 +191,8 @@ plugins
 
 
 - Before Payment Widget is rendered available payment methods are retrieved from SSE `/ccstorex/custom/isv-payment/v2/paymentMethods` endpoint. Saved credit cards are also retrieved from OCC in case user is logged-in.
-- `Card` component renders by default list of saved cards if it is not empty and user is logged-in. Otherwise credit card form is rendered
-- Credit card form is managed by `IsvCheckoutCardDetails` component. Saved cards are managed by `IsvCheckoutSavedCards` component. Shopper can switch between both components to choose preferable way to pay.
+- `Card` component renders by default list of saved cards if it is not empty and user is logged-in. Otherwise credit/debit card form is rendered
+- Card Payment form is managed by `IsvCheckoutCardDetails` component. Saved cards are managed by `IsvCheckoutSavedCards` component. Shopper can switch between both components to choose preferable way to pay.
 - Microform is initialized by fetching keys from SSE using `/ccstorex/custom/isv-payment/v2/keys` endpoint
 - Transient token is generated client side and is then included into payment details during order submission
 - In case shopper pays with saved card only savedCardId is sent and transient token is not generated. Shopper can also choose to set card as default
@@ -203,7 +204,7 @@ List of related controllers:
 - `server-extension/src/controllers/paymentMethods.ts` - return supported payment method configurations
 - `server-extension/src/controllers/flex.ts` - generate Microform keys
 
-The list of handlers processing credit card Webhook requests in SSE can be found in `server-extension/src/services/payments/index.ts`
+The list of handlers processing credit/debit card Webhook requests in SSE can be found in `server-extension/src/services/payments/index.ts`
 
 | **Operation**    | **Handlers**                    | **Description**                                                                                                  |
 |------------------|---------------------------------|------------------------------------------------------------------------------------------------------------------|
@@ -243,10 +244,10 @@ Payer authentication is enabled by default using `payerAuthEnabled` gateway sett
 Generally payer authentication services are executed together with credit card authorization:
 
 1. PayerAuth setup is created using card information using `/ccstorex/custom/isv-payment/v2/payerAuth/setup` SSE endpoint
-2. Credit card is tokenized as per process described in the [Microform Card Payments](#microform-card-payments) section
+2. Credit/Debit card is tokenized as per process described in the [Microform Card Payments](#microform-card-payments) section
 3. Order is created and "Authorize" Webhook request is triggered
 4. Credit card Authorization service is called along with Payer Auth Enrollment
-5. In case credit card is enrolled in payer authentication, authorization is rejected with specific reason code (10000). The response from payment provider will contain all data needed to start consumer authentication flow in storefront
+5. In case card is enrolled in payer authentication, authorization is rejected with specific reason code (10000). The response from payment provider will contain all data needed to start consumer authentication flow in storefront
 6. Payer Auth data is included in Webhook response using custom payment properties
 7. In storefront Cardinal Cruise continues the consumer authentication flow with the custom payment properties returned in Webhook response.
 8. Popup window is displayed to finish consumer authentication
@@ -273,6 +274,10 @@ The following UI component contains Payer Authentication integration logic `plug
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthEnrollMapper.ts` Including payer auth reference id into PSP card authorization request
 - `server-extension/src/services/payments/converters/request/mappers/payerAuthValidationMapper.ts` Including payer auth validation token into PSP card authorization request
 
+#### Decision Manager with Payer Authentication
+You can use Decision Manager with payer authentication services to allow the risk of an order to determine when you need to invoke payer authentication.
+[Decision Manager with Payer Authentication](https://ebc.cybersource.com/content/ebc/docs/cybs/en-us/html/dm-develop/developer/all/so/oxy_ex-1/topics/c_Using_DM_With_Payer_Auth.html)
+
 #### Strong Customer Authentication (SCA)
 
 When `Payer Authentication` is enabled, if a transaction gets declined with the reason as Strong Customer Authentication required, then another request will be sent from Oracle Commerce Cloud automatically for the same order and the customer will be 3DS challenged. 
@@ -283,13 +288,13 @@ In case 'Strong Customer Authentication' is enabled for credit cards, '10000' re
 
 *Note:* The `scaEnabled` setting is applicable only if `Payer Authentication` is enabled.
 
-### Network Tokenization
+### Network Tokens
 
-A Network Token is a network scheme generated token, that represents customer card information for secure transactions that references a customer’s actual PAN.  
+A Network Token is a card scheme generated token, that represents customer card information for secure transactions that references a customer’s actual PAN.  
 
-Before a MID can be enabled for Network Tokenization, it must be provisioned with a Token Requestor ID (TRID) for each card scheme. 
+Before a MID can be enabled for Network Token, it must be provisioned with a Token Requestor ID (TRID) for each card scheme. Please contact your Cybersource representative or reseller to arrange for Network Tokens to be enabled on your Cybersource account.
 
-Plug-in would need to subscribe to the necessary webhook notifications and ingest them for changes to the card. Subscription is created automatically when Authorization is processed, while the Webhook Subscription feature is enabled.  
+Plug-in would need to subscribe to the necessary webhook notifications and ingest them for changes to the card. Webhook subscription to the Network Token life cycle updates is created when authorization is processed, while the Network Token Updates is enabled in the back office.  
 
 The following describes the Network Token update process:
 
@@ -300,7 +305,7 @@ The following describes the Network Token update process:
 5. The expiry month, expiry year, and card suffix will be updated with the latest details.
 6. The updated card details will be saved in OCC.
 
-![Network Tokenization](images/network-token.png)
+![Network Token](images/network-token.png)
 
 ### Capturing funds during authorization (SALE)
 

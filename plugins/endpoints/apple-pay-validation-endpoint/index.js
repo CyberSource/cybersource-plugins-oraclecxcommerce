@@ -30,7 +30,7 @@ export const processOutput = async response => {
   const configuration = await getBodyAsJson(response);
   if (!response.ok) {
     return populateError(response, configuration);
-  };
+  }
   return {
     applePayRepository: {
       sessionData: configuration

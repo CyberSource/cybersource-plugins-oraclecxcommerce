@@ -1,10 +1,10 @@
 {
     "name": "@isv-occ-payment/occ-payment-service",
-    "version": "24.1.0",
+    "version": "24.1.1",
     "description": "Oracle Commerce payment service",
     "repository": {
         "type": "git",
-        "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+        "url": "git@github.com:CyberSource/cybersource-plugins-oraclecxcommerce.git"
     },
     "author": "ISV Payments",
     "main": "cjs/indexPaymentService.js",

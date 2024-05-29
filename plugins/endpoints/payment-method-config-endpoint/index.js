@@ -24,7 +24,7 @@ export const processOutput = async response => {
   const configuration = await getBodyAsJson(response);
   if (!response.ok) {
     return populateError(response, configuration);
-  };
+  }
   const { deviceFingerprintData } = configuration?.deviceFingerprint || {};
 
   return {

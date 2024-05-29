@@ -19,7 +19,6 @@ function validateCaptureContext(captureContext?: string, encryptedData?: string,
       iv
     })
   ) {
-    logger.error(`Transient token could not be verified`);
     throw new Error('Transient token could not be verified');
   }
 }

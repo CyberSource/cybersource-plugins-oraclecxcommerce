@@ -15,7 +15,7 @@ import validateDeviceFingerprintSessionId from '@isv-occ-payment/server-extensio
 import googlepayAuthorizationRequest from '@isv-occ-payment/server-extension/cjs/services/payments/converters/request/googlepayAuthorization';
 import processPayment from '@isv-occ-payment/server-extension/cjs/services/payments/api/processPayment';
 import genericAuthorizationResponse from '@isv-occ-payment/server-extension/cjs/services/payments/converters/response/generic/genericAuthorization';
-
+import autoAuthReversal from '@isv-occ-payment/server-extension/cjs/services/payments/autoAuthReversalService';
 /**
  * @class
  * @alias module:googlepay-auth-processor.GooglepayAuthProcessor
@@ -29,7 +29,8 @@ export class GooglepayAuthProcessor extends PaymentProcessor {
         validateDeviceFingerprintSessionId,
         googlepayAuthorizationRequest,
         processPayment,
-        genericAuthorizationResponse
+        genericAuthorizationResponse,
+        autoAuthReversal
       ]
     });
   }

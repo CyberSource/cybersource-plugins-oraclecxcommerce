@@ -6,7 +6,7 @@ import { RequestContext } from '../common';
 
 function proxySettings() {
   const hasProxy = Boolean(process.env.http_proxy || nconf.get('general:proxy-server'));
-  var url = nconf.get('general:proxy-server');
+  let url = nconf.get('general:proxy-server');
   const { hostname = null, port = null } = url ? new URL(url) : {};
 
   return (

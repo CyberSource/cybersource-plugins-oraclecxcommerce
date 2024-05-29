@@ -156,15 +156,15 @@ declare namespace OCC {
   export type genericItems = Array<item>;
 
   export interface item {
-    id: String,
-    rawTotalPrice: Number,
-    price: Number,
-    productId: String,
-    catRefId: String,
-    unitPrice: String,
-    quantity: Number,
-    displayName: String,
-    description: String,
+    id: string,
+    rawTotalPrice: number,
+    price: number,
+    productId: string,
+    catRefId: string,
+    unitPrice: string,
+    quantity: number,
+    displayName: string,
+    description: string,
     options: []
   }
 
@@ -557,6 +557,35 @@ declare namespace OCC {
     originalDecision: string;
   }
 
+  export interface GetTransactionResponse {
+    applicationInformation: Application
+    _links: ResponseLink
+  }
+  export interface Application {
+    applications: [
+      {
+        name: string,
+        rCode: string,
+        rFlag: string,
+        reconciliationId: string,
+        rMessage: string,
+        returnCode: number
+      }
+    ]
+  }
+  export interface ResponseLink {
+    self: {
+      href: string,
+      method: string
+    },
+    relatedTransactions: RelatedTransaction[]
+  }
+
+  export interface RelatedTransaction {
+    href: string,
+    method: string
+  }
+ 
   export interface Notification {
     notificationId: string;
     retryNumber: number;

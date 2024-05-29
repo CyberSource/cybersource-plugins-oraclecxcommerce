@@ -6,9 +6,8 @@ export const mapConsumerAuthToken = (info: Record<string, any>): string => {
   return info.token;
 };
 
-const getPauseRequestId = (res: PtsV2PaymentsPost201Response, context: PaymentContext) => {
-  const { webhookRequest } = context;
-  return res?.riskInformation?.profile?.action == 'PAYERAUTH_INVOKE' || res?.riskInformation?.profile?.action == 'PAYERAUTH_EXTERNAL' || webhookRequest.customProperties?.challengeCode == '04' ? { pauseRequestId: res.id } : {};
+const getPauseRequestId = (res: PtsV2PaymentsPost201Response) => {
+  return res?.riskInformation?.profile?.action == 'PAYERAUTH_INVOKE' || res?.riskInformation?.profile?.action == 'PAYERAUTH_EXTERNAL' ? { pauseRequestId: res.id } : {}; 
 }
 
 export const payerAuthMapper: PaymentResponseMapper = {
@@ -37,9 +36,8 @@ export const payerAuthMapper: PaymentResponseMapper = {
           token: mapConsumerAuthToken(consumerAuthenticationInformation),
           stepUpUrl: consumerAuthenticationInformation.stepUpUrl,
           accessToken: consumerAuthenticationInformation.accessToken,
-          ...getPauseRequestId(res, context),
+          ...getPauseRequestId(res),
           ...context.webhookRequest.customProperties?.challengeCode && {challengeCode : '04'}
-
         },
         customPaymentProperties: ['pareq', 'action', 'stepUpUrl', 'accessToken', 'pauseRequestId','challengeCode']
       }

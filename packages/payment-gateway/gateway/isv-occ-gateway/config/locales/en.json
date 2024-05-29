@@ -1,7 +1,7 @@
 {
   "resources": {
-    "title": "ISV Payment Gateway",
-    "description": "ISV Payment Gateway configuration",
+    "title": "Cybersource Official",
+    "description": "Cybersource Official configuration",
     "agentInstanceLabel": "Agent Configuration",
     "previewInstanceLabel": "Preview Configuration",
     "storefrontInstanceLabel": "Storefront Configuration",
