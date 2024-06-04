@@ -3,21 +3,18 @@
  * @requires module:@isv-occ-payment/occ-payment-factory#ServiceFactory
  * @requires module:error#BadRequestError
  */
-
 /**
  * @const
  */
 const { ServiceFactory, LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const { errorHandler } = require('../errors/handlers/errorHandler');
-
+const logger = LogFactory.logger();
 /**
  * Handle payment route request
  * @param {Object} req - Transaction request
  * @param {Object} res - Transaction response
  */
 async function paymentRouteHandler(req, res) {
-  const logger = LogFactory.logger();
-
   //Get gateway module name
   let gatewayModule = req.body.gatewaySettings && req.body.gatewaySettings.module;
   if (!gatewayModule) {
@@ -25,11 +22,10 @@ async function paymentRouteHandler(req, res) {
       req.body.customProperties && req.body.customProperties.paymentType,
       req.body.paymentMethod
     ].filter((el) => el)[0];
+    if (!gatewayModuleName) {
+      throw new Error('Missing gateway module name');
+    }
     gatewayModule = `@isv-occ-payment/${gatewayModuleName}-payment-service`;
-  }
-
-  if (!gatewayModule) {
-    throw new Error('Missing gateway module name');
   }
 
   logger.debug(

@@ -1,9 +1,9 @@
 {
     "extensionID": "",
     "developerID": "999",
-    "createdBy": "ISV Plugins",
-    "name": "payment-gateway-24.1.0",
-    "version": 2410,
-    "timeCreated": "2023-11-24",
-    "description": "ISV Payment Gateway"    
+    "createdBy": "Cybersource Official",
+    "name": "payment-gateway-24.1.1",
+    "version": 2411,
+    "timeCreated": "2024-04-04",
+    "description": "Cybersource Official Payment Gateway"    
 }

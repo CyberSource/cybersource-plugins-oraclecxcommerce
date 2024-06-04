@@ -49,12 +49,12 @@ Default values:
 
 You will need to go through the steps from the [Configure Apple Pay on the web](https://help.apple.com/developer-account/#/dev1731126fb) in order to setup ApplePay payments
 
-1. Go to  EBC portal -> Payment Configuration -> Digital Payment Solutions
+1. Go to Business Centre -> Payment Configuration -> Digital Payment Solutions
 2. Configure ApplePay by generating  certificate signing request (CSR) and providing Apple Merchant ID
 3. `applePayMerchantId` gateway setting should get the value of the introduced Apple Merchant ID
 4. Download CSR
 5. Create merchant identify in your ApplePay dev account (as per docs)
-6. Create Apple Pay Payment Processing Certificate for the identity you have just created (upload the certificate file downloaded from EBC in previous step)
+6. Create Apple Pay Payment Processing Certificate for the identity you have just created (upload the certificate file downloaded from  Business Centre in previous step)
 7. Create merchant identity certificate. This certificate is used on the Web when a session validation request is triggered.
 8. Register merchant domain and verify it (https://help.apple.com/developer-account/#/dev1731126fb). Merchant domain is where an application is being deployed to.
 

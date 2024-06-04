@@ -86,7 +86,7 @@ Once the module is installed, head back to the Oracle Commerce Cloud Admin to co
 After successful deployment you will need to enable payment gateway:
 
 - Go to OCC Admin -> Settings -> Payment Processing
-- Open 'Payment gateways' tab and choose 'ISV OCC Gateway' from the list
+- Open 'Payment gateways' tab and choose 'Cybersource Official' from the list
 - Select 'Payment Gateway Enabled' option
 - Configure gateway settings by providing values (e.g. merchant credentials) for particular channel (Preview, Storefront, Agent)
 - Save Changes

@@ -1,19 +1,19 @@
 {
     "name": "@isv-occ-payment/googlepay-payment-service",
-    "version": "24.1.0",
+    "version": "24.1.1",
     "description": "GooglePay SSE Payment Service",
     "repository": {
         "type": "git",
-        "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+        "url": "git@github.com:CyberSource/cybersource-plugins-oraclecxcommerce.git"
     },
     "author": "ISV Payments",
     "main": "cjs/index.js",
     "dependencies": {
-        "@isv-occ-payment/occ-payment-service": "24.1.0",
-        "@isv-occ-payment/occ-sdk": "24.1.0",
-        "@isv-occ-payment/payment-sdk": "24.1.0",
-        "@isv-occ-payment/server-extension": "24.1.0",
-        "cybersource-rest-client": "0.0.50"
+        "@isv-occ-payment/occ-payment-service": "24.1.1",
+        "@isv-occ-payment/occ-sdk": "24.1.1",
+        "@isv-occ-payment/payment-sdk": "24.1.1",
+        "@isv-occ-payment/server-extension": "24.1.1",
+        "cybersource-rest-client": "0.0.54"
     },
     "scripts": {
         "prebuild": "yarn clean && mkdirp node_modules/@isv-occ-payment && symlink-dir ../occ-sdk node_modules/@isv-occ-payment/occ-sdk && symlink-dir ../payment-sdk node_modules/@isv-occ-payment/payment-sdk",

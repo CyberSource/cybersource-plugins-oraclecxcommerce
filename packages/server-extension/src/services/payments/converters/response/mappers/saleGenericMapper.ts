@@ -6,8 +6,6 @@ import { responseCodeMappings } from '../common';
 const isNotPendingReview = (context: PaymentContext) =>
   !Boolean(context.data.response?.status == 'AUTHORIZED_PENDING_REVIEW');
 
-
-
 export const saleGenericMapper: PaymentResponseMapper = {
   supports: (context: PaymentContext) =>
     context.isValidForPaymentMode('saleEnabled') && isNotPendingReview(context),
@@ -16,8 +14,7 @@ export const saleGenericMapper: PaymentResponseMapper = {
     const paymentResponse = <DeepRequired<PtsV2PaymentsPost201Response>>context.data.response;
     const { webhookRequest } = context;
 
-    const status =
-      paymentResponse.status == 'AUTHORIZED' ? 'SALE_COMPLETE' : paymentResponse.status;
+    const status = paymentResponse.status == 'AUTHORIZED' ? 'SALE_COMPLETE' : paymentResponse.status;
 
     return {
       additionalProperties: {

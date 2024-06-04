@@ -15,6 +15,7 @@ import validateDeviceFingerprintSessionId from '@isv-occ-payment/server-extensio
 import applepayAuthorizationRequest from '@isv-occ-payment/server-extension/cjs/services/payments/converters/request/applepayAuthorization';
 import processPayment from '@isv-occ-payment/server-extension/cjs/services/payments/api/processPayment';
 import createGenericAuthorizationResponse from '@isv-occ-payment/server-extension/cjs/services/payments/converters/response/generic/genericAuthorization';
+import autoAuthReversal from '@isv-occ-payment/server-extension/cjs/services/payments/autoAuthReversalService';
 
 /**
  * @class
@@ -29,7 +30,8 @@ export class ApplepayAuthProcessor extends PaymentProcessor {
         validateDeviceFingerprintSessionId,
         applepayAuthorizationRequest,
         processPayment,
-        createGenericAuthorizationResponse
+        createGenericAuthorizationResponse,
+        autoAuthReversal
       ]
     });
   }

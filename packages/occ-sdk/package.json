@@ -1,11 +1,11 @@
 {
   "name": "@isv-occ-payment/occ-sdk",
-  "version": "24.1.0",
+  "version": "24.1.1",
   "private": true,
   "description": "OCC SDK",
   "repository": {
     "type": "git",
-    "url": "git@github.com:cybersource-tpi/cybersource-plugins-oraclecxcommerce.git"
+    "url": "git@github.com:CyberSource/cybersource-plugins-oraclecxcommerce.git"
   },
   "author": "ISV Payments",
   "main": "cjs/occSdk.js",

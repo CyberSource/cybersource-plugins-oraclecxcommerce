@@ -21,21 +21,16 @@ export async function createCaptureContext(
     enabledCardTypes = defaultCardTypes;
   }
   const keyObj = await generateKey(requestContext, captureContextPayload.targetOrigin, enabledCardTypes);
-  const contextResponse = typeof keyObj === "object" ? keyObj.toString() : keyObj;
-  try {
-    const keyId = jwtService.getKid(contextResponse);
-    const getPublicKey: any = await makeRequest(
-      requestContext.merchantConfig,
-      publicKeyApi,
-      "getPublicKey",
-      keyId
-    )
-    jwtService.signatureVerify(contextResponse, getPublicKey);
-    logger.debug("Generate Key : Capture context validation is successful");
-  }
-  catch (error) {
-    throw new Error("Generate Key : Invalid Capture Context " + error.message);
-  }
+  const contextResponse = "object" === typeof keyObj ? keyObj.toString() : keyObj;
+  const keyId = jwtService.getKid(contextResponse);
+  const getPublicKey: any = await makeRequest(
+    requestContext.merchantConfig,
+    publicKeyApi,
+    "getPublicKey",
+    keyId
+  )
+  jwtService.signatureVerify(contextResponse, getPublicKey);
+  logger.debug("Generate Key : Capture context validation is successful");
   return {
     captureContext: contextResponse,
     cipher: cryptoService.encrypt(contextResponse)

@@ -6,28 +6,16 @@ import http from 'http';
 import https from 'https';
 import nconf from 'nconf';
 import path from 'path';
-import { createLogger, Logger, transports } from 'winston';
 import configureApp from './app';
+const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
+const logger = LogFactory.logger();
 
 const app = express();
 app.locals.env = 'development';
 
-//Initialize new logger for local env
-const logger: Logger = createLogger({
-  levels: {
-    error: 0,
-    warning: 1,
-    info: 2,
-    debug: 3
-  },
-  transports: [new transports.Console({ level: 'debug' })]
-});
-
 //Set logger to res.locals in sub-app to duplicate how setup on server
 app.use(function (_req, res, next) {
   res.locals = res.locals || {};
-  res.locals.logger = logger;
-
   next();
 });
 

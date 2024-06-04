@@ -56,7 +56,7 @@ The `payment-gateway` package hold gateway settings definition according to [Sup
 .
 ├── ext.json
 ├── gateway
-│   └── isv-occ-gateway // name of the  gateway
+│   └── isv-occ-gateway 
 │       ├── config
 │       │   ├── config.json // configuration properties
 │       │   └── locales
@@ -69,7 +69,7 @@ The `gateway/isv-occ-gateway/gateway.json` file has the following definition:
 
 ```json
 {
-  "provider": "ISV OCC Gateway",
+  "provider": "Cybersource Official",
   "paymentMethodTypes": ["generic", "card"],
   "transactionTypes": {
     "generic": ["initiate", "retrieve", "authorization", "void", "refund"],
@@ -178,8 +178,6 @@ server-extension
  ┃ ┗ Resources_en.properties
  ┣ src
  ┃ ┣ common
- ┃ ┃ ┣ logging
- ┃ ┃ ┃ ┗ occLogger.ts
  ┃ ┃ ┣ genericDispatcher.ts
  ┃ ┃ ┗ index.ts
  ┃ ┣ controllers
@@ -199,6 +197,7 @@ server-extension
  ┃ ┃ ┣ paymentMethods.ts
  ┃ ┃ ┣ paymentRefund.ts
  ┃ ┃ ┣ paymentRouter.js
+ ┃ ┃ ┣ payments.ts
  ┃ ┃ ┣ report.ts
  ┃ ┃ ┗ webhookRouter.ts
  ┃ ┣ errors
@@ -231,9 +230,11 @@ server-extension
  ┃ ┃ ┃ ┃ ┣ generateKey.ts
  ┃ ┃ ┃ ┃ ┣ paymentCommand.ts
  ┃ ┃ ┃ ┃ ┣ processAuthorizationReversal.ts
+ ┃ ┃ ┃ ┃ ┣ processAutoAuthorizationReversal.ts
  ┃ ┃ ┃ ┃ ┣ processCapture.ts
  ┃ ┃ ┃ ┃ ┣ processPayment.ts
- ┃ ┃ ┃ ┃ ┗ processRefund.ts
+ ┃ ┃ ┃ ┃ ┣ processRefund.ts
+ ┃ ┃ ┃ ┃ ┗ processWebhookSubscription.ts
  ┃ ┃ ┃ ┣ converters
  ┃ ┃ ┃ ┃ ┣ request
  ┃ ┃ ┃ ┃ ┃ ┣ mappers
@@ -313,6 +314,7 @@ server-extension
  ┃ ┃ ┃ ┃ ┣ deviceFingerprintSessionIdValidator.ts
  ┃ ┃ ┃ ┃ ┗ transientTokenValidator.ts
  ┃ ┃ ┃ ┣ applePayService.ts
+ ┃ ┃ ┃ ┣ autoAuthReversalService.ts
  ┃ ┃ ┃ ┣ deviceFingerprintService.ts
  ┃ ┃ ┃ ┣ flexService.ts
  ┃ ┃ ┃ ┣ payerAuthSetupService.ts
