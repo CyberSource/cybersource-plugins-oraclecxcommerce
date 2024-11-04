@@ -10,7 +10,6 @@ import webhookRouter from './webhookRouter';
 import payments from './payments';
 
 const router = Router();
-
 router.use('/v2/keys', flex);
 router.use('/v2/paymentMethods', paymentMethods);
 router.use('/v2/applepay', applePay);
