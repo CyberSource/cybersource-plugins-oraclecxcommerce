@@ -72,7 +72,9 @@ where
 
 When you verify domain make sure it is accessible from ApplePay network. OCC Storefront (e.g. `https://asbx80c1dev-admin-{env}.oraclecloud.com/thirdparty/.well-known/apple-developer-merchantid-domain-association`) is often protected by basic authentication which might fail the domain verification process. You can use [updateBasicAuthConfiguration](https://docs.oracle.com/en/cloud/saas/commerce-cloud/20a/cxocc/op-ccadmin-v1-merchant-basicauth-put.html) to update your storefront access control settings by removing basic authentication or whitelisting [ApplePay IP Range](https://developer.apple.com/documentation/apple_pay_on_the_web/setting_up_your_server)
 
-![Important](../images/important.jpg) Merchant Identity Certificate is used to validate ApplePay session in `packages/server-extension/src/services/payments/applePayService.ts`. Identity certificate file is located in `packages/server-extension/certs/applePayIdentityCert.pem`. Private key file is located in`packages/server-extension/certs/applePayIdentityKey.key`. Please make sure you update the file with identity certificate downloaded from your Apple dev account.
+![Important](../images/important.jpg) The Merchant Identity Certificate is used to validate ApplePay session in `packages/server-extension/src/services/payments/applePayService.ts`. Before deploying, place the certificate and private key files in the specified paths with exact file names as follows: 
+- Identity Certificate : `packages/server-extension/certs/applePayIdentityCert.pem`
+- Private Key : `packages/server-extension/certs/applePayIdentityKey.key` 
 
 Please make sure you update gateway settings once you complete all setup steps:
 
