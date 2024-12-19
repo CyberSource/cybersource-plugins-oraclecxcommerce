@@ -14,7 +14,7 @@ const middlewares = jsonServer.defaults({
 
 server.use(middlewares);
 
-server.use(customRoutes);
+server.use(customRoutes as any);
 
 server.use(
   jsonServer.rewriter({

@@ -17,9 +17,9 @@ router.post(
     const requestContext = <RequestContext>req.app.locals;
     let sanitizedUrl = sanitizeUrl(validationUrl);
     if (!sanitizedUrl) {
-      throw new Error("Invalid Validation Url");
+      throw new Error("Invalid Validation URL");
     }
-    let isUrlValid = await isValidApplePayUrl(sanitizedUrl, requestContext);
+    let isUrlValid = await isValidApplePayUrl(sanitizedUrl);
     if (!isUrlValid) {
       throw new Error("URL does not match allowed domains or IP addresses");
     }

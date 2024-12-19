@@ -1,6 +1,6 @@
 {
   "name": "@isv-occ-payment/occ-sdk",
-  "version": "24.1.2",
+  "version": "25.1.0",
   "private": true,
   "description": "OCC SDK",
   "repository": {

@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/occ-payment-service",
-    "version": "24.1.2",
+    "version": "25.1.0",
     "description": "Oracle Commerce payment service",
     "repository": {
         "type": "git",

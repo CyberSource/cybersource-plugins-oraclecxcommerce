@@ -1,6 +1,6 @@
 {
   "name": "@isv-occ-payment/occ-sse-gateway",
-  "version": "24.1.2",
+  "version": "25.1.0",
   "private": true,
   "description": "Oracle Commerce SSE payment gateway",
   "repository": {
@@ -51,10 +51,10 @@
     "ssl_port": "3001"
   },
   "dependencies": {
-    "@isv-occ-payment/occ-sdk": "24.1.2",
-    "@isv-occ-payment/payment-sdk": "24.1.2",
-    "@isv-occ-payment/server-extension": "24.1.2",
-    "cybersource-rest-client": "0.0.54",
+    "@isv-occ-payment/occ-sdk": "25.1.0",
+    "@isv-occ-payment/payment-sdk": "25.1.0",
+    "@isv-occ-payment/server-extension": "25.1.0",
+    "cybersource-rest-client": "0.0.63",
     "deepmerge": "^4.2.2",
     "express-validator": "7.0.1",
     "form-data": "^4.0.0",

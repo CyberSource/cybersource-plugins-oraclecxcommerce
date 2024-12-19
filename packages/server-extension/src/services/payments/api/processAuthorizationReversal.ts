@@ -8,6 +8,11 @@ const logger = LogFactory.logger();
 
 export default async function makeAuthReversalRequest(req: Request, res: Response) {
   const context = buildPaymentContext(req);
+
+  if(!context?.data?.transactionId){
+    return;
+  }
+  
   const { request, transactionId } = context.data;
   const { merchantConfig } = context.requestContext;
 
