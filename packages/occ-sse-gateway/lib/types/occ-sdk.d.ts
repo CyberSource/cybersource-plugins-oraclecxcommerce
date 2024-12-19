@@ -67,6 +67,7 @@ declare namespace OCC {
     runEnvironment: string;
     merchantKeyId: string;
     merchantsecretKey: string;
+    messageEncryptionEnabled:string;
     keyAlias: string;
     keyPass: string;
     keyFileName: string;

@@ -1,6 +1,6 @@
 {
   "name": "isv-occ-payment",
-  "version": "24.1.2",
+  "version": "25.1.0",
   "description": "ISV Oracle Commerce Cloud Payment Plugin",
   "main": "index.js",
   "repository": "git@github.com:CyberSource/cybersource-plugins-oraclecxcommerce.git",
@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",
-
     "tsc-alias": "^1.7.1"
   },
   "devDependencies": {
@@ -91,7 +90,7 @@
     "tsconfig-paths": "^4.1.0",
     "typescript": "~5.2.2",
     "yauzl": "^2.10.0"
-  },  
+  },
   "resolutions": {
     "@types/node": "20.8.9"
   },

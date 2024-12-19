@@ -9,7 +9,9 @@ export default function createAuthorizationReversalResponse(req: Request, res: R
   const paymentResponse = <DeepRequired<PtsV2PaymentsReversalsPost201Response>>(
     context.data.response
   );
-
+  if(!paymentResponse?.reversalAmountDetails?.reversedAmount){
+    return;
+  }
   context.webhookResponse = convertResponse(context, genericCardPayment(context), {
     voidResponse: {
       amount: twelveDigits(paymentResponse.reversalAmountDetails.reversedAmount)

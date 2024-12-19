@@ -9,10 +9,12 @@ export default async function makePaymentRequest(req: Request, res: Response) {
   const context = buildPaymentContext(req);
   const { request } = context.data;
   const { merchantConfig } = context.requestContext;
-
   const logger = LogFactory.logger();
-  logger.debug(`Payment API Request: ${JSON.stringify(maskRequestData(request))}`);
-  
+  const isMessageLevelEncryptionEnabled = context?.requestContext.gatewaySettings?.messageEncryptionEnabled;
+  if('Yes'=== isMessageLevelEncryptionEnabled){
+    merchantConfig.useMLEGlobally = true;
+  }
+  logger.debug(`Payment API Request: ${JSON.stringify(maskRequestData(request))}`)
   context.data.response = await makeRequest<PtsV2PaymentsPost201Response>(
     merchantConfig,
     PaymentsApi,

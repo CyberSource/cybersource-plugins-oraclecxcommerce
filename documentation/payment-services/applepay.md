@@ -74,7 +74,7 @@ When you verify domain make sure it is accessible from ApplePay network. OCC Sto
 
 ![Important](../images/important.jpg) The Merchant Identity Certificate is used to validate ApplePay session in `packages/server-extension/src/services/payments/applePayService.ts`. Before deploying, place the certificate and private key files in the specified paths with exact file names as follows: 
 - Identity Certificate : `packages/server-extension/certs/applePayIdentityCert.pem`
-- Private Key : `packages/server-extension/certs/applePayIdentityKey.key` 
+- Private Key : `packages/server-extension/certs/applePayIdentityKey.key`
 
 Please make sure you update gateway settings once you complete all setup steps:
 

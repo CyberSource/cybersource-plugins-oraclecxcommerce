@@ -5,10 +5,10 @@ import { validationResult } from 'express-validator';
 export * from './genericDispatcher';
 
 export const CHANNEL_REGEX = /channel=([^,]+)/i;
-export const CLIENT_VERSION ="v2.0";
+export const CLIENT_VERSION ="v2";
 export const REPLACECHARACTERREGEX = /~W!C@O#n/g;
 
-const payload = ['email', 'lastName', 'firstName', 'expirationYear', 'expirationMonth', 'phoneNumber', 'cvv', 'securityCode'];
+const payload = ['email', 'lastName', 'firstName', 'expirationYear', 'expirationMonth', 'phoneNumber', 'cvv', 'securityCode','number','address1','postalCode','locality','address2','ipAddress'];
 const replaceCharacterRegex = /./g;
 
 export interface Logger {
@@ -74,7 +74,7 @@ const replaceChar = (logData: any) => {
     if ('object' === typeof logData[key]  &&  null !== logData[key]) {
       replaceChar(logData[key]);
     } else {
-      if (payload.includes(key) && null !== logData[key] && typeof  "string" === logData[key]) {
+      if (payload.includes(key) && null !== logData[key] &&  "string" === typeof logData[key]) {
         logData[key] = logData[key].replace(replaceCharacterRegex, "x");
       }
     }

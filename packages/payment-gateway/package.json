@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/payment-gateway",
-    "version": "24.1.2",
+    "version": "25.1.0",
     "private": true,
     "description": "Cybersource Official Payment Gateway",
     "repository": "",

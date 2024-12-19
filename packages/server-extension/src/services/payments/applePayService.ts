@@ -46,12 +46,11 @@ export function sanitizeUrl(inputUrl: string) {
     url.hash = '';
     return url.toString();
   } catch (err) {
-    logger.error(`Invalid Validation Url : ${err}`);
+    logger.error(`Invalid Validation URL : ${err}`);
     return null;
   }
 }
-
-export async function isValidApplePayUrl(validationUrl: string, requestContext: RequestContext): Promise<boolean> {
+export async function isValidApplePayUrl(validationUrl: string): Promise<boolean> {
   try {
     const url = new URL(validationUrl);
     const allowedDomains = applePayAllowedDomains.domains;

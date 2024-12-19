@@ -98,8 +98,9 @@ The following settings can be configured in gateway:
 | **merchantKeyId**                   | Merchant Key ID                                                                                                                                                                                                                                                                                                   |
 | **merchantsecretKey**               | Merchant Secret Key                                                                                                                                                                                                                                                                                               |
 | **authenticationType**              | Authentication Type                                                                                                                                                                                                                                                                                               |
+| **messageEncryptionEnabled**        | Enable Message Level Encryption Type                                                                                                                                                                                                                                                                                               |
 | **keyAlias**                        | Key Alias (in case authentication type = jwt)                                                                                                                                                                                                                                                                     |
-| **keyPass**                         | Key Pass (in case authentication type = jwt)                                                                                                                                                                                                                                                                      |
+| **keyPass**                         | Key Store Password (in case authentication type = jwt)                                                                                                                                                                                                                                                                      |
 | **keyFileName**                     | Key File Name (in case authentication type = jwt)                                                                                                                                                                                                                                                                 |
 | **runEnvironment**                  | PSP REST API environment to send requests to                                                                                                                                                                                                                                                                      |
 | **saleEnabled**                     | Indicates if authorizing and taking payment will be done at the same time for a particular payment mode                                                                                                                                                                                                           |
@@ -140,7 +141,9 @@ The following settings can be configured in gateway:
 
 ![Important](images/important.jpg)  `isCVVRequiredForSavedCards` and `isCVVRequiredForScheduledOrders` should be present in gateway settings in order for saved cards to be working
 
-Please refer to the [Authentication](https://developer.cybersource.com/api/developer-guides/dita-gettingstarted/authentication.html) documentation to learn more about available authentication types. In case authentication type is JWT you should place `p12` key file in `packages/server-extension/certs` directory, the `keyFileName` setting should be equal to the file name without 'p12' extension. `keyAlias` and `keyPass` should be updated accordingly (usually same value as MID).
+Use Enable Message-Level Encryption Type in order for personally identifiable information, such as payment information, to be returned unmasked by TMS. If the Enable Message Level Encryption is set to 'Yes' you should have the authentication type as JWT.
+
+Please refer to the [Authentication](https://developer.cybersource.com/api/developer-guides/dita-gettingstarted/authentication.html) documentation to learn more about available authentication types.In case authentication type is JWT you should place `p12` key file in `packages/server-extension/certs` directory, the `keyFileName` setting should be equal to the file name without 'p12' extension. `keyAlias` and `keyPass` should be updated accordingly (usually same value as MID).
 
 ## Server Extension Package (server-extension)
 
@@ -168,7 +171,7 @@ server-extension
  ┣ certs
  ┃ ┣ applePayIdentityCert.pem
  ┃ ┣ applePayIdentityKey.key
- ┃ ┗ isv_hybris_test.p12
+ ┃ ┗ isv_occ_test.p12
  ┣ config
  ┃ ┣ app.local.json
  ┃ ┗ app.prod.json
