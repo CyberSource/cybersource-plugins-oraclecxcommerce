@@ -99,12 +99,33 @@
       "public": false
     },
     {
+      "id": "messageEncryptionEnabled",
+      "type": "optionType",
+      "labelResourceId": "messageEncryptionEnabledLabel",
+      "helpTextResourceId": "messageEncryptionEnabledHelpText",
+      "defaultValue": "No",
+      "required": true,
+      "public": false,
+      "options": [
+        {
+          "id": "yes",
+          "value": "Yes",
+          "labelResourceId": "yesLabel"
+        },
+        {
+          "id": "no",
+          "value": "No",
+          "labelResourceId": "noLabel"
+        }
+      ]
+    },
+    {
       "id": "keyAlias",
       "type": "stringType",
       "labelResourceId": "keyAliasLabel",
       "helpTextResourceId": "keyAliasHelpText",
       "defaultValue": "keyAlias",
-      "required": true,
+      "required": false,
       "public": false
     },
     {

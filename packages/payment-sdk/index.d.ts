@@ -6,12 +6,11 @@ declare module "cybersource-rest-client" {
     merchantID: string;
     merchantKeyId?: string;
     merchantsecretKey?: string;
-
+    useMLEGlobally?:boolean;
     keyAlias?: string;
     keyPass?: string;
     keyFileName?: string;
     keysDirectory?: string;
-
     logConfiguration: {
       enableLog: boolean;
       logFilename: string;

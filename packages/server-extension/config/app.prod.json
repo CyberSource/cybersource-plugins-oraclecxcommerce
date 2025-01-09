@@ -1,10 +1,10 @@
 {
     "cache.service.ttl.secs": 0,
     "cache.gatewaysettings.ttl.secs": 1,
-    "crypto.service.key": "l8myMlkZiBX/kLbpDcn3Nw==",
+    "crypto.service.key": "",
     "feature.gatewaysettings.payload": "disabled",
     "partner.developerId": "999",
-    "partner.solutionId": "EQU9OF9E",
+    "partner.solutionId": "D9W5TBWU",
     "logging.webhook.http": true,
     "logging.api.error": true,
     "logging.api.access": true,

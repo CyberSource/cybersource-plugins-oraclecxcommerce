@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/card-payment-service",
-    "version": "24.1.2",
+    "version": "25.1.0",
     "description": "Card SSE Payment Service",
     "repository": {
         "type": "git",
@@ -9,11 +9,11 @@
     "author": "ISV Payments",
     "main": "cjs/index.js",
     "dependencies": {
-        "@isv-occ-payment/occ-payment-service": "24.1.2",
-        "@isv-occ-payment/occ-sdk": "24.1.2",
-        "@isv-occ-payment/payment-sdk": "24.1.2",
-        "@isv-occ-payment/server-extension": "24.1.2",
-        "cybersource-rest-client": "0.0.54"
+        "@isv-occ-payment/occ-payment-service": "25.1.0",
+        "@isv-occ-payment/occ-sdk": "25.1.0",
+        "@isv-occ-payment/payment-sdk": "25.1.0",
+        "@isv-occ-payment/server-extension": "25.1.0",
+        "cybersource-rest-client": "0.0.63"
     },
     "scripts": {
         "prebuild": "yarn clean && mkdirp node_modules/@isv-occ-payment && symlink-dir ../occ-sdk node_modules/@isv-occ-payment/occ-sdk && symlink-dir ../payment-sdk node_modules/@isv-occ-payment/payment-sdk",

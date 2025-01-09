@@ -4,7 +4,7 @@ const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
  
 const logger = LogFactory.logger();
 export const apiClient = new ApiClient();
- 
+
 export default async function makeRequest<T>(
   merchantConfig: MerchantConfig,
   apiClass: new (conf: MerchantConfig, client: ApiClient) => any,

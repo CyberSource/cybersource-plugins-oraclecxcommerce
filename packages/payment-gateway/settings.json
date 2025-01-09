@@ -4,6 +4,7 @@
   "merchantID": "",
   "merchantKeyId": "",
   "merchantsecretKey": "",
+  "messageEncryptionEnabled":"No",
   "authenticationType": "http_signature",
   "keyAlias": "keyAlias",
   "keyPass": "keyPass",

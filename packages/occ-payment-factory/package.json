@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/occ-payment-factory",
-    "version": "24.1.2",
+    "version": "25.1.0",
     "private": true,
     "description": "Oracle Commerce payment service factory",
     "repository": {
