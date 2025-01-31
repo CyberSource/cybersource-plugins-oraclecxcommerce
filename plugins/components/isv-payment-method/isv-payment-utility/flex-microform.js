@@ -22,7 +22,7 @@ let Microform = /** @class */ (function () {
         color: '#a94442'
       }
     };
-    this.microform = new Flex(captureContext).microform({styles: myStyles});
+    this.microform = new Flex(captureContext).microform('card',{styles: myStyles});
     let securityCode = this.microform.createField('securityCode');
     let number = this.microform.createField('number');
     number.load(this.options.cardNumberContainer);
