@@ -29,8 +29,6 @@ declare interface PaymentMethodConfig {
 
 declare interface CreditCardConfig {
   payerAuthEnabled: boolean;
-  flexSdkUrl: string;
-  songbirdUrl: string;
 }
 
 declare interface GooglePayConfig {
@@ -89,9 +87,7 @@ declare namespace OCC {
     googlePayMerchantId: string;
     googlePayMerchantName: string;
     googlePaySupportedNetworks: string;
-    flexSdkUrl: string;
     saleEnabled: string;
-    songbirdUrl: string;
     applePaySdkUrl: string;
     applePayMerchantId: string;
     applePayInitiative: string;
@@ -99,9 +95,7 @@ declare namespace OCC {
     applePayDisplayName: string;
     applePaySupportedNetworks: string;
     dmDecisionSkip: string;
-
     dailyReportName: string;
-
     deviceFingerprintEnabled: boolean;
     deviceFingerprintUrl: string;
     deviceFingerprintOrgId: string;

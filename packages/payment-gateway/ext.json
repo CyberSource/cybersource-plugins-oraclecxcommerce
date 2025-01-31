@@ -2,8 +2,8 @@
     "extensionID": "",
     "developerID": "999",
     "createdBy": "Cybersource Official",
-    "name": "payment-gateway-25.1.0",
-    "version": 2510,
-    "timeCreated": "2024-11-27",
+    "name": "payment-gateway-25.1.1",
+    "version": 2511,
+    "timeCreated": "2025-01-13",
     "description": "Cybersource Official Payment Gateway"    
 }

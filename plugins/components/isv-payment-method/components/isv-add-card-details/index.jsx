@@ -9,7 +9,7 @@ import IsvCheckoutCardDetails from '../isv-checkout-card-details';
 // Add new card details component containing card details, billing address and save card to profile component
 const IsvAddCardDetails = props => {
   // Get the card details,billing address and save card to profile if there is a applied credit card payment group
-  const {appliedCreditCardPaymentGroup, flexContext, deviceFingerprint, flexSdkUrl, ...remainingProps} = props;
+  const {appliedCreditCardPaymentGroup, flexContext, deviceFingerprint, ...remainingProps} = props;
   let appliedPaymentGroupBillingAddress, appliedPaymentGroupSaveCardToProfile, appliedPaymentGroupCardDetails;
   if (appliedCreditCardPaymentGroup && !appliedCreditCardPaymentGroup.savedCardId) {
     const {billingAddress, saveCard, ...remainingCardDetails} = appliedCreditCardPaymentGroup;
@@ -23,7 +23,6 @@ const IsvAddCardDetails = props => {
       <IsvCheckoutCardDetails
         flexContext={flexContext}
         deviceFingerprint={deviceFingerprint}
-        flexSdkUrl={flexSdkUrl}
         {...remainingProps}
         appliedPaymentGroupCardDetails={appliedPaymentGroupCardDetails}
       />

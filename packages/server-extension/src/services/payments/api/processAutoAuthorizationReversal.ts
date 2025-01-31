@@ -1,4 +1,4 @@
-import { PaymentContext, maskRequestData } from "@server-extension/common";
+import {PaymentContext, maskRequestData } from "@server-extension/common";
 import { MerchantConfig, AuthReversalRequest, PtsV2PaymentsReversalsPost201Response, ReversalApi, TransactionDetailsApi } from "cybersource-rest-client";
 import { convertRequest, twoDecimal } from "../converters/request/common";
 import { delay } from "../converters/response/common";

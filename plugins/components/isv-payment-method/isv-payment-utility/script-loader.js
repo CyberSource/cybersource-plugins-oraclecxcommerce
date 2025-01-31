@@ -38,11 +38,24 @@ export default function loadScript(url, scriptId) {
     return new Promise(function (resolve, reject) {
         let scriptExists = document.getElementById(scriptId);
         if (scriptExists) {
-            scriptExists.setAttribute('src', url);
+            if(  'Flex' === scriptId ){
+                scriptExists.setAttribute('src', url?.ctx[0]?.data?.clientLibrary);
+                scriptExists.setAttribute('integrity', url?.ctx[0]?.data?.clientLibraryIntegrity);
+                scriptExists.setAttribute('crossorigin', 'anonymous');
+            }
+            else{
+                scriptExists.setAttribute('src', url);
+            }
             return resolve();
         }
+        
         let scriptToLoad = document.createElement('script');
-        scriptToLoad.setAttribute('src', url);
+
+        scriptToLoad.setAttribute('src',  (scriptId === 'Flex'? url?.ctx[0]?.data?.clientLibrary:url));
+        if('Flex' === scriptId){
+            scriptToLoad.setAttribute('integrity',url?.ctx[0]?.data?.clientLibraryIntegrity);
+            scriptToLoad.setAttribute('crossorigin', 'anonymous');
+        }
         scriptToLoad.id = scriptId;
         scriptToLoad.onload = function () { return resolve(); };
         scriptToLoad.onerror = function () { return reject(); };

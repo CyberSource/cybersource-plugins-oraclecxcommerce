@@ -32,13 +32,9 @@ function buildApplePayConfig({ applePaySdkUrl, applePayDisplayName, applePaySupp
 
 function buildCreditCardConfig({
   payerAuthEnabled,
-  flexSdkUrl,
-  songbirdUrl
 }: OCC.GatewaySettings): CreditCardConfig {
   return {
-    payerAuthEnabled,
-    flexSdkUrl,
-    songbirdUrl
+    payerAuthEnabled
   };
 }
 

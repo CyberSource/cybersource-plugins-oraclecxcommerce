@@ -14,7 +14,6 @@
   "scaEnabled": false,
   "networkTokenUpdates": false,
   "saleEnabled": "card",
-  "flexSdkUrl": "https://testflex.cybersource.com/microform/bundle/v2/flex-microform.min.js",
   "isCVVRequiredForSavedCards": false,
   "isCVVRequiredForScheduledOrders": false,
   "googlePaySdkUrl": "https://pay.google.com/gp/p/js/pay.js",

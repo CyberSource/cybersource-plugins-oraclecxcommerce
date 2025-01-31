@@ -219,15 +219,6 @@
       ]
     },
     {
-      "id": "flexSdkUrl",
-      "type": "stringType",
-      "labelResourceId": "flexSdkUrlLabel",
-      "helpTextResourceId": "flexSdkUrlHelpText",
-      "defaultValue": "microformSdkUrl",
-      "required": true,
-      "public": false
-    },
-    {
       "id": "isCVVRequiredForSavedCards",
       "type": "booleanType",
       "name": "isCVVRequiredForSavedCards",

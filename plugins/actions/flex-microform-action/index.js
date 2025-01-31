@@ -1,8 +1,17 @@
-import {endpointSaga, takeEvery} from '@oracle-cx-commerce/store/utils';
+import {createReducer, endpointSaga, takeEvery} from '@oracle-cx-commerce/store/utils';
 
 function* flexMicroformActionSaga(action) {
   const response = yield endpointSaga({action, payload: action.payload, endpointId: 'flexMicroformEndpoint'});
   return response;
+}
+
+export function flexContextReducer(state) {
+  return {
+    ...state,
+    flexMicroformRepository: {
+      ...null
+    }
+  };
 }
 
 /**
@@ -15,7 +24,11 @@ function* flexMicroformActionSaga(action) {
  * The generator function results in an asynchronous endpoint invocation
  * when the action is dispatched.
  */
+
 export default {
+  reducer: createReducer({
+    flexMicroformAction: flexContextReducer
+  }),
   *saga() {
     yield takeEvery('flexMicroformAction', flexMicroformActionSaga);
   }

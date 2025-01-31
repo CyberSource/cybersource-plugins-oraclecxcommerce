@@ -23,6 +23,7 @@
  import CardTypes from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/components/checkout-card-details/card-types';
  import Microform from '../../isv-payment-utility/flex-microform';
  import { amdJsLoad } from '../../isv-payment-utility/script-loader';
+ import {jwtDecode as jwt_decode} from 'jwt-decode';
  
  /**
   * Widget for card details.
@@ -47,7 +48,6 @@
      useAnotherCard = true,
      flexContext,
      deviceFingerprint,
-     flexSdkUrl
    } = props;
    const [selectedCardType, setSelectedCardType] = useState({});
    const [cardTypeNotEnabled, setCardTypeNotEnabled] = useState(false);
@@ -336,7 +336,6 @@
    useEffect(() => {
      if (creditCardNumberFieldName && cvvNumberFieldName) {
        const microform = new Microform({
-         sdkUrl: flexSdkUrl,
          securityCodeContainer: `#${cvvNumberFieldName}`,
          securityCodeLabel: `#${cvvNumberFieldName}-label`,
          cardNumberContainer: `#${creditCardNumberFieldName}`,
@@ -347,13 +346,18 @@
    }, [creditCardNumberFieldName, cvvNumberFieldName]);
  
    useEffect(() => {
-     if (flexContext && flexMicroform && flexSdkUrl) {
-       amdJsLoad(flexSdkUrl, 'Flex').then(() => {
+    try{
+     if (flexContext && flexMicroform) {
+      let flexCreds = jwt_decode(flexContext.captureContext);
+       amdJsLoad(flexCreds, 'Flex').then(() => {
          updateState('flexMicroForm', flexMicroform);
          return flexMicroform.setup(flexContext.captureContext);
        });
      }
-   }, [flexContext, flexMicroform, flexSdkUrl]);
+    }catch(error){
+      console.error(error)
+    }
+   }, [flexContext, flexMicroform]);
  
    useEffect(() => {
      if (flexMicroform && flexMicroform.number) {

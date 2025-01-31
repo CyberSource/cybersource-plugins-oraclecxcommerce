@@ -279,7 +279,7 @@ const IsvGooglePayPaymentMethod = props => {
       }
       setGooglePay(new GooglePay(googlePayConfiguration[0].config, 'container-gpay', googlePayCallback));
     }
-  }, [isDisplayGooglePay, billingAddress]);
+  }, [isDisplayGooglePay, billingAddress, priceInfo]);
 
   //load googlepay script in html
   useEffect(() => {

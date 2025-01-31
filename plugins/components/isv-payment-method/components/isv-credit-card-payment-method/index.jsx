@@ -11,7 +11,7 @@ import IsvCreditCard from './IsvCreditCard';
  * @param props
  */
 const IsvCreditCardPaymentMethod = props => {
-  const {flexContext, deviceFingerprint = {}, flexSdkUrl} = props;
+  const {flexContext, deviceFingerprint = {}} = props;
 
   return (
     <React.Fragment>
@@ -22,7 +22,6 @@ const IsvCreditCardPaymentMethod = props => {
               flexContext={flexContext}
               deviceFingerprint={deviceFingerprint}
               {...props}
-              flexSdkUrl={flexSdkUrl}
             />
           </Styled>
         ),

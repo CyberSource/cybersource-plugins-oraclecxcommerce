@@ -20,7 +20,7 @@ const IsvPaymentMethod = props => {
   const store = useContext(StoreContext);
   const { action } = store;
   const { isPreview } = getGlobalContext(store.getState());
-  let payerAuthEnabled, flexSdkUrl;
+  let payerAuthEnabled;
   let creditCardConfiguration = [],
     applePayConfiguration = [];
   let applePayEnabled, creditCardEnabled = false, applePaySupported = false;
@@ -41,7 +41,6 @@ const IsvPaymentMethod = props => {
 
   creditCardConfiguration.forEach(key => {
     payerAuthEnabled = key.config.payerAuthEnabled;
-    flexSdkUrl = key.config.flexSdkUrl;
   });
 
   applePayConfiguration.forEach(key => {
@@ -100,7 +99,7 @@ const IsvPaymentMethod = props => {
   else {
     return (
       <Styled id="IsvPaymentMethod" css={css}>
-        {creditCardEnabled && <IsvCreditCardPaymentMethod {...props} flexSdkUrl={flexSdkUrl} />}
+        {creditCardEnabled && <IsvCreditCardPaymentMethod {...props}/>}
         <IsvGooglePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />
         {applePaySupported && <IsvApplePayPaymentMethod {...props} isvSelectedGenericPayment={isvSelectedGenericPayment} setIsvSelectedGenericPayment={setIsvSelectedGenericPayment} />}
       </Styled>
