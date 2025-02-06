@@ -287,17 +287,42 @@
       for (const card of enabledCardTypes) {
         if (cardTypes[card].code === cardData?.cybsCardType) {
           setCardTypeNotEnabled(false);
-          updateState('creditCardNumberData', data);
-          setSelectedCardType(cardTypes[card].value);
+          setCardData(data,cardTypes[card].value)
           break;
         }
         else {
-          setSelectedCardType('');
-          updateState('creditCardNumberData', null);
+          setDefaultCardType(data,cardData)
         }
       }
     }
+    else{
+       setDefaultCardType(data,cardData)
+    }
   }
+
+  const setDefaultCardType = (data,cardData) => {
+    if (cardData && cardData.couldBeValid) {
+      setCardTypeNotEnabled(false);
+      if (cardData.valid) {
+        setCardData(data,cardData?.cybsCardType,)
+      }
+      else{
+        resetCardData();
+      }
+    }
+    else{
+      resetCardData();
+    }
+  };
+
+  const setCardData = (data,cardType) => {
+    updateState('creditCardNumberData', data);
+    setSelectedCardType(cardType);
+  };
+  const resetCardData = () => {
+    setSelectedCardType('');
+    updateState('creditCardNumberData', null);
+  };
    const onSecurityCodeChange = data => {
      updateState('securityCodeData', data);
    };
