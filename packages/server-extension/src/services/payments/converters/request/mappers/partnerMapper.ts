@@ -1,4 +1,4 @@
-import { PaymentContext } from '@server-extension/common';
+import { APPLICATION_NAME, APPLICATION_VERSION, PaymentContext } from '@server-extension/common';
 import { Mapper } from '@server-extension/services/payments/converters/common';
 import {
   AuthReversalRequest,
@@ -27,7 +27,9 @@ export const partnerMapper: Mapper<PaymentRequest> = {
         partner: {
           developerId: nconf.get(DEVELOPER_ID_KEY),
           solutionId: nconf.get(SOLUTION_ID_KEY)
-        }
+        },
+        applicationName:APPLICATION_NAME,
+        applicationVersion:APPLICATION_VERSION,
       }
     };
   }

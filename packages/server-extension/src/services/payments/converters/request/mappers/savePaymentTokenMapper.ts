@@ -11,7 +11,12 @@ export const savePaymentTokenMapper: PaymentRequestMapper = {
     return <CreatePaymentRequest>{
       processingInformation: {
         actionList: ['TOKEN_CREATE'],
-        actionTokenTypes: ['customer', 'paymentInstrument', 'shippingAddress']
+        actionTokenTypes: ['customer', 'paymentInstrument', 'shippingAddress'],
+        authorizationOptions:{
+          initiator:{
+            credentialStoredOnFile:true
+          }
+        }
       }
     };
   }

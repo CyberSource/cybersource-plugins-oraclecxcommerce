@@ -23,6 +23,7 @@
  import CardTypes from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/components/checkout-card-details/card-types';
  import Microform from '../../isv-payment-utility/flex-microform';
  import { amdJsLoad } from '../../isv-payment-utility/script-loader';
+ import {jwtDecode as jwt_decode} from 'jwt-decode';
  
  /**
   * Widget for card details.
@@ -47,7 +48,6 @@
      useAnotherCard = true,
      flexContext,
      deviceFingerprint,
-     flexSdkUrl
    } = props;
    const [selectedCardType, setSelectedCardType] = useState({});
    const [cardTypeNotEnabled, setCardTypeNotEnabled] = useState(false);
@@ -287,17 +287,42 @@
       for (const card of enabledCardTypes) {
         if (cardTypes[card].code === cardData?.cybsCardType) {
           setCardTypeNotEnabled(false);
-          updateState('creditCardNumberData', data);
-          setSelectedCardType(cardTypes[card].value);
+          setCardData(data,cardTypes[card].value)
           break;
         }
         else {
-          setSelectedCardType('');
-          updateState('creditCardNumberData', null);
+          setDefaultCardType(data,cardData)
         }
       }
     }
+    else{
+       setDefaultCardType(data,cardData)
+    }
   }
+
+  const setDefaultCardType = (data,cardData) => {
+    if (cardData && cardData.couldBeValid) {
+      setCardTypeNotEnabled(false);
+      if (cardData.valid) {
+        setCardData(data,cardData?.cybsCardType,)
+      }
+      else{
+        resetCardData();
+      }
+    }
+    else{
+      resetCardData();
+    }
+  };
+
+  const setCardData = (data,cardType) => {
+    updateState('creditCardNumberData', data);
+    setSelectedCardType(cardType);
+  };
+  const resetCardData = () => {
+    setSelectedCardType('');
+    updateState('creditCardNumberData', null);
+  };
    const onSecurityCodeChange = data => {
      updateState('securityCodeData', data);
    };
@@ -336,7 +361,6 @@
    useEffect(() => {
      if (creditCardNumberFieldName && cvvNumberFieldName) {
        const microform = new Microform({
-         sdkUrl: flexSdkUrl,
          securityCodeContainer: `#${cvvNumberFieldName}`,
          securityCodeLabel: `#${cvvNumberFieldName}-label`,
          cardNumberContainer: `#${creditCardNumberFieldName}`,
@@ -347,13 +371,18 @@
    }, [creditCardNumberFieldName, cvvNumberFieldName]);
  
    useEffect(() => {
-     if (flexContext && flexMicroform && flexSdkUrl) {
-       amdJsLoad(flexSdkUrl, 'Flex').then(() => {
+    try{
+     if (flexContext && flexMicroform) {
+      let flexCreds = jwt_decode(flexContext.captureContext);
+       amdJsLoad(flexCreds, 'Flex').then(() => {
          updateState('flexMicroForm', flexMicroform);
          return flexMicroform.setup(flexContext.captureContext);
        });
      }
-   }, [flexContext, flexMicroform, flexSdkUrl]);
+    }catch(error){
+      console.error(error)
+    }
+   }, [flexContext, flexMicroform]);
  
    useEffect(() => {
      if (flexMicroform && flexMicroform.number) {

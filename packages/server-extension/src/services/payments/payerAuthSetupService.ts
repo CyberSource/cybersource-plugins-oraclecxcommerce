@@ -3,6 +3,7 @@ import { MerchantConfig, PayerAuthenticationApi, RiskV1AuthenticationSetupsPost2
 import nconf from 'nconf';
 import makeRequest from "./api/paymentCommand";
 import occClientStorefront from "../occ/occClientStorefront";
+import { APPLICATION_NAME,APPLICATION_VERSION } from "@server-extension/common";
 
 const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
@@ -35,6 +36,8 @@ async function buildSetupPayload(setupRequestPayload: OCC.PayerAuthSetupRequest)
                 developerId: nconf.get(DEVELOPER_ID_KEY),
                 solutionId: nconf.get(SOLUTION_ID_KEY)
             },
+            applicationName:APPLICATION_NAME,
+            applicationVersion:APPLICATION_VERSION,
             code: orderId
         },
         ...transientToken && { tokenInformation: { transientToken: transientToken } },

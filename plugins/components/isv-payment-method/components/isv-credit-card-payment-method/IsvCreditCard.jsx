@@ -28,8 +28,7 @@ const IsvCreditCard = props => {
     isCardPaymentDisabled = false,
     PaymentInfoForScheduledOrder,
     flexContext,
-    deviceFingerprint,
-    flexSdkUrl
+    deviceFingerprint
   } = props;
 
   const formElementRef = useRef(null);
@@ -148,7 +147,6 @@ const IsvCreditCard = props => {
                               selectedPaymentType={selectedPaymentType}
                               flexContext={flexContext}
                               deviceFingerprint={deviceFingerprint}
-                              flexSdkUrl={flexSdkUrl}
                             />
                           </div>
                         )}
@@ -174,7 +172,6 @@ const IsvCreditCard = props => {
           isLoggedIn,
           flexContext,
           deviceFingerprint,
-          flexSdkUrl,
           props,
           updateSavedCard,
           addDifferentCard,
