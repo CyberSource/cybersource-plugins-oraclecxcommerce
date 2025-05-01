@@ -27,7 +27,7 @@ async function paymentRouteHandler(req, res) {
     }
     gatewayModule = `@isv-occ-payment/${gatewayModuleName}-payment-service`;
   }
-
+  
   logger.debug(
     `${req.method} ${req.path}; order=${req.body.orderId}; paymentGroup=${req.body.paymentId}`
   );

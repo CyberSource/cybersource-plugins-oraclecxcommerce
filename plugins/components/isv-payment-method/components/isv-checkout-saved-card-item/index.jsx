@@ -35,7 +35,6 @@ const IsvCheckoutSavedCardItem = props => {
   );
   const cvvNumberFieldName = useMemo(() => `cvv-${id}-${selectedSavedCardId}`, [id, selectedSavedCardId]);
   const {savedCardId, nameOnCard, expiryMonth, expiryYear, cardType, cardNumber: maskedCardNumber} = cardDetails;
-  const [cardCVV, setCardCVV] = useState('');
   const card = cardTypes[cardType];
   let imgSrc = null;
   let cardImageAltText = cardType;
@@ -47,39 +46,17 @@ const IsvCheckoutSavedCardItem = props => {
       imgSrc = card.img.url;
     }
   }
-  const cardCVVValidator = cardCVV =>
-    validateCVV(cardCVV, card.cvvLength, {
-      messageCardCVVInvalid: t(textFieldInvalid, {fieldName: labelCardCVV}),
-      messageCardCVVRequired: textRequiredField
-    });
 
   useEffect(() => {
-    setCardCVV('');
-  }, [selectedSavedCardId, isCardPaymentDisabled]);
+    if(onInput){
+    onInput({
+            ...(selectedSavedCardId && { savedCardId: selectedSavedCardId }),
+            type: PAYMENT_TYPE_CARD,
+            customProperties: {
+              deviceFingerprint
+            }
+  })}}, [selectedSavedCardId, isCardPaymentDisabled])
 
-  /**
-   * Called when cvv changes, calls onInput Callback to set saved card state to parent component.
-   * @param {Object} event The event object
-   */
-  const onCVVChange = event => {
-    const element = event.target;
-    const cardCVV = element.value;
-    const regex = /^[0-9]+$/;
-    if (cardCVV === '' || regex.test(cardCVV)) {
-      setCardCVV(cardCVV);
-    }
-    element.setCustomValidity(cardCVVValidator(cardCVV));
-    if (onInput) {
-      onInput({
-        cardCVV,
-        savedCardId: selectedSavedCardId,
-        type: PAYMENT_TYPE_CARD,
-        customProperties: {
-          deviceFingerprint
-        }
-      });
-    }
-  };
 
   const isSavedCardSelected = selectedPaymentType === PAYMENT_TYPE_CARD && selectedSavedCardId === savedCardId;
 
@@ -111,36 +88,6 @@ const IsvCheckoutSavedCardItem = props => {
         </span>
         <span>{nameOnCard}</span>
         <span id={`expiryDate-${id}-${savedCardId}`}>{t(textExpiryDate, {month: expiryMonth, year: expiryYear})}</span>
-        {isSavedCardSelected && (
-          <div className="CheckoutSavedCards__CvvDetailsContainer">
-            <label className="CheckoutSavedCards__CvvLabel" htmlFor={cvvNumberFieldName}>
-              {labelCardCVV}
-            </label>
-            <div className="CheckoutSavedCards__CvvInputContainer">
-              <input
-                type="password"
-                className="CheckoutSavedCards__CvvInput"
-                id={cvvNumberFieldName}
-                name="cardCVV"
-                value={cardCVV}
-                maxLength={cvvLength}
-                disabled={isCardPaymentDisabled}
-                onChange={onCVVChange}
-                onBlur={event => setElementValidity(event.target, cardCVVValidator)}
-                required
-              />
-              <span className="CheckoutSavedCards__CvvIconContainer">
-                <CardCVVIcon />
-              </span>
-            </div>
-            <div className="CheckoutSavedCards__ErrorContainer">
-              <span className="CheckoutSavedCards__ErrorMessage"></span>
-              <span className="CheckoutSavedCards__ErrorIconContainer">
-                <WarningIcon />
-              </span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

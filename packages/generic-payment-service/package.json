@@ -1,6 +1,6 @@
 {
     "name": "@isv-occ-payment/generic-payment-service",
-    "version": "25.1.1",
+    "version": "25.2.0",
     "description": "Generic SSE Payment Service",
     "repository": {
         "type": "git",
@@ -9,11 +9,11 @@
     "author": "ISV Payments",
     "main": "cjs/index.js",
     "dependencies": {
-        "@isv-occ-payment/occ-payment-service": "25.1.1",
-        "@isv-occ-payment/occ-sdk": "25.1.1",
-        "@isv-occ-payment/payment-sdk": "25.1.1",
-        "@isv-occ-payment/server-extension": "25.1.1",
-        "cybersource-rest-client": "0.0.63"
+        "@isv-occ-payment/occ-payment-service": "25.2.0",
+        "@isv-occ-payment/occ-sdk": "25.2.0",
+        "@isv-occ-payment/payment-sdk": "25.2.0",
+        "@isv-occ-payment/server-extension": "25.2.0",
+        "cybersource-rest-client": "0.0.66"
     },
     "devDependencies": {
         "typescript-transform-paths": "^3.4.4"

@@ -13,7 +13,10 @@ export default async function generateKey(
   const request = {
     clientVersion: CLIENT_VERSION,
     targetOrigins: [targetOrigin],
-    allowedCardNetworks: allowedCardNetworks
+    allowedCardNetworks: allowedCardNetworks,
+    transientTokenResponseOptions:{
+      includeCardPrefix:false
+    }
   };
   logger.debug(`Generate Key API Request: ${JSON.stringify(maskRequestData(request))}`);
   return await makeRequest<any>(
