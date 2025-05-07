@@ -113,6 +113,7 @@ declare namespace OCC {
     savedCardId?: string;
     profileId?: string;
   }
+
   export interface PayerAuthSetupResponse {
     status: string;
     accessToken: string;
@@ -227,7 +228,6 @@ declare namespace OCC {
     ipAddress?: string;
     httpBrowserJavaScriptEnabled?: boolean;
     httpAcceptContent?: string;
-
     pauseRequestId?: string;
     stepUpUrl?: string;
     accessToken?: string;
@@ -237,7 +237,6 @@ declare namespace OCC {
     numberOfPurchases?: string;
     lineItems?:any;
     subTotal?:string;
-
   }
 
   export interface CaptureContextRequest {
@@ -291,6 +290,7 @@ declare namespace OCC {
   export interface StatusProps {
     hostTransactionId: string;
   }
+
   export interface TransactionStatus {
     amount?: number;
     statusProps: StatusProps;
@@ -440,7 +440,6 @@ declare namespace OCC {
     locale: string;
     transactionType: string;
     currencyCode: string;
-
     authorizationResponse?: AuthorizationResponse;
     captureResponse?: CaptureResponse;
     creditResponse?: CreditResponse;
@@ -458,7 +457,6 @@ declare namespace OCC {
     hostTimestamp: string;
     hostTransactionId: string;
     merchantTransactionId: string;
-
     response: WebhookGenericResponse;
     additionalProperties?: WebhookAdditionalProperties;
   }
@@ -554,6 +552,7 @@ declare namespace OCC {
     applicationInformation: Application
     _links: ResponseLink
   }
+
   export interface Application {
     applications: [
       {
@@ -566,6 +565,7 @@ declare namespace OCC {
       }
     ]
   }
+
   export interface ResponseLink {
     self: {
       href: string,
@@ -604,7 +604,6 @@ declare namespace OCC {
     customers?: Link[];
   }
 
-
   export interface Link {
     href: string;
   }
@@ -618,7 +617,7 @@ declare namespace OCC {
     source: string;
     iin: string;
     token: string;
-    cardProps: object;
+    cardProps: cardProps;
     nameOnCard: string;
     creditCardNumber: string;
     repositoryId: string;
@@ -629,6 +628,12 @@ declare namespace OCC {
     id: string;
     expirationDayOfMonth: string;
   }
+
+  export interface cardProps{
+    customerId : string;
+    instrumentId : string;
+  }
+  
   export interface SubscriptionDetailsResponse {
     organizationId: string;
     productId: string;
@@ -660,6 +665,7 @@ declare namespace OCC {
     status: string;
     expirationDate: string;
   }
+
   export interface webhookSubscriptionResponse {
     organizationId: string,
     productId: string,
@@ -677,10 +683,6 @@ declare namespace OCC {
     deliveryType: string,
     notificationScope: string
   }
-
-
-
-
 }
 
 declare namespace Express {
@@ -688,5 +690,3 @@ declare namespace Express {
     rawBody: string;
   }
 }
-
-
