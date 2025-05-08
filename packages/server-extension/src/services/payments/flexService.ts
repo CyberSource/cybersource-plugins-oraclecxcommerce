@@ -12,7 +12,7 @@ export async function createCaptureContext(
   captureContextPayload: OCC.CaptureContextRequest
 ): Promise<OCC.CaptureContextResponse> {
   const logger = LogFactory.logger();
-  const enabledCardTypesDetails = (await occClient.getCardTypes())?.items || [];
+  const enabledCardTypesDetails = (await occClient.getCardTypes(requestContext?.siteId))?.items || [];
   const possibleCardTypes = ["VISA", "MAESTRO", "MASTERCARD", "AMEX", "DISCOVER", "DINERSCLUB", "JCB", "CUP", "CARTESBANCAIRES", "CARNET"];
   const defaultCardTypes = ["VISA", "MASTERCARD"];
   let enabledCardTypes = possibleCardTypes.filter(cybsType => enabledCardTypesDetails.some((enabledCardTypeDetails: { repositoryId: string; }) =>

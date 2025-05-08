@@ -6,42 +6,34 @@ import occClient from '../services/occ/occClient';
 
 const DEFAULT_CACHE_TTL_SECS = 300;
 
-function convertValue(value: string): string | boolean {
-  return value === 'true' || value === 'false' ? value === 'true' : value;
-}
-
-function getFromCache(channel: string): Promise<OCC.GatewaySettings> {
+async function getFromCache(channel: string, siteId: string): Promise<OCC.GatewaySettings> {
   const ttl = Number(nconf.get('cache.gatewaysettings.ttl.secs'));
-
   return cacheService
     .cacheAsync(
       'gatewaySettings_getGatewaySettings',
-      occClient.getGatewaySettings.bind(occClient),
+      occClient.getGatewaySettings.bind(occClient, siteId),
       isNaN(ttl) ? DEFAULT_CACHE_TTL_SECS : ttl
     )
-    .then((response) => response.data[channel]);
-}
-
-function getFromPayload(req: Request): OCC.GatewaySettings | undefined {
-  const payloadSettings = req.body.gatewaySettings;
-
-  if (nconf.get('feature.gatewaysettings.payload') === 'enabled' && payloadSettings) {
-    return Array.isArray(payloadSettings)
-      ? payloadSettings?.reduce((gatewaySettings: any, { name, value }) => {
-          gatewaySettings[name] = convertValue(value);
-          return gatewaySettings;
-        }, {})
-      : payloadSettings;
-  }
-
-  return undefined;
+    .then((response) => 
+      response.data[channel]);
 }
 
 export default asyncMiddleware(async (req: Request, _res: Response, next: NextFunction) => {
   const requestContext: RequestContext = req.app.locals;
-
-  requestContext.gatewaySettings =
-    getFromPayload(req) ?? (await getFromCache(requestContext.channel));
-
+  const rawHeaders = req.rawHeaders;
+  let siteId: string = '';
+  if (req?.body?.siteId) {
+    siteId = req.body.siteId
+  }
+  else {
+    for (let i = 0; i < rawHeaders.length; i += 2) {
+      if (rawHeaders[i] === 'x-ccsite') {
+        siteId = rawHeaders[i + 1];
+        break;
+      }
+    }
+  }
+  requestContext.gatewaySettings = await getFromCache(requestContext.channel, siteId);
+  requestContext.siteId = siteId;
   next();
 });

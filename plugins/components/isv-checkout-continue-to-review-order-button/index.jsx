@@ -188,6 +188,9 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       }
     }
     if (!isError) {
+      if(paymentsToApply[0]?.cardCVV){
+         paymentsToApply[0].cardCVV = '';
+      }
       applyPayments(paymentsToApply);
     }
   }, []);
@@ -253,7 +256,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
           await callDeviceDataCollection(setupResponse);
           store.getState().payerAuthRepository = { transientToken: transientToken.encoded, jti: transientToken.decoded.jti };
         }
-        let cardNumber = transientToken.decoded.content.paymentInformation.card.number.bin + transientToken.decoded.content.paymentInformation.card.number.maskedValue.toLowerCase().substring(6);
+        let cardNumber = transientToken.decoded.content.paymentInformation.card.number.maskedValue.toLowerCase();
         updatedPayments = {
           ...(payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)),
           cardNumber: cardNumber,
@@ -312,7 +315,7 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
       (payments && payments.find(item => item.type === PAYMENT_TYPE_CARD)) || {};
     const microFormIsValid =
       creditCardNumberData && creditCardNumberData.valid && securityCodeData && securityCodeData.valid;
-    if (savedCardId || cardCVV?.length >= 3) {
+    if (savedCardId) {
       return false;
     } else {
       return selectedPaymentType === PAYMENT_TYPE_CARD

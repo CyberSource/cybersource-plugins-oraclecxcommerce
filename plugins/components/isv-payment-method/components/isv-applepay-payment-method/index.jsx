@@ -174,6 +174,9 @@ const IsvApplePayPaymentMethod = props => {
     const paymentsToApply = [];
     let isError = false;
     isError = await removeNotApplicablePaymentGroups(payments);
+    if (payments.length > 1 && payments[0].hasOwnProperty('savedCardId')) {
+      payments.splice(0, payments.length - 1);
+    };
     if (isError) {
       setInProgress(false);
       return;

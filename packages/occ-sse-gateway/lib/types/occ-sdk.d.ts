@@ -70,7 +70,6 @@ declare namespace OCC {
     keyPass: string;
     keyFileName: string;
     keysDirectory: string;
-    enableLog: boolean;
     logFilename: string;
     logDirectory: string;
     logFileMaxSize: string;
@@ -99,7 +98,6 @@ declare namespace OCC {
     deviceFingerprintEnabled: boolean;
     deviceFingerprintUrl: string;
     deviceFingerprintOrgId: string;
-
     [key: string]: string | boolean;
   }
 
@@ -115,6 +113,7 @@ declare namespace OCC {
     savedCardId?: string;
     profileId?: string;
   }
+
   export interface PayerAuthSetupResponse {
     status: string;
     accessToken: string;
@@ -123,6 +122,7 @@ declare namespace OCC {
   }
 
   export interface CardDetails {
+    additionalSavedCardProperties: any;
     expirationMonth: string;
     expirationYear: string;
     cvv?: string;
@@ -132,7 +132,6 @@ declare namespace OCC {
     saveCard?: boolean;
     maskedCardNumber?: string;
     token?: string;
-    additionalSavedCardProperties: any;
   }
 
   export interface BillingAddress {
@@ -230,7 +229,6 @@ declare namespace OCC {
     httpBrowserJavaScriptEnabled?: boolean;
     httpAcceptContent?: string;
     pauseRequestId?: string;
-
     stepUpUrl?: string;
     accessToken?: string;
     pareq?: string;
@@ -292,6 +290,7 @@ declare namespace OCC {
   export interface StatusProps {
     hostTransactionId: string;
   }
+
   export interface TransactionStatus {
     amount?: number;
     statusProps: StatusProps;
@@ -441,7 +440,6 @@ declare namespace OCC {
     locale: string;
     transactionType: string;
     currencyCode: string;
-
     authorizationResponse?: AuthorizationResponse;
     captureResponse?: CaptureResponse;
     creditResponse?: CreditResponse;
@@ -459,7 +457,6 @@ declare namespace OCC {
     hostTimestamp: string;
     hostTransactionId: string;
     merchantTransactionId: string;
-
     response: WebhookGenericResponse;
     additionalProperties?: WebhookAdditionalProperties;
   }
@@ -555,6 +552,7 @@ declare namespace OCC {
     applicationInformation: Application
     _links: ResponseLink
   }
+
   export interface Application {
     applications: [
       {
@@ -567,6 +565,7 @@ declare namespace OCC {
       }
     ]
   }
+
   export interface ResponseLink {
     self: {
       href: string,
@@ -579,7 +578,7 @@ declare namespace OCC {
     href: string,
     method: string
   }
-
+ 
   export interface Notification {
     notificationId: string;
     retryNumber: number;
@@ -605,7 +604,6 @@ declare namespace OCC {
     customers?: Link[];
   }
 
-
   export interface Link {
     href: string;
   }
@@ -619,7 +617,7 @@ declare namespace OCC {
     source: string;
     iin: string;
     token: string;
-    cardProps: object;
+    cardProps: cardProps;
     nameOnCard: string;
     creditCardNumber: string;
     repositoryId: string;
@@ -631,6 +629,11 @@ declare namespace OCC {
     expirationDayOfMonth: string;
   }
 
+  export interface cardProps{
+    customerId : string;
+    instrumentId : string;
+  }
+  
   export interface SubscriptionDetailsResponse {
     organizationId: string;
     productId: string;
@@ -662,6 +665,7 @@ declare namespace OCC {
     status: string;
     expirationDate: string;
   }
+
   export interface webhookSubscriptionResponse {
     organizationId: string,
     productId: string,
@@ -679,9 +683,6 @@ declare namespace OCC {
     deliveryType: string,
     notificationScope: string
   }
-
-
-
 }
 
 declare namespace Express {

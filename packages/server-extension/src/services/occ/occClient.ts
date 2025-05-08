@@ -13,22 +13,22 @@ export class OccClient {
     });
   }
 
-  getGatewaySettings(): Promise<OCC.GatewaySettingsResponse> {
+  getGatewaySettings(siteId?:string): Promise<OCC.GatewaySettingsResponse> {
     return this.requestGET({
       url: "/ccadmin/v1/sitesettings/isv-occ-gateway",
-    });
+    },siteId);
   }
 
-  getOrder(orderId: string): Promise<OCC.OrderDataResponse> {
+  getOrder(orderId: string,siteId?:string): Promise<OCC.OrderDataResponse> {
     return this.requestGET({
       url: `/ccadmin/v1/orders/${orderId}`,
-    });
+    },siteId);
   }
 
-  getCardTypes(): Promise<Record<string, any>> {
+  getCardTypes(siteId?:string): Promise<Record<string, any>> {
     return this.requestGET({
       url: `/ccstore/v1/payment/types`,
-    });
+    },siteId);
   }
 
   updateExtensionVariable(variableDetails: any,id: string): Promise<Record<string, any>> {
@@ -73,13 +73,17 @@ export class OccClient {
     });
   }
 
-  requestGET(options: any): Promise<any> {
+  requestGET(options: any,siteId?:string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.sdk.get({
         callback: (err: any, res: any) => {
           Boolean(err) ? reject(err) : resolve(res);
         },
         ...options,
+        headers:{
+          ...options.headers, // preserve any existing headers in options
+          ...(siteId ? { 'x-ccsite': siteId } : {}),
+         }
       });
     });
   }
