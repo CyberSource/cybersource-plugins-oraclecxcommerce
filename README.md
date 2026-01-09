@@ -14,7 +14,30 @@ Please refer to the [official documentation](documentation/occ.md) to get all de
 
 ## Install dependencies
 
-From your project's root run
+To ensure @isv-occ-payment packages are always resolved from the local workspace (and never fetched from the public npm registry), update your system .npmrc.
+
+Open the system .npmrc:
+
+Windows:
+
+```bash
+npm config edit
+```
+
+Mac:
+
+```bash
+open ~/.npmrc
+```
+
+
+Add the following configuration:
+```
+@isv-occ-payment:registry=http://localhost/
+```
+This ensures that if the local workspace package is missing, the installation will fail, instead of falling back to npm.
+
+Then, install dependencies from your project directory:
 
 ```bash
 yarn install

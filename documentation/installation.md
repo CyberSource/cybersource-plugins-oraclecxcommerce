@@ -29,11 +29,14 @@ The following is required before going through installation steps:
 
 1. Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
 2. NodeJS version: 18.16.1, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
-3. OCC environment
+3. Configure `.npmrc` to resolve `@isv-occ-payment` packages only from the local workspace.
+    - Add the following to your **global** `.npmrc` (via `npm config edit` on Windows or `open ~/.npmrc` on Mac):
+         ` @isv-occ-payment:registry=http://localhost/`
+4. OCC environment
     - OCC Admin interface: https://asbx80c1dev-admin-{env}.oraclecloud.com/occs-admin/
     - OCC Storefront: https://asbx80c1dev-store-{env}.oraclecloud.com
-4. [Application Key](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/ccdev/register-applications.html)
-5. User credentials for OCC Admin
+5. [Application Key](https://docs.oracle.com/en/cloud/saas/cx-commerce/21d/ccdev/register-applications.html)
+6. User credentials for OCC Admin
 
 
 Install all the dependencies by running `yarn install` from the project's root.
