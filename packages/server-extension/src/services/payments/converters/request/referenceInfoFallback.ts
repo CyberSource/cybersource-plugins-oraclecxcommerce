@@ -28,8 +28,9 @@ function getTransactionId(
 }
 
 export default async function referenceInfoFallback(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
-  const requestContext: RequestContext = req.app.locals;
+
+  const context = buildPaymentContext(req, res);
+  const requestContext: RequestContext = res.locals.requestContext as RequestContext;
   const { webhookRequest } = context;
   const { orderId, paymentId, referenceInfo } = webhookRequest;
 

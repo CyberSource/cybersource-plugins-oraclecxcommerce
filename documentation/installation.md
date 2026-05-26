@@ -27,8 +27,8 @@ Please pay attention to installation steps documented for both SSE and widgets (
 
 The following is required before going through installation steps:
 
-1. Yarn version: [1.22.4](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-2. NodeJS version: 18.16.1, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
+1. Yarn version: [1.22.19](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+2. NodeJS version: 24.15.0, You could use [NVM](https://github.com/nvm-sh/nvm) to manage multiple versions locally
 3. Configure `.npmrc` to resolve `@isv-occ-payment` packages only from the local workspace.
     - Add the following to your **global** `.npmrc` (via `npm config edit` on Windows or `open ~/.npmrc` on Mac):
          ` @isv-occ-payment:registry=http://localhost/`

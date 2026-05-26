@@ -24,7 +24,7 @@ import { noop, formatDate } from '@oracle-cx-commerce/utils/generic';
 import { getPayerAuthPaymentGroup } from '@oracle-cx-commerce/react-components/utils/payment';
 import { replaceSpecialCharacter } from '../isv-common';
 import payerAuthCss from './styles.css';
-import { getGlobalContext, getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
+import { getCurrentSiteId, getGlobalContext, getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { CHANNEL } from '../constants';
 import { DDC_URL_PATTERN, RETURN_URL } from '../constants';
 import { getIpAddress, getOptionalPayerAuthFields, additionalFieldsMapper } from '../isv-common';
@@ -411,24 +411,41 @@ const IsvCheckoutPlaceOrderButton = props => {
     });
   }
 
-  async function payerAuthValidation() {
+async function payerAuthValidation() {
     return new Promise((resolve) => {
       stepUpFormRef.current.submit();
       let frame = document.querySelector('.Payer_Auth_Form');
       let overlay = document.querySelector('.Overlay');
       frame.style.display = 'block';
       overlay.style.display = 'block';
+      const siteId = getCurrentSiteId(getState());
+      const sites = getState().siteRepository?.sites || {};
+      const currentSite = sites[siteId];
+      const occSiteDomain = currentSite?.productionURL || '';
+      let eventDomain = '';
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
+          eventDomain = new URL(event.origin).hostname;
+          if (eventDomain !== occSiteDomain) {
+              return;
+          }
           let type = event.data.messageType;
           if (type === 'transactionValidation') {
-            if (event.data.message != undefined) {
+            if (event.data.message !== undefined) {
               frame.style.display = 'none';
               overlay.style.display = 'none';
               console.log(alertActionCompletedSuccessfully);
-              resolve(JSON.parse(event.data.message));
-            };
-          };
+              let parsedMessage;
+              try {
+                parsedMessage = JSON.parse(event.data.message);
+              } catch (e) {
+                // If not JSON, just return the raw message or handle as needed
+                parsedMessage = event.data.message;
+                console.error('Failed to parse message as JSON:', event.data.message, e);
+              }
+              resolve(parsedMessage);
+            }
+          }
         }, false);
       }
       else {
@@ -436,8 +453,7 @@ const IsvCheckoutPlaceOrderButton = props => {
       }
     })
   }
-
-
+ 
   useEffect(() => {
     getIpAddress()
       .then(setIpAddress)
@@ -495,7 +511,11 @@ const IsvCheckoutPlaceOrderButton = props => {
 
   useEffect(() => {
     if (self != top) {
-      top.location = encodeURI(self.location);
+        var currentUrl = self.location;
+        var sanitizedUrl = sanitizeUrl(currentUrl);
+        if (sanitizedUrl) {
+          top.location.replace(sanitizedUrl);
+        }
     }
   }, []);
 
@@ -512,7 +532,10 @@ const IsvCheckoutPlaceOrderButton = props => {
               <iframe name="stepUpIframe" height={height} width={width} sandbox></iframe>
               <form ref={stepUpFormRef} id="stepUpForm" target="stepUpIframe" method="post" >
                 <input ref={stepUpInputRef} type="hidden" name="JWT" />
-                <input type="hidden" name="MD" value={`orderId=${order.id},channel=${channel}`} />
+                <input type="hidden" name="MD" value={typeof window !== 'undefined'
+                      ? window.btoa(`orderId=${order.id},channel=${channel},siteId=${getCurrentSiteId(getState())}`)
+                      : ''
+                  } />
               </form>
             </div>
           </Styled>

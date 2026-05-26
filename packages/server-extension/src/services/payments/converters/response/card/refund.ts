@@ -5,7 +5,7 @@ import buildPaymentContext from '@server-extension/services/payments/paymentCont
 import { Request } from 'express';
 
 export default function createRefundResponse(req: Request, res: any) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   const paymentResponse = <DeepRequired<PtsV2PaymentsRefundPost201Response>>context.data.response;
 
   context.webhookResponse = convertResponse(context, genericCardPayment(context), {
@@ -14,5 +14,5 @@ export default function createRefundResponse(req: Request, res: any) {
     }
   });
 
-  Object.assign(res, context.webhookResponse);
+  res.locals.data = context.webhookResponse;
 }

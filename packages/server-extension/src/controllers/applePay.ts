@@ -14,7 +14,7 @@ router.post(
   validateRequest,
   asyncMiddleware(async (req: Request, res: Response, _next: NextFunction) => {
     const validationUrl = <string>req.body.validationUrl;
-    const requestContext = <RequestContext>req.app.locals;
+    const requestContext = <RequestContext>res.locals.requestContext;
     let sanitizedUrl = sanitizeUrl(validationUrl);
     if (!sanitizedUrl) {
       throw new Error("Invalid Validation URL");

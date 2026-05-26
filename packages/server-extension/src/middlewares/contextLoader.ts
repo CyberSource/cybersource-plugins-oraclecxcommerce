@@ -8,7 +8,9 @@ const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
 
 function contextLoader(req: Request, res: Response, next: NextFunction) {
-  const requestContext: RequestContext = req.app.locals;
+  res.locals.data = res.locals.data || {};
+  res.locals.requestContext = res.locals.requestContext || {};
+  const requestContext: RequestContext = res.locals.requestContext;
   requestContext.channel = req.body?.channel || req.headers['channel'] || 'storefront';
   loggingService.init(logger);
   occClient.init(logger);

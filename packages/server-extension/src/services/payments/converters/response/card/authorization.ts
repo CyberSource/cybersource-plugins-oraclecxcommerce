@@ -6,7 +6,7 @@ import { Request, Response } from 'express';
 import {scaMapper} from '../mappers/scaMapper';
 
 export default function createAuthorizationResponse(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   context.webhookResponse = convertResponse(
     context,
     genericCardPayment(context),
@@ -15,5 +15,5 @@ export default function createAuthorizationResponse(req: Request, res: Response)
     saleCardMapper,
     savedCardPaymentMapper
    );
-  Object.assign(res, context.webhookResponse);
+  res.locals.data = context.webhookResponse;
 }

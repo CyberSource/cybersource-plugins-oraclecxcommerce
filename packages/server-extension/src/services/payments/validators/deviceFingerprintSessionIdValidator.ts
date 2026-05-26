@@ -17,7 +17,7 @@ function validateSessionId(sessionId?: string, encryptedData?: string, iv?: stri
 
 export default function validateDeviceFingerprintSessionId(req: Request, res: Response) {
   const { customProperties } = req.body;
-  if (req.app.locals.gatewaySettings.deviceFingerprintEnabled) {
+  if (res.locals?.gatewaySettings?.deviceFingerprintEnabled) {   
     const sessionId = customProperties?.deviceFingerprintSessionId;
     validateSessionId(
       sessionId,

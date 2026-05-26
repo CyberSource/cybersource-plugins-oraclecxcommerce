@@ -1,6 +1,6 @@
 {
   "name": "@isv-occ-payment/server-extension",
-  "version": "25.2.0",
+  "version": "25.2.1",
   "private": true,
   "description": "Payment Server Extension",
   "repository": {
@@ -55,10 +55,10 @@
     "ssl_port": "3001"
   },
   "dependencies": {
-    "@isv-occ-payment/occ-payment-factory": "25.2.0",
-    "@isv-occ-payment/occ-sdk": "25.2.0",
-    "@isv-occ-payment/payment-gateway": "25.2.0",
-    "@isv-occ-payment/payment-sdk": "25.2.0",
+    "@isv-occ-payment/occ-payment-factory": "25.2.1",
+    "@isv-occ-payment/occ-sdk": "25.2.1",
+    "@isv-occ-payment/payment-gateway": "25.2.1",
+    "@isv-occ-payment/payment-sdk": "25.2.1",
     "cybersource-rest-client": "0.0.66",
     "deepmerge": "^4.2.2",
     "express-validator": "7.0.1",
@@ -79,9 +79,9 @@
     "@types/superagent-proxy": "^3.0.0",
     "@types/xml2js": "0.4.13",
     "@zerollup/ts-transform-paths": "^1.7.18",
-    "body-parser": "latest",
+    "body-parser": "1.20.3",
     "cors": "^2.8.5",
-    "express": "latest",
+    "express": "4.21.2",
     "nconf": "0.12.1",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",

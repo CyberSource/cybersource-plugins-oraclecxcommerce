@@ -55,6 +55,13 @@ const IsvPaymentMethod = props => {
   }
 
   useEffect(() => {
+    const state = store.getState();
+    if (!state.paymentRepository || !state.paymentRepository.paymentConfigurations) {
+      store.endpoint('getPaymentConfigurations');
+    }
+  }, [store]);
+
+  useEffect(() => {
     if (creditCardEnabled && isDisplayCreditCard) {
       action('flexMicroformAction', { isPreview }).then(response => {
         if (!response.ok) {
@@ -87,7 +94,11 @@ const IsvPaymentMethod = props => {
 
   useEffect(() => {
     if (self != top) {
-      top.location = encodeURI(self.location);
+        var currentUrl = self.location;
+        var sanitizedUrl = sanitizeUrl(currentUrl);
+        if (sanitizedUrl) {
+          top.location.replace(sanitizedUrl);
+        }
     }
   }, []);
 

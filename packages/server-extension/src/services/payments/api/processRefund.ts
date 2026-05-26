@@ -6,7 +6,7 @@ const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 import { maskRequestData } from '@server-extension/common';
 
 export default async function makeRefundRequest(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   const { request, transactionId } = context.data;
   const { merchantConfig } = context.requestContext;
   const logger = LogFactory.logger();

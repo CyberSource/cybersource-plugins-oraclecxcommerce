@@ -12,7 +12,7 @@ router.get(
   validateRequest,
   asyncMiddleware(async (req: Request, res: Response, _next: NextFunction) => {
     const date = new Date(req.query.date as string);
-    const requestContext = <RequestContext>req.app.locals;
+    const requestContext = <RequestContext>res.locals.requestContext;
 
     const response = await getDailyReport(date, requestContext);
 
@@ -27,7 +27,7 @@ router.get(
   asyncMiddleware(async (req: Request, res: Response, _next: NextFunction) => {
     const startDate = req.query.startTime ? new Date(req.query.startTime as string) : undefined;
     const endDate = req.query.endTime ? new Date(req.query.endTime as string) : undefined;
-    const requestContext = <RequestContext>req.app.locals;
+    const requestContext = <RequestContext>res.locals.requestContext;
 
     const response = await getOnDemandReport(requestContext, startDate, endDate);
 

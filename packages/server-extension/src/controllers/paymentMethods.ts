@@ -8,7 +8,7 @@ router.get(
   '/',
   noCache,
   asyncMiddleware(async function (req: Request, res: Response, _next: NextFunction) {
-    const { gatewaySettings } = req.app.locals;
+    const { gatewaySettings } = res.locals.requestContext;
     const settings = paymentMethods(gatewaySettings);
     logger.debug(`Payment method webhook response: ${JSON.stringify(settings)}`);
     res.json(settings);   

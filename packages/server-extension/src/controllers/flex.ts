@@ -13,8 +13,7 @@ router.post(
   validateRequest,
   asyncMiddleware(async function (req: Request, res: Response, _next: NextFunction) {
     const captureContextPayload = <OCC.CaptureContextRequest>req.body;
-    const requestContext = <RequestContext>req.app.locals;
-
+    const requestContext = <RequestContext>res.locals;
     const captureContext: OCC.CaptureContextResponse = await createCaptureContext(
       requestContext,
       captureContextPayload
