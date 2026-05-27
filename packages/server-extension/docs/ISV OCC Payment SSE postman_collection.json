@@ -466,7 +466,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{APP_KEY}}",
+            "value": "Bearer {{ACCESS_TOKEN}}",
             "type": "text"
           }
         ],
@@ -539,7 +539,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{APP_KEY}}",
+            "value": "Bearer {{ACCESS_TOKEN}}",
             "type": "text"
           }
         ],
@@ -776,6 +776,10 @@
     },
     {
       "key": "APP_KEY",
+      "value": ""
+    },
+    {
+      "key": "ACCESS_TOKEN",
       "value": ""
     },
     {
