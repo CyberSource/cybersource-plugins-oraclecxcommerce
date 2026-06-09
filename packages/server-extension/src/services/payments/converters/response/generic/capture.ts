@@ -5,7 +5,7 @@ import buildPaymentContext from '@server-extension/services/payments/paymentCont
 import { Request, Response } from 'express';
 
 export default function createCaptureResponse(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   const paymentResponse = <DeepRequired<PtsV2PaymentsCapturesPost201Response>>context.data.response;
 
   context.webhookResponse = convertResponse<OCC.GenericWebhookResponse>(
@@ -16,5 +16,5 @@ export default function createCaptureResponse(req: Request, res: Response) {
     }
   );
 
-  Object.assign(res, context.webhookResponse);
+  res.locals.data = context.webhookResponse;
 }

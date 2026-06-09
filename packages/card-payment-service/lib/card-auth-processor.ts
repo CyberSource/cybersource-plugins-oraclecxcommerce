@@ -11,7 +11,8 @@
  */
 
 import { PaymentProcessor } from '@isv-occ-payment/occ-payment-service';
-import validateTransientToken from '@isv-occ-payment/server-extension/cjs/services/payments/validators/transientTokenValidator';
+import { Request, Response } from 'express';
+import { validateTransientToken } from '@isv-occ-payment/server-extension/cjs/services/payments/validators/transientTokenValidator';
 import validateDeviceFingerprintSessionId from '@isv-occ-payment/server-extension/cjs/services/payments/validators/deviceFingerprintSessionIdValidator';
 import cardAuthorizationRequest from '@isv-occ-payment/server-extension/cjs/services/payments/converters/request/cardAuthorization';
 import processPayment from '@isv-occ-payment/server-extension/cjs/services/payments/api/processPayment';
@@ -29,6 +30,11 @@ export class CardAuthProcessor extends PaymentProcessor {
       name: 'auth',
       middlewares: [
         validateTransientToken,
+            async (req: Request, res: Response) => {
+              const customProperties = req.body && (req.body as any).customProperties;
+              const merchantConfig = (req as any).merchantConfig;
+              await validateTransientToken(customProperties, merchantConfig);
+            },
         validateDeviceFingerprintSessionId,
         cardAuthorizationRequest,
         processPayment,

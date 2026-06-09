@@ -1,5 +1,5 @@
 import { GenericDispatcher, Middleware, PaymentContext } from '@server-extension/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import buildPaymentContext from './paymentContextBuilder';
 
 export type PaymentHandler = Middleware<PaymentContext>;
@@ -22,8 +22,8 @@ class PaymentDispatcher {
     return dispatcher;
   }
 
-  async dispatchFrom(req: Request): Promise<OCC.GenericPaymentWebhookResponse> {
-    const paymentContext = buildPaymentContext(req);
+  async dispatchFrom(req: Request, res: Response): Promise<OCC.GenericPaymentWebhookResponse> {
+    const paymentContext = buildPaymentContext(req, res);
     await this.dispatch(paymentContext);
     return paymentContext.webhookResponse as OCC.GenericPaymentWebhookResponse;
   }

@@ -1,43 +1,65 @@
 import { RequestContext } from '@server-extension/common';
 import { ReportDownloadsApi } from 'cybersource-rest-client';
+import crypto from 'crypto';
 import fs from 'fs';
 import nconf from 'nconf';
 import path from 'path';
-import makeRequest, { apiClient } from '../api/paymentCommand';
+import { makeRequestWithConfigurableClient } from '../api/paymentCommand';
 import { createDailyReportResponse } from '../converters/response/reports';
 
-const REPORT_FILE_NAME = 'dailyReport';
-
 const DOWNLOAD_PATH = nconf.get('report.daily.download.path') ?? path.join(__dirname, './data');
-const REPORT_FILE_PATH = path.join(DOWNLOAD_PATH, `${REPORT_FILE_NAME}.xml`);
-const DOWNLOAD_FILE_PATH = path.join(DOWNLOAD_PATH, REPORT_FILE_NAME);
 
-function ensureReportPaths() {
-  !fs.existsSync(DOWNLOAD_PATH) && fs.mkdirSync(DOWNLOAD_PATH);
-  fs.existsSync(REPORT_FILE_PATH) && fs.unlinkSync(REPORT_FILE_PATH);
+function ensureDownloadDirectory() {
+  if (!fs.existsSync(DOWNLOAD_PATH)) {
+    fs.mkdirSync(DOWNLOAD_PATH, { recursive: true });
+  }
 }
 
 export async function getDailyReport(date: Date, requestContext: RequestContext) {
   const { gatewaySettings } = requestContext;
   const reportName = gatewaySettings.dailyReportName || 'ConversionDetailReport_Daily_Classic';
 
-  ensureReportPaths();
+  // Generate unique file paths per request to prevent race conditions
+  const uniqueId = crypto.randomUUID();
+  const reportFileName = `dailyReport_${uniqueId}`;
+  const reportFilePath = path.join(DOWNLOAD_PATH, `${reportFileName}.xml`);
+  const downloadFilePath = path.join(DOWNLOAD_PATH, reportFileName);
 
-  apiClient.downloadFilePath = DOWNLOAD_FILE_PATH;
-  await makeRequest(
-    requestContext.merchantConfig,
-    ReportDownloadsApi,
-    'downloadReport',
-    date.toISOString().slice(0, 10),
-    reportName,
-    gatewaySettings.merchantID
-  );
+  ensureDownloadDirectory();
 
-  return await getXmlReportConversionInfo();
+  try {
+    // Download report to unique file path using a per-request ApiClient
+    // This prevents race conditions between concurrent report downloads
+    await makeRequestWithConfigurableClient(
+      requestContext.merchantConfig,
+      ReportDownloadsApi,
+      'downloadReport',
+      (apiClient) => {
+        // Configure the ApiClient with the unique download path for this request
+        apiClient.downloadFilePath = downloadFilePath;
+      },
+      date.toISOString().slice(0, 10),
+      reportName,
+      gatewaySettings.merchantID
+    );
+
+    // Read and parse the report
+    return await getXmlReportConversionInfo(reportFilePath);
+  } finally {
+    // Clean up temporary file after processing
+    if (fs.existsSync(reportFilePath)) {
+      try {
+        fs.unlinkSync(reportFilePath);
+      } catch (cleanupError) {
+        // Log cleanup error but don't fail the request
+        console.error(`Failed to clean up temporary report file: ${reportFilePath}`, cleanupError);
+      }
+    }
+  }
 }
 
-function getXmlReportConversionInfo(): Promise<OCC.ConversionInfo[]> {
-  const file = fs.readFileSync(REPORT_FILE_PATH, 'utf-8');
+function getXmlReportConversionInfo(filePath: string): Promise<OCC.ConversionInfo[]> {
+  const file = fs.readFileSync(filePath, 'utf-8');
 
   return createDailyReportResponse(file);
 }

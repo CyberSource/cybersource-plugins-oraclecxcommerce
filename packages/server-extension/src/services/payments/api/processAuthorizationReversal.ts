@@ -7,7 +7,7 @@ const { LogFactory } = require('@isv-occ-payment/occ-payment-factory');
 const logger = LogFactory.logger();
 
 export default async function makeAuthReversalRequest(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
 
   if(!context?.data?.transactionId){
     return;

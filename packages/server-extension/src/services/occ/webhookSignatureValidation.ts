@@ -15,10 +15,24 @@ function validateWebHookPayloadSignature(
     .createHmac(algorithm, decoded_secret_key)
     .update(rawBody)
     .digest('base64');
-  logger.debug("Calculated signature: " + calculated_signature);
-  if (calculated_signature != webhookSignature) {
+
+  // Use constant-time comparison to prevent timing attacks
+  const calculatedBuffer = Buffer.from(calculated_signature);
+  const providedBuffer = Buffer.from(webhookSignature);
+
+  // Check length equality first (timingSafeEqual requires same length)
+  if (calculatedBuffer.length !== providedBuffer.length) {
+    logger.debug("Signature validation failed: length mismatch");
     throw new Error('Invalid signature. Access denied');
   }
+
+  // Perform constant-time comparison to prevent timing side-channel attacks
+  if (!crypto.timingSafeEqual(calculatedBuffer, providedBuffer)) {
+    logger.debug("Signature validation failed: signature mismatch");
+    throw new Error('Invalid signature. Access denied');
+  }
+
+  logger.debug("Signature validation successful");
 }
 
 export default validateWebHookPayloadSignature;

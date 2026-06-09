@@ -46,10 +46,32 @@ function createMerchantConfig(settings: OCC.GatewaySettings): MerchantConfig {
 }
 
 export default (req: Request, res: Response, next: NextFunction) => {
-  const requestContext: RequestContext = req.app.locals;
+
+  const requestContext: RequestContext = res.locals.requestContext;
   const { gatewaySettings } = requestContext;
+  const reqPath = req.path || req.originalUrl;
 
-  requestContext.merchantConfig = createMerchantConfig(gatewaySettings);
+  const isWebhookTokenUpdate = reqPath.includes('/ccstorex/custom/isv-payment/v2/webhook/tokenUpdate');
+  const isReturnUrl = reqPath.includes('/isv-payment/v2/payerAuth/returnUrl');
 
+  if (isWebhookTokenUpdate) {
+    if (gatewaySettings) {
+      requestContext.merchantConfig = createMerchantConfig(gatewaySettings);
+      res.locals.merchantConfig = requestContext.merchantConfig;
+    }
+    return next();
+  }
+
+  if (isReturnUrl) {
+    return next();
+  }
+
+  if (gatewaySettings) {
+    requestContext.merchantConfig = createMerchantConfig(gatewaySettings);
+    res.locals.merchantConfig = requestContext.merchantConfig;
+  }
   next();
+
 };
+
+ 

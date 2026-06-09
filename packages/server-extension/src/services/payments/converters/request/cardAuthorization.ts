@@ -21,7 +21,7 @@ import { Request, Response } from 'express';
 import buildPaymentContext from '@server-extension/services/payments/paymentContextBuilder';
 
 export default function createAuthorizationRequest(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   const { webhookRequest } = context;
 
   const paymentRequest: CreatePaymentRequest = {

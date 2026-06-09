@@ -117,12 +117,11 @@ export class PaymentService {
    * @param  {Object} req - Incoming request
    * @returns {Object} response - Current transaction processor response
    */
-  async process(req: Request) {
+  async process(req: Request, res?:any) {
     try {
       const processor = this.getProcessor(req.body.transactionType);
-      return await processor.processAll(req);
+      return await processor.processAll(req, res);
     } catch (error) {
-      // logger.error(error);
       throw error;
     }
   }

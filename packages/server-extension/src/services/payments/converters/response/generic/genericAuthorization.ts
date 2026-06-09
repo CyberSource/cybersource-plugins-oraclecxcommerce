@@ -5,12 +5,12 @@ import buildPaymentContext from '@server-extension/services/payments/paymentCont
 import { Request, Response } from 'express';
 
 export default function createAuthorizationResponse(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   context.webhookResponse = convertResponse<OCC.GenericWebhookResponse>(
     context,
     genericPayment(context),
     saleGenericMapper
   );
 
-  Object.assign(res, context.webhookResponse);
+ res.locals.data = context.webhookResponse;
 }

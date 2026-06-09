@@ -34,6 +34,22 @@ function getHttp(url) {
 }
 
 /**
+ * Masks sensitive tokens for logging to prevent credential leakage
+ * @param {String} token - The access token to mask
+ * @returns {String} Masked token string safe for logging
+ */
+function maskToken(token) {
+  'use strict';
+  if (!token || typeof token !== 'string') {
+    return '[no token]';
+  }
+  // Show first 8 characters for debugging, mask the rest
+  // This allows verification that a token exists without exposing the full credential
+  const visibleChars = Math.min(8, token.length);
+  return token.substring(0, visibleChars) + '...[REDACTED]';
+}
+
+/**
  * @class
  * This constructor function creates CommerceSDK instance.
  * <p>
@@ -215,7 +231,7 @@ CommerceSDK.prototype.login = function () {
         var accessToken = response.access_token; // jshint ignore:line
         self.setAccessToken(accessToken);
         CommerceSDK.printDebugMessage(
-          'user logged in with access token ::' + self.accessToken,
+          'user logged in with access token :: ' + maskToken(self.accessToken),
           self.logger
         );
         resolve(self);
@@ -367,7 +383,7 @@ CommerceSDK.prototype.request = function (args) {
   }
 
   if (requestMethod === 'post' || requestMethod === 'put' || requestMethod === 'delete') {
-    requestOptions.headers['Content-Length'] = new Buffer(requestData).length;
+    requestOptions.headers['Content-Length'] = Buffer.from(requestData).length;
     CommerceSDK.printDebugMessage(
       'The content type values is :: ' + requestOptions.headers['Content-Type'],
       self.logger
@@ -652,7 +668,7 @@ CommerceSDK.prototype.init = function (endpoint) {
     }
 
     CommerceSDK.printDebugMessage(
-      'Init : access token value is :: ' + self.accessToken,
+      'Init : access token value is :: ' + maskToken(self.accessToken),
       self.logger
     );
     if (!self.accessToken) {

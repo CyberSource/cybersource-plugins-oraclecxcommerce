@@ -8,9 +8,9 @@ export const CHANNEL_REGEX = /channel=([^,]+)/i;
 export const CLIENT_VERSION ="v2";
 export const REPLACECHARACTERREGEX = /~W!C@O#n/g;
 export const APPLICATION_NAME = 'Oracle Commerce (REST)';
-export const APPLICATION_VERSION = '25.2.0';
+export const APPLICATION_VERSION = '25.2.1';
 
-const payload = ['email', 'lastName', 'firstName', 'expirationYear', 'expirationMonth', 'phoneNumber', 'cvv', 'securityCode','number','address1','postalCode','locality','address2','ipAddress'];
+const payload = ['email', 'lastName', 'firstName', 'expirationYear', 'expirationMonth', 'phoneNumber', 'cvv', 'securityCode','number','address1','postalCode','locality','address2','ipAddress','token','suffix','prefix','bin','accountNumber','correctedAccountNumber','cardNumber','key','secretKey'];
 const replaceCharacterRegex = /./g;
 
 export interface Logger {
@@ -72,6 +72,7 @@ export const maskRequestData = (obj: any) => {
 };
 
 const replaceChar = (logData: any) => {
+  if (!logData) return logData;
   Object.keys(logData).forEach(key => {
     if ('object' === typeof logData[key]  &&  null !== logData[key]) {
       replaceChar(logData[key]);

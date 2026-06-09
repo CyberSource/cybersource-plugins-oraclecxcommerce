@@ -92,11 +92,11 @@ export class PaymentProcessor {
    * @param {Object} request - Request object
    * @returns {Object} response - Processor transaction response
    */
-  async processAll(req: Request) {
-    //Initialize empty response
-    const res = {};
-
+  async processAll(req: Request, res?: any) {
     //Execute all middlewares in configured order, passing in request and (initially) empty response
+     if (!res || !res.locals) {
+      throw new Error('processAll must be called with the real Express res object for correct context propagation.');
+    }
     await this.executeMiddlewares(req, res);
 
     //Send response

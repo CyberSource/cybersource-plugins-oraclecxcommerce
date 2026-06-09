@@ -4,7 +4,7 @@ import buildPaymentContext from '@server-extension/services/payments/paymentCont
 import { Request, Response } from 'express';
 
 export default function createCreditRequest(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   const { webhookRequest } = context;
 
   context.data.request = convertRequest<RefundCaptureRequest>(context, {

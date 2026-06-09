@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import nconf from 'nconf';
 
 const algorithm = 'aes-256-cbc';
-const iv = crypto.randomBytes(16);
 const encoding = 'base64';
 
 const DEFAULT_KEY = crypto.randomBytes(32);
@@ -16,6 +15,8 @@ const getKey = () => {
 
 export default {
   encrypt(text: string): OCC.EncryptedText {
+    // Generate a fresh random IV for each encryption operation to prevent IV reuse attacks
+    const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv(algorithm, Buffer.from(getKey()), iv);
 
     let encrypted = cipher.update(text);
@@ -38,7 +39,15 @@ export default {
   validate(text: string, cipher: OCC.EncryptedText) {
     let valid = false;
     try {
-      valid = this.decrypt(cipher) === text;
+      const decrypted = this.decrypt(cipher);
+      // Use constant-time comparison to prevent timing attacks
+      const textBuffer = Buffer.from(text, 'utf8');
+      const decryptedBuffer = Buffer.from(decrypted, 'utf8');
+
+      // Check length equality first (timingSafeEqual requires same length)
+      if (textBuffer.length === decryptedBuffer.length) {
+        valid = crypto.timingSafeEqual(textBuffer, decryptedBuffer);
+      }
     } catch (error) {}
 
     return valid;

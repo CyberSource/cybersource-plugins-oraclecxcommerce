@@ -8,23 +8,26 @@ function toArray(options: string) {
     .map((payment) => payment.trim());
 }
 
-export default function buildPaymentContext(req: Request): PaymentContext {
-  const requestContext = <RequestContext>req.app.locals;
+export default function buildPaymentContext(req: Request, res: any): PaymentContext {
+  const requestContext = <RequestContext>res.locals.requestContext;
   const webhookRequest = <OCC.GenericPaymentWebhookRequest>req.body;
   const paymentMode = webhookRequest.customProperties?.paymentType ?? webhookRequest.paymentMethod;
 
-  const getSetting = (key: string) => requestContext.gatewaySettings[key];
-  const getOptions = (key: string) => toArray(<string>getSetting(key));
+  const getSetting = (key: string) => requestContext.gatewaySettings && requestContext.gatewaySettings[key];
+  const getOptions = (key: string) => {
+    const setting = getSetting(key);
+    return setting ? toArray(<string>setting) : [];
+  };
   const isValidForPaymentMode = (key: string) => getOptions(key).includes(paymentMode);
   const hasOption = (key: string, option: string) => getOptions(key).includes(option);
-  req.app.locals.data = req.app.locals.data || {};
+  //res.locals.data = res.locals.data || {};
 
   return {
     requestContext,
     paymentMode,
     webhookRequest,
     webhookResponse: undefined,
-    data: req.app.locals.data,
+    data: res.locals.data,
     getSetting,
     getOptions,
     hasOption,

@@ -24,7 +24,7 @@ import { noop, formatDate } from '@oracle-cx-commerce/utils/generic';
 import { getPayerAuthPaymentGroup } from '@oracle-cx-commerce/react-components/utils/payment';
 import { replaceSpecialCharacter } from '../isv-common';
 import payerAuthCss from './styles.css';
-import { getGlobalContext, getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
+import { getCurrentSiteId, getGlobalContext, getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { CHANNEL } from '../constants';
 import { DDC_URL_PATTERN, RETURN_URL } from '../constants';
 import { getIpAddress, getOptionalPayerAuthFields, additionalFieldsMapper } from '../isv-common';
@@ -371,13 +371,29 @@ const IsvCheckoutPlaceOrderButton = props => {
     });
   }
 
-
   async function payerAuthSetup(payload) {
     return new Promise((resolve) => {
       action('getPayerAuthSetupAction', { isPreview, setupPayload: { orderId: order.id, ...payload } }).then(response => {
         if (response.ok) {
           const data = response.delta.payerAuthSetupRepository || {};
-          cardinalUrl = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN)[1];
+          if (data.deviceDataCollectionUrl) {
+            let cardinalUrl = null;
+            try {
+              const match = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN);
+              if (match && match[1]) {
+                const extractedUrl = new URL(match[1]);
+                if (extractedUrl.protocol === 'https:') {
+                  cardinalUrl = match[1];
+                } else {
+                  console.error('Device data collection URL must use HTTPS protocol');
+                }
+              } else {
+                console.error('Invalid device data collection URL format');
+              }
+            } catch (e) {
+              console.error('Failed to parse device data collection URL:', e);
+            }
+          }
           payerAuthSetupData = data || false;
         } else {
           action('notify', { level: ERROR, message: response.error.message });
@@ -387,57 +403,99 @@ const IsvCheckoutPlaceOrderButton = props => {
       });
     });
   };
+
   async function callDeviceDataCollection() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (!ddcInputRef.current || !ddcFormRef.current) {
-        return;
+        reject(new Error('DDC form references not available'));
       }
+
+      if (!cardinalUrl) {
+        console.error('Cardinal Commerce URL not available or invalid');
+        reject(new Error('Device data collection URL not configured'));
+      }
+
       ddcFormRef.current.action = payerAuthSetupData.deviceDataCollectionUrl || '';
       ddcInputRef.current.value = payerAuthSetupData.accessToken || '';
       ddcFormRef.current.submit();
+
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
-          if (event.origin === cardinalUrl) {
+
+          if (event.origin !== cardinalUrl) {
+            console.log('Rejected postMessage from untrusted origin:');
+            return;
+          }
+          try {
             let data = JSON.parse(event.data);
             if (data != undefined && data.Status) {
               console.log(alertActionCompletedSuccessfully);
               resolve();
             }
             console.log(alertActionCompletedSuccessfully, data);
-          };
+          } catch (e) {
+            console.error('Failed to parse device data collection response:', e);
+            reject(new Error('Invalid response format from device data collection'));
+          }
         }, false);
-      };
-
+      } else {
+        reject(new Error('Window object not available'));
+      }
     });
   }
-
-  async function payerAuthValidation() {
-    return new Promise((resolve) => {
+ 
+async function payerAuthValidation() {
+    return new Promise((resolve, reject) => {
       stepUpFormRef.current.submit();
       let frame = document.querySelector('.Payer_Auth_Form');
       let overlay = document.querySelector('.Overlay');
       frame.style.display = 'block';
       overlay.style.display = 'block';
+ 
+      const siteId = getCurrentSiteId(getState());
+      const sites = getState().siteRepository?.sites || {};
+      const currentSite = sites[siteId];
+      const occSiteDomain = currentSite?.productionURL || '';
+ 
+      if (!occSiteDomain || typeof occSiteDomain !== 'string' || occSiteDomain.trim() === '') {
+        console.error('No trusted OCC site domain configured');
+        reject(new Error('Trusted domain not configured'));
+      }
+      let eventDomain = '';
       if (typeof window !== 'undefined') {
         window.addEventListener('message', (event) => {
-          let type = event.data.messageType;
-          if (type === 'transactionValidation') {
-            if (event.data.message != undefined) {
-              frame.style.display = 'none';
-              overlay.style.display = 'none';
-              console.log(alertActionCompletedSuccessfully);
-              resolve(JSON.parse(event.data.message));
-            };
-          };
+          try {
+          eventDomain = new URL(event.origin).hostname;
+          if (eventDomain !== occSiteDomain) {
+              return;
+          }
+            let type = event.data.messageType;
+            if (type === 'transactionValidation') {
+              if (event.data.message !== undefined) {
+                frame.style.display = 'none';
+                overlay.style.display = 'none';
+                console.log(alertActionCompletedSuccessfully);
+                let parsedMessage;
+                try {
+                  parsedMessage = JSON.parse(event.data.message);
+                } catch (e) {
+                  parsedMessage = event.data.message;
+                  console.error('Failed to parse message as JSON:', event.data.message, e);
+                }
+                resolve(parsedMessage);
+              }
+            }
+          } catch (e) {
+            console.error('Error processing postMessage:', e);
+            return;
+          }
         }, false);
+      } else {
+        reject(new Error('Window object not available'));
       }
-      else {
-        resolve(false);
-      }
-    })
+    });
   }
-
-
+ 
   useEffect(() => {
     getIpAddress()
       .then(setIpAddress)
@@ -495,7 +553,11 @@ const IsvCheckoutPlaceOrderButton = props => {
 
   useEffect(() => {
     if (self != top) {
-      top.location = encodeURI(self.location);
+        var currentUrl = self.location;
+        var sanitizedUrl = sanitizeUrl(currentUrl);
+        if (sanitizedUrl) {
+          top.location.replace(sanitizedUrl);
+        }
     }
   }, []);
 
@@ -512,7 +574,10 @@ const IsvCheckoutPlaceOrderButton = props => {
               <iframe name="stepUpIframe" height={height} width={width} sandbox></iframe>
               <form ref={stepUpFormRef} id="stepUpForm" target="stepUpIframe" method="post" >
                 <input ref={stepUpInputRef} type="hidden" name="JWT" />
-                <input type="hidden" name="MD" value={`orderId=${order.id},channel=${channel}`} />
+                <input type="hidden" name="MD" value={typeof window !== 'undefined'
+                      ? window.btoa(`orderId=${order.id},channel=${channel},siteId=${getCurrentSiteId(getState())}`)
+                      : ''
+                  } />
               </form>
             </div>
           </Styled>

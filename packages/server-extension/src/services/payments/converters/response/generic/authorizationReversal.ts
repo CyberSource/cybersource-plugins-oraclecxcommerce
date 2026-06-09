@@ -5,7 +5,7 @@ import buildPaymentContext from '@server-extension/services/payments/paymentCont
 import { Request, Response } from 'express';
 
 export default function createAuthorizationReversalResponse(req: Request, res: Response) {
-  const context = buildPaymentContext(req);
+  const context = buildPaymentContext(req, res);
   const paymentResponse = <DeepRequired<PtsV2PaymentsReversalsPost201Response>>(
     context.data.response
   );
@@ -20,5 +20,5 @@ export default function createAuthorizationReversalResponse(req: Request, res: R
     }
   );
 
-  Object.assign(res, context.webhookResponse);
+  res.locals.data = context.webhookResponse;
 }

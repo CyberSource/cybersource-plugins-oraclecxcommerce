@@ -1,4 +1,4 @@
-import { PaymentContext } from '@server-extension/common';
+import { PaymentContext, maskRequestData } from '@server-extension/common';
 import { MerchantConfig, PtsV2PaymentsPost201Response } from 'cybersource-rest-client';
 import { PaymentResponseMapper } from '../../common';
 import makeRequest from '@server-extension/services/payments/api/paymentCommand';
@@ -47,7 +47,7 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
       return;
     }
     let webhookConfigurations = await getSavedNetworkTokenConfigurations();
-    logger.debug("Webhook Subscription : Saved Configurations " + JSON.stringify(webhookConfigurations));
+    logger.debug("Webhook Subscription : Saved Configurations " + JSON.stringify(maskRequestData(webhookConfigurations)));
     let isConfigurationExists = webhookConfigurations.find((configuration: any) => configuration.merchantId === context.requestContext.merchantConfig.merchantID) || false;
     const webhookurl = hostname + ":" + WEBHOOK_SUBSCRIPTION.PORT + WEBHOOK_SUBSCRIPTION.ENDPOINT;
     let subscriptionDetails: OCC.SubscriptionDetailsResponse | false = await getSubscriptionsDetails(merchantConfig);
@@ -99,16 +99,16 @@ async function webhookSubscriptionRequests(context: PaymentContext) {
 
 async function updateWebhookConfiguration(configurations: any){
   let environmentVariables = await occClient.getAllExtensionVariable();
-  logger.debug("Webhook Subscription : All environment varibales" + JSON.stringify(environmentVariables));
+  logger.debug("Webhook Subscription : All environment varibales" + JSON.stringify(maskRequestData(environmentVariables)));
   let extensionVariableDetails =  environmentVariables?.items?.find((variableDetail:any)=>variableDetail?.name === WEBHOOK_SUBSCRIPTION.NETWORK_TOKENS_EXTENSION_VARIABLE) || false;
-  logger.debug("Webhook Subscription : Matching extension Variable " + JSON.stringify(extensionVariableDetails))
-  const extensionVariableId = extensionVariableDetails && extensionVariableDetails.id; 
+  logger.debug("Webhook Subscription : Matching extension Variable " + JSON.stringify(maskRequestData(extensionVariableDetails)))
+  const extensionVariableId = extensionVariableDetails && extensionVariableDetails.id;
   let updatedPayload = {
     ...(extensionVariableId ? {previewValue:configurations}:{preview:configurations}),
     name:WEBHOOK_SUBSCRIPTION.NETWORK_TOKENS_EXTENSION_VARIABLE,
     value:configurations
   };
-  logger.debug("Webhook Subscription : Updated Payload " + JSON.stringify(updatedPayload));
+  logger.debug("Webhook Subscription : Updated Payload " + JSON.stringify(maskRequestData(updatedPayload)));
   if(extensionVariableId){
     logger.debug("Webhook Subscription : Matching Repository Id " + extensionVariableId);
     await occClient.updateExtensionVariable(updatedPayload,extensionVariableId);
@@ -122,9 +122,9 @@ async function updateWebhookConfiguration(configurations: any){
 
   export async function getSavedNetworkTokenConfigurations(){
     let environmentVariables = await occClient.getAllExtensionVariable();
-    logger.debug("Webhook Subscription : All Environment Variables " + JSON.stringify(environmentVariables));
+    logger.debug("Webhook Subscription : All Environment Variables " + JSON.stringify(maskRequestData(environmentVariables)));
     let environmentVariableDetails =  environmentVariables?.items?.find((variableDetail:any)=>variableDetail?.name === WEBHOOK_SUBSCRIPTION.NETWORK_TOKENS_EXTENSION_VARIABLE) || false;
-    logger.debug("Webhook Subscription : Matching Environment Variable " + JSON.stringify(environmentVariableDetails));
+    logger.debug("Webhook Subscription : Matching Environment Variable " + JSON.stringify(maskRequestData(environmentVariableDetails)));
     let savedConfig = environmentVariableDetails?.value || '[]';
     let webhookConfigurations = JSON.parse(savedConfig);
     return webhookConfigurations;

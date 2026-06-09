@@ -375,7 +375,11 @@ const IsvCheckoutContinueToReviewOrderButton = props => {
 
   useEffect(() => {
     if (self != top) {
-      top.location = encodeURI(self.location);
+        var currentUrl = self.location;
+        var sanitizedUrl = sanitizeUrl(currentUrl);
+        if (sanitizedUrl) {
+          top.location.replace(sanitizedUrl);
+        }
     }
   }, []);
 

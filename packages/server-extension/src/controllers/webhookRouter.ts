@@ -18,7 +18,7 @@ router.get('/tokenUpdate', asyncMiddleware(async (req: Request, res: Response, n
 router.post('/tokenUpdate', asyncMiddleware(validateISVWebhook), asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const webhookRequestData: OCC.Notification = req.body;
-        const requestContext: RequestContext = req.app.locals;
+        const requestContext: RequestContext = res.locals.requestContext as RequestContext;
         const savedWebhookConfiguration = await getSavedNetworkTokenConfigurations();
         if (requestContext.gatewaySettings?.networkTokenUpdates && WEBHOOK_SUBSCRIPTION.EVENT_TYPE === webhookRequestData?.eventType && webhookRequestData?.payload[0]?.data) {
             for (const payload of webhookRequestData.payload) {
@@ -31,7 +31,7 @@ router.post('/tokenUpdate', asyncMiddleware(validateISVWebhook), asyncMiddleware
                     if (!paymentInstrument || !instrumentIdentifier) {
                         throw Error("Missing Instrument Identifier URL or Payment Instrument URL");
                     }
-                    await updateCardDetails(instrumentIdentifier, paymentInstrument, req);
+                    await updateCardDetails(instrumentIdentifier, paymentInstrument, req, res);
                 }
                 else {
                     logger.debug("WebhookRouter tokenUpdate: Configurations doesn't exists in SSE");
@@ -50,9 +50,9 @@ router.post('/tokenUpdate', asyncMiddleware(validateISVWebhook), asyncMiddleware
     };
 }
 ));
-async function updateCardDetails(instrumentIdentifier: string, paymentInstrument: string, req: Request) {
+async function updateCardDetails(instrumentIdentifier: string, paymentInstrument: string, req: Request, res: Response) {
     try {
-        const requestContext: RequestContext = req.app.locals;
+        const requestContext: RequestContext = res.locals.requestContext as RequestContext;
         let retrieveInstrumentIdResponse: PostInstrumentIdentifierRequest | null = null;
         logger.debug("WebhookRouter tokenUpdate: Calling getInstrumentIdentifier with id: " + instrumentIdentifier);
         retrieveInstrumentIdResponse = await makeRequest(

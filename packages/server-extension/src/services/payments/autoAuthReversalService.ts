@@ -9,7 +9,7 @@ const logger = LogFactory.logger();
 
 export default function autoAuthReversal(req: Request, res: Response) {
     (async function (req, res) {
-        const context = buildPaymentContext(req);
+        const context = buildPaymentContext(req, res);
         try {
             let isAuthReversalExists = false;
             const response = <DeepRequired<PtsV2PaymentsPost201Response>>context.data.response;

@@ -1,5 +1,5 @@
 import jsonwebtoken, { Secret, SignOptions } from 'jsonwebtoken';
-import toPem, { JWK } from 'jwk-to-pem';
+import { createPublicKey, createPrivateKey, KeyObject } from 'crypto';
 
 export interface JsonJwt {
   header: any;
@@ -7,10 +7,13 @@ export interface JsonJwt {
 }
 
 export default {
-  jwkToPem(jwk: JWK, isPrivate = false): string {
-    return toPem(jwk, {
-      private: isPrivate
-    });
+  jwkToPem(jwk: any, isPrivate = false): string {
+    if (isPrivate) {
+      const key: KeyObject = createPrivateKey({ key: jwk, format: 'jwk' });
+      return key.export({ type: 'pkcs8', format: 'pem' }) as string;
+    }
+    const key: KeyObject = createPublicKey({ key: jwk, format: 'jwk' });
+    return key.export({ type: 'spki', format: 'pem' }) as string;
   },
 
   decode(jwt: string): JsonJwt {
@@ -29,7 +32,7 @@ export default {
     return jsonwebtoken.sign(payload, key, options);
   },
 
-  signatureVerify(captureContext: string, publicKey: JWK) {
+  signatureVerify(captureContext: string, publicKey: any) {
     const publicKeyToPem = this.jwkToPem(publicKey);
     return jsonwebtoken.verify(captureContext, publicKeyToPem, { algorithms: ['RS256'] });
   }
