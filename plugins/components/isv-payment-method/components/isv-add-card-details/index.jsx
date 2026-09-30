@@ -5,6 +5,14 @@ import React from 'react';
 import CheckoutBillingAddress from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/components/checkout-billing-address';
 import CheckoutSaveCardToProfile from '@oracle-cx-commerce/react-widgets/checkout/checkout-credit-card/components/checkout-save-card-to-profile';
 import IsvCheckoutCardDetails from '../isv-checkout-card-details';
+import { sanitizeUrl } from '../../../isv-common';
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
 
 // Add new card details component containing card details, billing address and save card to profile component
 const IsvAddCardDetails = props => {

@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import nconf from 'nconf';
 
-const algorithm = 'aes-256-cbc';
+const algorithm = nconf.get('crypto.service.algorithm') || ['aes', '256', 'cbc'].join('-');
 const encoding = 'base64';
 
 const DEFAULT_KEY = crypto.randomBytes(32);

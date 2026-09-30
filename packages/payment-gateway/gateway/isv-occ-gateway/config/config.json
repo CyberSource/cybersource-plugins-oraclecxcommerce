@@ -99,73 +99,30 @@
       "public": false
     },
     {
+      "id": "responseMlePrivateKeyFileName",
+      "type": "stringType",
+      "labelResourceId": "responseMlePrivateKeyFileNameLabel",
+      "helpTextResourceId": "responseMlePrivateKeyFileNameHelpText",
+      "defaultValue": "filename",
+      "required": true,
+      "public": false
+    },
+    {
+      "id": "responseMlePrivateKeyPass",
+      "type": "passwordType",
+      "labelResourceId": "responseMlePrivateKeyPassLabel",
+      "helpTextResourceId": "responseMlePrivateKeyPassHelpText",
+      "defaultValue": "",
+      "required": true,
+      "public": false
+    },
+    {
       "id": "messageEncryptionEnabled",
-      "type": "optionType",
+      "type": "booleanType",
       "labelResourceId": "messageEncryptionEnabledLabel",
       "helpTextResourceId": "messageEncryptionEnabledHelpText",
-      "defaultValue": "No",
-      "required": true,
-      "public": false,
-      "options": [
-        {
-          "id": "yes",
-          "value": "Yes",
-          "labelResourceId": "yesLabel"
-        },
-        {
-          "id": "no",
-          "value": "No",
-          "labelResourceId": "noLabel"
-        }
-      ]
-    },
-    {
-      "id": "keyAlias",
-      "type": "stringType",
-      "labelResourceId": "keyAliasLabel",
-      "helpTextResourceId": "keyAliasHelpText",
-      "defaultValue": "keyAlias",
-      "required": false,
+      "defaultValue": false,
       "public": false
-    },
-    {
-      "id": "keyPass",
-      "type": "passwordType",
-      "labelResourceId": "keyPassLabel",
-      "helpTextResourceId": "keyPassHelpText",
-      "defaultValue": "keyPass",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "keyFileName",
-      "type": "stringType",
-      "labelResourceId": "keyFileNameLabel",
-      "helpTextResourceId": "keyFileNameHelpText",
-      "defaultValue": "keyFileName",
-      "required": true,
-      "public": false
-    },
-    {
-      "id": "authenticationType",
-      "type": "optionType",
-      "labelResourceId": "authenticationTypeLabel",
-      "helpTextResourceId": "authenticationTypeHelpText",
-      "defaultValue": "http_signature",
-      "required": true,
-      "public": false,
-      "options": [
-        {
-          "id": "httpSignature",
-          "value": "http_signature",
-          "labelResourceId": "httpAuthenticationTypeLabel"
-        },
-        {
-          "id": "jwt",
-          "value": "JWT",
-          "labelResourceId": "jwtAuthenticationTypeLabel"
-        }
-      ]
     },
     {
       "id": "runEnvironment",

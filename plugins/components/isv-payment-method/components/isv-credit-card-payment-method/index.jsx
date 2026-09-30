@@ -4,7 +4,17 @@ import Styled from '@oracle-cx-commerce/react-components/styled';
 import css from '../../styles/flex.css';
 import {connect} from '@oracle-cx-commerce/react-components/provider';
 import {getFlexMicroformRepository} from '../../../../selectors';
+import {sanitizeUrl} from '../../../isv-common';
 import IsvCreditCard from './IsvCreditCard';
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
+
+
 /**
  * Credit Card widget allows to enter card details or select a saved card. Contains nested components for saved cards, card details, billing address and
  * save card to profile.

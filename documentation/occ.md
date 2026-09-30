@@ -66,6 +66,6 @@ This document is written for merchants who want to use Payment and Value added B
 - Generic Payment Gateway Integration ( [HTML](https://docs.oracle.com/en/cloud/saas/cx-commerce/20c/ccdev/create-generic-payment-gateway-integration1.html) )
 - Payment Integration with OCC ( [HTML](https://community.oracle.com/docs/DOC-1032741) )
 - OCC Payment FAQ ( [HTML](https://community.oracle.com/docs/DOC-1032746) )
-- SSE Development Best Practices ( [HTML](https://community.oracle.com/groups/oracle-commerce-cloud-group/blog/2018/11/08/server-side-extension-development-best-practices) )
+- SSE Development Best Practices ( [HTML](https://community.oracle.com/customerconnect/discussion/630679/server-side-extension-development-best-practices) )
 - Developing Widgets in OCC ( [HTML](https://docs.oracle.com/en/cloud/saas/cx-commerce/20c/widge/create-widget1.html) )
 - Cybersource REST API Reference ( [HTML](https://developer.cybersource.com/api-reference-assets/index.html) )

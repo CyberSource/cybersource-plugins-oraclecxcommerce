@@ -22,9 +22,17 @@ import {
 } from '@oracle-cx-commerce/react-components/utils/payment';
 import { getCurrentOrder, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
 import { amdJsLoad } from '../../isv-payment-utility/script-loader';
-import { replaceSpecialCharacter } from '../../../isv-common';
+import { replaceSpecialCharacter, sanitizeUrl } from '../../../isv-common';
 import GooglePay from './googlePay';
 import { additionalFieldsMapper } from '../../../isv-common';
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
+
 /**
  * @param props
  */
