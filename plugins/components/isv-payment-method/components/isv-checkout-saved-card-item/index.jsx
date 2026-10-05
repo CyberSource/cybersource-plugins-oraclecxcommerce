@@ -9,6 +9,15 @@ import CardCVVIcon from '@oracle-cx-commerce/react-components/icons/card-cvv';
 import WarningIcon from '@oracle-cx-commerce/react-components/icons/warning';
 import {formatCardNumber, validateCVV} from '@oracle-cx-commerce/react-components/utils/payment';
 import {PAYMENT_TYPE_CARD} from '@oracle-cx-commerce/commerce-utils/constants';
+import {sanitizeUrl} from '../../../isv-common';
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
+
 
 const IsvCheckoutSavedCardItem = props => {
   const {

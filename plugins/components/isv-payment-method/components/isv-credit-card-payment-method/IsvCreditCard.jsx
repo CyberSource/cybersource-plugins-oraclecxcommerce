@@ -10,6 +10,14 @@ import { validatePaymentsEnabled } from '@oracle-cx-commerce/react-components/ut
 import IsvCheckoutSavedCards from '../isv-checkout-saved-cards';
 import IsvAddCardDetails from '../isv-add-card-details';
 import { getSavedCardsForProfile } from '@oracle-cx-commerce/commerce-utils/selector';
+import {sanitizeUrl} from '../../../isv-common';
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
 /**
  * Credit Card widget allows to enter card details or select a saved card. Contains nested components for saved cards, card details, billing address and
  * save card to profile.

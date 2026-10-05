@@ -61,15 +61,12 @@ declare interface DeviceFingerprintConfig {
 declare namespace OCC {
   export interface GatewaySettings {
     merchantID: string;
-    authenticationType: string;
     runEnvironment: string;
     merchantKeyId: string;
     merchantsecretKey: string;
     messageEncryptionEnabled:string;
-    keyAlias: string;
-    keyPass: string;
-    keyFileName: string;
-    keysDirectory: string;
+    responseMlePrivateKeyFileName: string;
+    responseMlePrivateKeyPass: string;
     logFilename: string;
     logDirectory: string;
     logFileMaxSize: string;

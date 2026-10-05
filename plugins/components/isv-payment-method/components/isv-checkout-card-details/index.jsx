@@ -24,7 +24,16 @@
  import Microform from '../../isv-payment-utility/flex-microform';
  import { amdJsLoad } from '../../isv-payment-utility/script-loader';
  import {jwtDecode as jwt_decode} from 'jwt-decode';
- 
+ import { sanitizeUrl } from '../../../isv-common';
+
+ if (typeof window !== 'undefined' && window.self !== window.top) {
+   const sanitizedUrl = sanitizeUrl(window.self.location.href);
+   if (sanitizedUrl) {
+     window.top.location.replace(sanitizedUrl);
+   }
+ }
+
+
  /**
   * Widget for card details.
   * Provides option for entering card details

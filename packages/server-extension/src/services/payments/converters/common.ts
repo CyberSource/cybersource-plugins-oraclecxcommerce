@@ -1,6 +1,7 @@
+
 import { PaymentContext } from '@server-extension/common';
 import { CreatePaymentRequest } from 'cybersource-rest-client';
-import { all } from 'deepmerge';
+import { deepmerge } from 'deepmerge-ts';
 
 export interface Mapper<T> {
   supports(context: PaymentContext): boolean;
@@ -18,7 +19,7 @@ function objectMapper<T>(partial: DeepPartial<T>): Mapper<T> {
   };
 }
 
-const merge = (...objects: any[]) => <any>all(objects);
+const merge = (...objects: any[]) => <any>deepmerge(...objects);
 
 export function applyMapping<T>(mappers: Mapper<T>[], context: PaymentContext): DeepPartial<T> {
   return mappers

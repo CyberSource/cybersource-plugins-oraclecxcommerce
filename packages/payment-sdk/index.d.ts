@@ -1,16 +1,19 @@
+
 declare module "cybersource-rest-client" {
   export interface MerchantConfig {
     authenticationType: string;
+    jwtKeyType?: string;
     runEnvironment: string;
 
     merchantID: string;
     merchantKeyId?: string;
     merchantsecretKey?: string;
-    useMLEGlobally?:boolean;
-    keyAlias?: string;
-    keyPass?: string;
-    keyFileName?: string;
-    keysDirectory?: string;
+
+    // MLE Configuration
+    enableResponseMleGlobally?: boolean;
+    responseMlePrivateKeyFilePath?: string;
+    responseMlePrivateKeyFilePassword?: string;
+
     logConfiguration: {
       enableLog: boolean;
       logFilename: string;

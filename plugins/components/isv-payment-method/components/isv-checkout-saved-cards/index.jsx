@@ -11,6 +11,15 @@ import {getCheckoutSavedCardsData} from '@oracle-cx-commerce/react-widgets/check
 import {noop} from '@oracle-cx-commerce/utils/generic';
 import {PAYMENT_TYPE_CARD} from '@oracle-cx-commerce/commerce-utils/constants';
 import IsvCheckoutSavedCardItem from '../isv-checkout-saved-card-item';
+import {sanitizeUrl} from '../../../isv-common';
+
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
 
 /**
  * Widgets displays saved cards on the checkout payment page.

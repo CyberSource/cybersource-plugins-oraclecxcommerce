@@ -377,7 +377,7 @@ const IsvCheckoutPlaceOrderButton = props => {
         if (response.ok) {
           const data = response.delta.payerAuthSetupRepository || {};
           if (data.deviceDataCollectionUrl) {
-            let cardinalUrl = null;
+            cardinalUrl = null;
             try {
               const match = data.deviceDataCollectionUrl.match(DDC_URL_PATTERN);
               if (match && match[1]) {

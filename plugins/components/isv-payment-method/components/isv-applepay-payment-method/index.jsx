@@ -21,9 +21,17 @@ import {
   isPaymentDetailsComplete
 } from '@oracle-cx-commerce/react-components/utils/payment';
 import { getCurrentOrder, getGlobalContext, getCurrentProfileId } from '@oracle-cx-commerce/commerce-utils/selector';
-import { replaceSpecialCharacter } from '../../../isv-common';
+import { replaceSpecialCharacter, sanitizeUrl } from '../../../isv-common';
 import ApplePay from './applePay';
 import { getIpAddress, getAccountPurchaseHistory, getLineItemDetails, additionalFieldsMapper } from '../../../isv-common';
+
+
+if (typeof window !== 'undefined' && window.self !== window.top) {
+  const sanitizedUrl = sanitizeUrl(window.self.location.href);
+  if (sanitizedUrl) {
+    window.top.location.replace(sanitizedUrl);
+  }
+}
 
 /**
  * Apple Pay allows to make payment using Apple Pay button
